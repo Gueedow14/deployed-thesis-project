@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">Campaign Data</title>
+        <link rel="stylesheet" href="{% static 'anon/css/campaigndata.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        
+        <div class="section">
+
+
+
+            <div class="title">
+                <h1>Campaign Data</h1>
+            </div>
+
+
+
+            <div class="container"> 
+
+
+                <div class="text_container">
+                    <p>Fill the fields with your data:</p>
+                </div>
+
+                <div class="data_div">
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 1:</label>
+                        </div>
+                        <div class="data_input">
+                            <input id="data-1" class="campaign_input">
+                        </div>
+                    </div>
+    
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 2:</label>
+                        </div>
+                        <div class="data_input">
+                            <input id="data-2" class="campaign_input">
+                        </div>
+                    </div>
+    
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 3:</label>
+                        </div>
+                        <div class="data_input">
+                            <input id="data-3" class="campaign_input">
+                        </div>
+                    </div>
+    
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 4:</label>
+                        </div>
+                        <div class="data_input">
+                            <input id="data-4" class="campaign_input">
+                        </div>
+                    </div>
+    
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 5:</label>
+                        </div>
+                        <div class="data_input">
+                            <input id="data-5" class="campaign_input">
+                        </div>
+                    </div>
+    
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 6:</label>
+                        </div>
+                        <div class="data_input">
+                            <input id="data-6" class="campaign_input">
+                        </div>
+                    </div>
+    
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 7:</label>
+                        </div>
+                        <div class="data_input">
+                            <input id="data-7" class="campaign_input">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="button_div">
+                    <button id="proceed-button" class="button">Proceed</button>
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+ 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/campaigndata.js' %}"></script>
+
+    </body>
+
+</html>

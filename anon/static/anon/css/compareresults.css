@@ -1,0 +1,321 @@
+body{
+    background-color: blue;
+    font-family: 'Lato', sans-serif;
+}
+
+.section{
+    border: 5px solid #9B0000;
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 80px auto;
+    height: 810px;
+    position: relative;
+    background: white;
+}
+
+.title {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    font-size: 25px;
+    line-height: 15px;
+    text-align: center;
+}
+
+
+
+
+
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s;
+    transition-delay: .2s;
+}
+  
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+
+
+
+
+.toggle_container {
+    display: flex;
+    padding: 30px;
+}
+
+.bar_chart_div {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    width: 44%;
+}
+
+.toggle_div {
+    text-align: center;
+    width: 12%;
+}
+
+.table_div {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 44%;
+}
+
+.toggle_icon {
+    font-size: 30px;
+    line-height: 10px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 40px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 34px;
+    width: 34px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: blue;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(38px);
+    -ms-transform: translateX(38px);
+    transform: translateX(38px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.chart_table_container {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+
+
+
+.chartBox {
+    min-width: 600px;
+    width: 700px;
+    max-width: 850px;
+    height: 500px;
+    padding: 20px;
+    background: white;
+    transform: translateX(0px);
+    display: block;
+    transition: .3s all;
+}
+
+
+
+
+.tableBox {
+    height: 500px;
+    padding: 20px;
+    background: white;
+    transition: .3s all;
+    display: none;
+    align-items: center;
+    justify-items: center;
+}
+
+.table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    min-width: 600px;
+    width: 700px;
+    max-width: 850px;
+    max-height: 500px;
+    border: 1px solid #ddd;
+}
+
+th, td {
+    text-align: center;
+    padding: 16px;
+}
+
+th:first-child, td:first-child {
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2
+}
+
+
+
+
+
+
+
+
+@keyframes chartOutAnim {
+
+    0% {
+        transform: translateX(0px);
+    }
+
+    100% {
+        transform: translateX(-1000px);
+    }
+
+}
+
+@keyframes chartInAnim {
+    
+    0% {
+        transform: translateX(-1000px);
+    }
+
+    100% {
+        transform: translateX(0px);
+    }
+
+}
+
+@keyframes tableOutAnim {
+    
+    0% {
+        transform: translateX(0px);
+    }
+
+    100% {
+        transform: translateX(1000px);
+    }
+
+}
+
+@keyframes tableInAnim {
+    
+    0% {
+        transform: translateX(1000px);
+    }
+
+    100% {
+        transform: translateX(0px);
+    }
+
+}
+
+
+
+
+
+
+.button_div {
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.button {
+    margin: 10px 30px;
+    width: 200px;
+    color: white;
+    background: red;
+    border: 3px solid #9B0000;
+    border-radius: 10px;
+    font-size: 25px;
+    line-height: 20px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.button:hover {
+    background: #DB0000;
+    transform: scale(1.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*, *::before, *::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}

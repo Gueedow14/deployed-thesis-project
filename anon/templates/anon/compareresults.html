@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">Compare</title>
+        <link rel="stylesheet" href="{% static 'anon/css/compareresults.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
+        
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        
+        <div class="section">
+
+
+
+            <div class="title">
+                <h1>Compare</h1>
+            </div>
+
+
+
+            <div class="container"> 
+
+                <div class="toggle_container">
+
+                    <div class="bar_chart_div animate">
+                        <i class="toggle_icon bi bi-bar-chart-line"></i>
+                    </div>
+
+                    <div class="toggle_div animate">
+                        <label class="switch">
+                            <input id="toggle-button" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="table_div animate">
+                        <i class="toggle_icon bi bi-table"></i>
+                    </div>
+
+                </div>
+
+                
+                <div class="chart_table_container">
+
+                    <div id="chartBox" class="chartBox">
+                        <canvas id="myChart"></canvas>
+                    </div>
+
+                    
+
+                    <div id="tableBox" class="tableBox">
+                        <table id="myTable" class="table">
+
+                            <tr>
+                              <th style="width:40%">Features</th>
+                              <th style="width:10%">RRU</th>
+                              <th style="width:10%">AIL</th>
+                              <th style="width:20%">Clustering Alg.</th>
+                              <th style="width:20%">Validation Alg.</th>
+                            </tr>
+
+                            
+
+                          </table>
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div id="finish-button-container" class="button_div">
+
+                    <button id="finish-button" class="button">Done</button>
+
+                </div>
+
+
+ 
+
+            </div>
+
+
+
+        </div>
+
+
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/compareresults.js' %}"></script>
+
+    </body>
+
+</html>

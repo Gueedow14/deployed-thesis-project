@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Security Level</title>
+        <link rel="stylesheet" href="{% static 'anon/css/homedataowner.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        
+        <div class="section">
+
+            <div class="title">
+                <button id="exit-button" class="exit_button">Exit</button>
+            </div>
+
+
+            <div class="container">
+               
+                <div class="button_div">
+
+                    <div id="profile-text" class="button_text">Profile</div>
+
+                    <button id="profile-button" class="profile_button animate">
+                        <span>
+                            <i class="bi bi-person-fill"></i>
+                        </span>
+                    </button>
+                    
+                </div>
+
+                <div class="circle_div">
+
+                    <div id="progress" class="progress_bar_div">
+                        <span id="progress-value" class="progress_value"></span>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/homedataowner.js' %}"></script>
+
+    </body>
+
+</html>

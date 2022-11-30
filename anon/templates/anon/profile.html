@@ -1,0 +1,193 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">Profile</title>
+        <link rel="stylesheet" href="{% static 'anon/css/profile.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        
+        <div class="section">
+
+
+
+            <div class="title">
+                <h1>Profile</h1>
+            </div>
+
+
+
+            <div class="container"> 
+
+                <div class="inside_container">
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>E-Mail:</label>
+                        </div>
+                        <div>
+                            <input autocomplete="off" id="email-input" class="email" value="gbernasconi3@studenti.insubria.it" disabled>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Password:</label>
+                        </div>
+                        <div>
+                            <input autocomplete="off" id="pwd" value="eX4mPl3_-PwD" class="pwd" placeholder="Password" type="password" disabled>
+                        </div>
+                        <div id="pwd-icon-div-change" class="pwd_icon_div">
+                            <i id="pwd-icon-change" class="change_icon bi bi-pencil"></i>
+                        </div>
+                        <div id="pwd-icon-div-see" class="pwd_icon_div">
+                            <i id="pwd-icon-see" class="change_icon bi bi-eye-fill"></i>      <!--   <i class="bi bi-eye-slash-fill"></i>   -->
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Campaign:</label>
+                        </div>
+                        <div>
+                            <input id="campaign" class="campaign_name" disabled>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 1:</label>
+                        </div>
+                        <div>
+                            <input class="campaign_input" disabled>
+                        </div>
+                        <div class="change_icon_div">
+                            <i class="change_icon bi bi-pencil"></i>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 2:</label>
+                        </div>
+                        <div>
+                            <input class="campaign_input" disabled>
+                        </div>
+                        <div class="change_icon_div">
+                            <i class="change_icon bi bi-pencil"></i>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 3:</label>
+                        </div>
+                        <div>
+                            <input class="campaign_input" disabled>
+                        </div>
+                        <div class="change_icon_div">
+                            <i class="change_icon bi bi-pencil"></i>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 4:</label>
+                        </div>
+                        <div>
+                            <input class="campaign_input" disabled>
+                        </div>
+                        <div class="change_icon_div">
+                            <i class="change_icon bi bi-pencil"></i>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 5:</label>
+                        </div>
+                        <div>
+                            <input class="campaign_input" disabled>
+                        </div>
+                        <div class="change_icon_div">
+                            <i class="change_icon bi bi-pencil"></i>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 6:</label>
+                        </div>
+                        <div>
+                            <input class="campaign_input" disabled>
+                        </div>
+                        <div class="change_icon_div">
+                            <i class="change_icon bi bi-pencil"></i>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Data 7:</label>
+                        </div>
+                        <div>
+                            <input class="campaign_input" disabled>
+                        </div>
+                        <div class="change_icon_div">
+                            <i class="change_icon bi bi-pencil"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="button_div">
+                <button id="button" class="button">Done</button>
+            </div>
+
+        </div>
+
+
+
+        <div id="id-window-change" class="window_change_pwd">
+            <form class="content_window_change_pwd animate">
+                <span id="button-close" class="close"><i class="bi bi-x-circle-fill"></i></span>
+                <div>
+
+                    <div>
+                        <h2 class="window_change_text">Are you sure you want to change your password?</h2>
+                    </div>
+                    
+                    <div class="button_div">
+                        <button id="confirm-reset-pwd" class="button">Yes</button>
+                        <button id="cancel-reset-pwd" class="button">Cancel</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+
+
+ 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/profile.js' %}"></script>
+
+    </body>
+
+</html>

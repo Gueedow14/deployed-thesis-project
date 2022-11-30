@@ -1,0 +1,128 @@
+{% load static %}
+
+<!DOCTYPE html>  
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Create Campaign</title>
+        <link rel="stylesheet" href="{% static 'anon/css/createcampaign.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        
+        <div class="section">
+
+            <div class="title">
+                <h1>Create a Campaign</h1>
+            </div>
+
+
+            <div class="container">
+
+                <div class="buttons_div">
+
+                    <div class="attribute_button_div">
+                        <button id="attr-button" class="button">Add Attribute</button>
+                    </div>
+
+                    <div class="relationship_button_div">
+                        <button id="rel-button" class="button">Add Relationship</button>
+                    </div>
+
+                </div>
+
+                <div class="list_div">
+
+                    <ul id="list">
+                        
+                    </ul>
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">No Data Inserted...</p>
+                    </div>
+
+                </div>
+
+                <div class="button_div">
+                    <button id="create-campaign-button" class="button">Create Campaign</button>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!--    CREAZIONE DATA    -->
+
+        <div id="attr-name-div" class="name_div">
+            <div class="content animate">
+                <div class="input_name_div">
+                    <input autocomplete="off" id="attr-name" class="name" placeholder="Insert attribute name..." type="text" maxlength="30" />
+                </div>
+                <div class="icon_div">
+                    <span id="attr-name-button" class="button_name">
+                        <i class="bi bi-arrow-right-circle-fill"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div id="rel-name-div" class="name_div">
+            <div class="content animate">
+                <div class="input_name_div">
+                    <input autocomplete="off" id="rel-name" class="name" placeholder="Insert relationship name..." type="text" maxlength="30" />
+                </div>
+                <div class="icon_div">
+                    <span id="rel-name-button" class="button_name">
+                        <i class="bi bi-arrow-right-circle-fill"></i>
+                    </span>
+                </div>
+            </div>  
+        </div>
+
+
+        <!--    MODIFICA DATA    -->
+
+        <div id="mod-attr-name-div" class="name_div">
+            <div class="content animate">
+                <div class="input_name_div">
+                    <input autocomplete="off" id="mod-attr-name" class="name" placeholder="Insert new attribute name..." type="text" maxlength="30" />
+                </div>
+                <div class="icon_div">
+                    <span id="mod-attr-name-button" class="button_name">
+                        <i class="bi bi-arrow-right-circle-fill"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div id="mod-rel-name-div" class="name_div">
+            <div class="content animate">
+                <div class="input_name_div">
+                    <input autocomplete="off" id="mod-rel-name" class="name" placeholder="Insert new relationship name..." type="text" maxlength="30" />
+                </div>
+                <div class="icon_div">
+                    <span id="mod-rel-name-button" class="button_name">
+                        <i class="bi bi-arrow-right-circle-fill"></i>
+                    </span>
+                </div>
+            </div>  
+        </div>
+
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/createcampaign.js' %}"></script>
+
+    </body>
+
+</html>

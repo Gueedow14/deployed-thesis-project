@@ -1,0 +1,252 @@
+body{ 
+    background-color: blue;
+    font-family: 'Lato', sans-serif;
+}
+
+.section{
+    border: 5px solid #9B0000;
+    border-radius: 10px;
+    max-width: 1300px;
+    margin: 120px auto;
+    height: 730px;
+    position: relative;
+    background: white;
+}
+
+.title {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    font-size: 25px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.container {
+    height: 420px;
+}
+
+.container h3 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 20px;
+}
+
+.container hr {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+
+
+
+
+
+
+.campaigns {
+    margin: 20px 50px;
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    
+}
+
+.campaigns::-webkit-scrollbar {
+    width: 10px;
+}
+
+.campaigns::-webkit-scrollbar:hover {
+    cursor: pointer;
+}
+  
+.campaigns::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+   
+.campaigns::-webkit-scrollbar-thumb {
+    background: red; 
+    border-radius: 10px;
+}
+  
+.campaigns::-webkit-scrollbar-thumb:hover {
+    background-color: #9B0000;
+}
+
+
+
+
+.campaign {
+    width: 300px;
+    margin: 10px;
+    height: 90%;
+    display: inline-block;
+    padding: 10px;
+    border: 6px solid black;
+    transition: all .3s ease-in-out;
+    box-shadow: 5px 5px 15px black;
+}
+
+.selected_campaign {
+    width: 300px;
+    margin: 10px;
+    height: 90%;
+    display: inline-block;
+    padding: 10px;
+    border: 6px solid #CB0000;
+    color: red;
+    transition: all .3s ease-in-out;
+    box-shadow: 5px 5px 15px black;
+}
+
+.campaign:hover {
+    transform: scale(1.1);
+}
+
+.selected_campaign:hover {
+    transform: scale(1.1);
+}
+
+
+
+
+.campaigns:hover .campaign {
+    transform: rotateY(30deg);
+    box-shadow: -15px 15px 15px rgba(0,0,0,0.5);
+}
+
+.campaigns .campaign:hover ~ .campaign {
+    transform: rotateY(-30deg);
+    box-shadow: 15px 15px 15px rgba(0,0,0,0.5);
+}
+
+.campaigns .campaign:hover ~ .selected_campaign {
+    transform: rotateY(-30deg);
+    box-shadow: 15px 15px 15px rgba(0,0,0,0.5);
+}
+
+.campaigns .campaign:hover {
+    transform: rotateY(0deg) scale(1.1);
+    z-index: 1;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+
+
+
+.campaigns:hover .selected_campaign {
+    transform: rotateY(30deg);
+    box-shadow: -15px 15px 15px rgba(0,0,0,0.5);
+}
+
+.campaigns .selected_campaign:hover ~ .campaign {
+    transform: rotateY(-30deg);
+    box-shadow: 15px 15px 15px rgba(0,0,0,0.5);
+}
+
+.campaigns .selected_campaign:hover {
+    transform: rotateY(0deg) scale(1.1);
+    z-index: 1;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+}
+
+
+
+
+
+
+
+
+.campaign h2 {
+    text-align: center;
+    font-size: 35px;
+    line-height: 20px;
+}
+
+.campaign p {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.campaign ul {
+    margin:  0 70px 0;
+}
+
+.campaign ul li {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+.selected_campaign h2 {
+    text-align: center;
+    font-size: 35px;
+    line-height: 20px;
+}
+
+.selected_campaign p {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.selected_campaign ul {
+    margin:  0 70px 0;
+}
+
+.selected_campaign ul li {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+
+
+
+
+
+
+.button_div {
+    text-align: center;
+    margin-top: 10px;
+}
+
+
+.button {
+    margin: 10px 30px;
+    width: 200px;
+    color: white;
+    background: red;
+    border: 3px solid #9B0000;
+    border-radius: 10px;
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.button:hover {
+    background: #DB0000;
+    transform: scale(1.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+*, *::before, *::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}

@@ -1,0 +1,138 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Login/Registration</title>
+        <link rel="stylesheet" href="{% static 'anon/css/logreg.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+ 
+    <body>
+        
+        <div class="section">
+
+            <!--  MENU' SECTION  -->
+
+            <div class="menu_choice">
+                <ul>
+                    <li id="menu-login-option" class="active">Login</li>
+                    <li id="menu-register-option">Register</li>
+                </ul>
+                <div class="line_menu"></div>
+            </div>
+
+            <!--  LOGIN SECTION  -->
+
+            <div id="login-container" class="login">
+
+                <div>
+
+                    <div>
+                        <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail">
+                    </div>
+
+                    <div class="pwd_icon_div">
+
+                        <div class="pwd_div">
+                            <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Password" type="password">
+                        </div>  
+
+                        <div class="eye_icon_div">
+                            <span id="pwd-icon-eye" class="eye_icon">
+                                <i id="icona_pwd" class="bi bi-eye-fill"></i>
+                            </span>
+                        </div>
+
+                    </div>
+                    
+                    <div class="forgot_pwd_div">
+                        <p id="forgot-pwd" class="forgot_pwd">Forgot your Password?</p>
+                    </div>
+
+                    <div class="button_div">
+                        <button  class="button">Login</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!--  REGISTER SECTION  -->
+
+            <div id="register-container" class="register">
+
+                <div>
+                    <h3>Choose your role</h3>
+                </div>
+                <hr>
+ 
+                <div class="roles_buttons">
+
+                    <div>
+
+                        <div class="data_owner_button_div">
+                            <a style="text-decoration: none;" href="{% url 'registration' %}" id="data-owner-button" type="button" class="role_button">
+                                <span>
+                                    <i class="bi bi-person-circle button_icon"></i>  Data Owner
+                                </span>
+                            </a>
+                        </div>
+                        
+                        <div class="data_provider_button_div">
+                            <a style="text-decoration: none;" href="{% url 'registration' %}" id="data-provider-button" type="button" class="role_button">
+                                <span>
+                                    <i class="bi bi-cpu-fill button_icon"></i>  Data Provider
+                                </span>
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div id="id-window-forgot" class="window_forgot_pwd">
+            <form class="content_window_forgot_pwd animate">
+                <span id="button-close-forgot" class="close"><i class="bi bi-x-circle-fill"></i></span>
+                <div>
+
+                    <div>
+                        <h2>Insert your E-Mail:</h2>
+                    </div>
+
+                    <div>
+                        <input autocomplete="off" id="email-forgot" class="email_forgot_pwd" placeholder="Insert your E-Mail" />
+                    </div>
+                    
+                    <div>
+                        <button class="button_forgot_pwd">Send</button>
+                    </div>
+                    
+                    <div>
+                        <h4>Click Send to receive an email with further instructions on how to reset your password.</h4>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+        <script src="{% static 'anon/js/logreg.js' %}"></script>
+
+    </body>
+
+</html>

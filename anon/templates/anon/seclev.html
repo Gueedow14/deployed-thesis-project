@@ -1,0 +1,115 @@
+{% load static %}
+
+<!DOCTYPE html>  
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Security Level</title>
+        <link rel="stylesheet" href="{% static 'anon/css/seclev.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        
+        <div class="section">
+
+            <div class="title">
+                <h1>Choose your Security Level</h1>
+            </div>
+
+            <div class="container">
+
+
+                <h2>Using the Range Slider select the security level you prefer</h2>
+
+                <hr>
+
+                <!--
+
+                <div class="slider_container">
+
+                    <div class="text_container">
+                        <div class="left_container">
+                            <p>Low Security</p>
+                        </div>
+                        
+                        <div class="right_container">
+                            <p>High Security</p>
+                        </div>
+                    </div>
+                    
+                  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                  <p>Selected Value (1-7): <span id="value"></span></p>
+                  
+                </div>
+
+                -->
+
+                <div class="content_container">
+
+
+                    <div class="text_container">
+                        <div>
+                            <label class="text_sec_lev">Low Security</label>
+                        </div>
+                        <div>
+                            <label class="text_sec_lev">High Security</label>
+                        </div>
+                    </div>
+
+
+                    <div class="slider_container">
+                        <input type="range" min="0" max="100" value="50" class="slider" id="myRange">
+                    </div>
+
+
+                    <div>
+                        <div class="value_text_div">
+                            <label>Selected Value (1-7): <span id="value"></span></label>
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <label id="sec-level-p" class="security_level_p">Mid Security Level</label>
+                    </div>
+
+
+                </div>
+                
+                <hr>
+
+                <div class="button_div">
+                    <button id="confirm-button" class="button">Confirm</button>
+                </div>
+                
+
+            </div>
+
+
+            <div id="window-confirm-security-value" class="window_confirm_security_value">
+                <div class="content_window_confirm animate">
+                    <span id="button-close-forgot" class="close"><i class="bi bi-x-circle-fill"></i></span>
+                    <h2 class="window_title">Are you sure?</h2>
+                    <p class="window_text">The security value you chose is k=<span id="k-value-confirm" class="k_value_confirm">*</span></p>
+                    <button id="window-confirm-button" class="window_confirm_button">Confirm</button>
+                </div>
+            </div>
+
+
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/seclev.js' %}"></script>
+
+    </body>
+
+</html>

@@ -1,0 +1,262 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">Compare</title>
+        <link rel="stylesheet" href="{% static 'anon/css/comparehome.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+ 
+    <body>
+        
+        <div class="section">
+
+
+
+            <div class="title">
+                <h1>Compare</h1>
+            </div>
+
+
+
+            <div class="container">
+
+
+
+                <div class="buttons_div">
+                    
+                    <div class="filter_div">
+                        <button id="filter-button" class="button">Filter</button>
+                        <p id="num-filters" class="num_filters">3</p>
+                    </div>
+
+                    <div class="sort_div">
+                        <p id="selected-sort-param" class="sort">--Reset--</p>
+                        <button id="sort-button" class="button">Sort</button>
+                    </div>
+
+
+                    <div id="sort-params" class="sort_params">
+
+                        <dl id="list-sort-params" class="list_sort_params">
+                            <dt class="sort_param">--Reset--</dt>
+                            <dt class="sort_param">Highest RRU</dt>
+                            <dt class="sort_param">Lowest RRU</dt>
+                            <dt class="sort_param">Highest AIL</dt>
+                            <dt class="sort_param">Lowest AIL</dt>
+                            <dt class="sort_param">Alphabetical</dt>
+                            <dt class="sort_param">Clustering Algorithm</dt>
+                            <dt class="sort_param">Validation Algorithm</dt>
+                        </dl>
+        
+                    </div>
+
+
+
+                </div>
+
+
+
+                <div id="kgs" class="kgs">
+
+                    <div class="kg">
+
+                        <div class="imageBox">
+                            <img class="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Conceptual_Diagram_-_Example.svg/800px-Conceptual_Diagram_-_Example.svg.png">
+                        </div>
+
+                        <div class="content">
+                            <div>
+                                <h2>Desenzano</h2>
+
+                                <p>RRU: <span>1.7</span></p>
+                                <p>AIL: <span>3.7</span></p>
+                                <p>Clustering Algorithm: <span>VAC</span></p>
+                                <p>Validation Algorithm: <span>MS-Algorithm</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="kg">
+                        <div class="imageBox">
+                            <img class="image" src="https://theinnovator.news/wp-content/uploads/2020/12/bio_kg-2.png">
+                        </div>
+                        <div class="content">
+                            <div>
+                                <h2>Amalfi</h2>
+
+                                <p>RRU: <span id="RRU-value-2">1.3</span></p>
+                                <p>AIL: <span id="RRU-value-2">2.1</span></p>
+                                <p>Clustering Algorithm: <span id="clustering-alg-2">K-Medoids</span></p>
+                                <p>Validation Algorithm: <span id="validation-alg-2">Invalid Removal</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="kg">
+                        <div class="imageBox">
+                            <img class="image" src="https://miro.medium.com/max/909/1*2ZnrhrKUGk0KkPOa8RaXsA.png">
+                        </div>
+                        <div class="content">
+                            <div>
+                                <h2>Napoli</h2>
+
+                                <p>RRU: <span id="RRU-value-3">3.1</span></p>
+                                <p>AIL: <span id="RRU-value-3">2.9</span></p>
+                                <p>Clustering Algorithm: <span id="clustering-alg-3">VAC</span></p>
+                                <p>Validation Algorithm: <span id="validation-alg-3">Invalid Removal</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="kg">
+                        <div class="imageBox">
+                            <img class="image" src="https://timbr.ai/wp-content/uploads/2020/05/ontology.jpg">
+                        </div>
+                        <div class="content">
+                            <div>
+                                <h2>Zurigo</h2>
+
+                                <p>RRU: <span id="RRU-value-4">2.4</span></p>
+                                <p>AIL: <span id="RRU-value-4">1.5</span></p>
+                                <p>Clustering Algorithm: <span id="clustering-alg-4">HDBSCAN</span></p>
+                                <p>Validation Algorithm: <span id="validation-alg-4">MS-Algorithm</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="proceed_div">
+
+                    <button id="proceed-button" class="proceed_button">Proceed</button>
+
+                </div>
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+        <div id="window-filters" class="window_filters">
+            <div class="content_window_filters animate">
+
+                <div class="filters_title">
+                    <h1>Filters</h1>
+                </div>
+
+                <div class="filters_container">
+
+                    <div class="RRU_filter">
+                        <p>Ratio of Removed Users: </p>
+                        <div class="values_slider_div">
+                            <span id="RRU-min" class="filter_value_min">0</span>
+                            <div class="slider_div">
+                                <input id="RRU-filter" class="filter_range" type="range" step="0.1">
+                            </div>
+                            <span id="RRU-max" class="filter_value_max">100</span>
+                        </div>
+                        <div class="slider_current_value">
+                            <span id="RRU-current-value">50</span>
+                        </div>
+                    </div>
+    
+                    <div class="AIL_filter">
+                        <p>Average Information Loss: </p>
+                        <div class="values_slider_div">
+                            <span id="AIL-min" class="filter_value_min">0</span>
+                            <div class="slider_div">
+                                <input id="AIL-filter" class="filter_range" type="range" step="0.1">
+                            </div>
+                            <span id="AIL-max" class="filter_value_max">100</span>
+                        </div>
+                        <div class="slider_current_value">
+                            <span id="AIL-current-value">50</span>
+                        </div>
+                    </div>
+    
+                    <div class="clustering_alg_filter">
+                        <p>Clustering Algorithm:</p>
+
+                        <div>
+                            <label class="radio_option">
+                                <span>VAC</span>
+                                <input id="filter-vac" class="radio_alg" type="radio" name="clustering"/>
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label class="radio_option">
+                                <span>k-Medoids</span>
+                                <input id="filter-k-medoids" class="radio_alg" type="radio" name="clustering"/>
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label class="radio_option">
+                                <span>HDBSCAN</span>
+                                <input id="filter-hdbscan" class="radio_alg" type="radio" name="clustering"/>
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+
+                    </div>
+    
+                    <div class="validation_alg_filter">
+                        <p>Validation Algorithm: </p>
+
+                            <div>
+                                <label class="radio_option">
+                                    <span>Invalid Removal</span>
+                                    <input id="filter-invalid-removal" class="radio_alg" type="radio" name="validation"/>
+                                    <span class="checkmark"></span>
+                                </label>
+    
+                                <label class="radio_option">
+                                    <span>MS-Algorithm</span> 
+                                    <input id="filter-ms-alg" class="radio_alg" type="radio" name="validation"/>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+
+                    </div>
+
+                    <div class="filters_button_div">
+                        <button id="filters-button" class="button">Finish</button>
+                        <button id="reset-button" class="button">Reset</button>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+
+
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/comparehome.js' %}"></script>
+
+    </body>
+
+</html>
