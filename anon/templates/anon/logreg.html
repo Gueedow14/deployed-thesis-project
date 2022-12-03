@@ -2,7 +2,7 @@
 
 <!DOCTYPE html> 
 <html lang="en">
-    
+     
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,7 +105,7 @@
         </div>
 
         <div id="id-window-forgot" class="window_forgot_pwd">
-            <form class="content_window_forgot_pwd animate">
+            <div class="content_window_forgot_pwd animate">
                 <span id="button-close-forgot" class="close"><i class="bi bi-x-circle-fill"></i></span>
                 <div>
 
@@ -118,7 +118,7 @@
                     </div>
                     
                     <div>
-                        <button class="button_forgot_pwd">Send</button>
+                        <button id="button-forgot-pwd" class="button_forgot_pwd">Send</button>
                     </div>
                     
                     <div>
@@ -126,11 +126,11 @@
                     </div>
 
                 </div>
-            </form>
+            </div>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
         <script src="{% static 'anon/js/logreg.js' %}"></script>
 
     </body>

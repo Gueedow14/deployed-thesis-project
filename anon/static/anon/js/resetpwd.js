@@ -1,3 +1,7 @@
+const emailForgot = localStorage.getItem("email-forgot-pwd");
+
+
+
 var password = document.getElementById('pwd-input');
 var confirmPassword = document.getElementById('confirm-pwd-input');
 var iconPwd = document.getElementById('pwd-icon-eye');
@@ -69,3 +73,28 @@ function onClickConfirmPwd() {
         chkConfirmIcon = true;
     }
 }
+
+function chkPwds(pwd, conf) {
+
+    console.log("Pwd:" + pwd)
+    console.log("Confirm:" + conf)
+    
+
+    if(pwd.length === 0 || conf.length === 0) {
+        alert("Fill both password fields before continuing!")
+    } else if(pwd != conf) {
+        alert("The passwords don't match!")
+    } else {
+        return true
+    }
+    return false
+}
+
+
+function onClickRegisterButton() {
+    if(chkPwds(document.getElementById("pwd-input").value, document.getElementById("confirm-pwd-input").value)) {
+        //register modification in files
+        location.href = "logreg";
+    }
+}
+

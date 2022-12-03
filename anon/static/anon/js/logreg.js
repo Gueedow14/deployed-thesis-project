@@ -96,13 +96,6 @@ function onClickIconForgot() {
     document.getElementById('email-forgot').value = '';
 }
 
-window.onclick = function(event) {
-    if (event.target == document.getElementById('id-window-forgot')) {
-        document.getElementById('id-window-forgot').style.display = "none";
-        document.getElementById('email-forgot').value = '';
-    }
-}
-
 function onClickLoginMenu() {
     if(!chkMenu) {
         chkMenu = true;
@@ -120,7 +113,6 @@ function onClickRegisterMenu() {
 }
 
 
-
 const dataOwnerButton = document.getElementById('data-owner-button');
 const dataProviderButton = document.getElementById('data-provider-button');
 
@@ -136,7 +128,37 @@ function openRegistration() {
     }
 
 }
+ 
+
+function validEmail(str) {
+    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if(str.match(validRegex))
+        return true;
+    else
+        return false;
+}
 
 
 
-//IMPLEMENT RESET PWD
+const buttonForgotPwd = document.getElementById("button-forgot-pwd");
+
+buttonForgotPwd.addEventListener('click', onButtonForgot)
+
+function onButtonForgot() {
+    if(document.getElementById("email-forgot").value.length === 0) {
+        alert("Insert an E-Mail");
+        return;
+    } else if(!validEmail(document.getElementById("email-forgot").value)) {
+        alert("Insert a valid E-Mail address");
+        return;
+    }
+
+
+    //THE EMAIL HAS TO BE IN THE DATABASE
+
+
+
+    localStorage.setItem("email-forgot-pwd", document.getElementById("email-forgot").value);
+    location.href = "resetpwd";
+
+}
