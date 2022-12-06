@@ -29,66 +29,74 @@
                 <h3>Select a campaign from the list below</h3>
                 <hr>
 
-                <div class="campaigns">
-                    <div id="campaign-1" class="campaign">
-                        <h2>Campaign 1</h2>
-                        <p>Creator: <span id="creator-name-1">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-2" class="campaign">
-                        <h2>Campaign 2</h2>
-                        <p>Creator: <span id="creator-name-2">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-3" class="campaign">
-                        <h2>Campaign 3</h2>
-                        <p>Creator: <span id="creator-name-3">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-4" class="campaign">
-                        <h2>Campaign 4</h2>
-                        <p>Creator: <span id="creator-name-4">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-5" class="campaign">
-                        <h2>Campaign 5</h2>
-                        <p>Creator: <span id="creator-name-5">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-6" class="campaign">
-                        <h2>Campaign 6</h2>
-                        <p>Creator: <span id="creator-name-6">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                </div>
+                <form style="height: 410px;" method="post">
 
-                <div class="button_div">
-                    <button id="button-confirm-choice" class="button">Confirm</button>                  
-                </div>
+                    {% csrf_token %}
+
+                    <div class="campaigns">
+                        <div id="campaign-1" class="campaign">
+                            <h2>Campaign 1</h2>
+                            <p>Creator: <span id="creator-name-1">John Doe</span></p>
+                            <ul>
+                                <li>Name</li>
+                                <li>DoB</li>
+                                <li>Occupation</li>
+                            </ul>
+                        </div>
+                        <div id="campaign-2" class="campaign">
+                            <h2>Campaign 2</h2>
+                            <p>Creator: <span id="creator-name-2">John Doe</span></p>
+                            <ul>
+                                <li>Name</li>
+                                <li>DoB</li>
+                                <li>Occupation</li>
+                            </ul>
+                        </div>
+                        <div id="campaign-3" class="campaign">
+                            <h2>Campaign 3</h2>
+                            <p>Creator: <span id="creator-name-3">John Doe</span></p>
+                            <ul>
+                                <li>Name</li>
+                                <li>DoB</li>
+                                <li>Occupation</li>
+                            </ul>
+                        </div>
+                        <div id="campaign-4" class="campaign">
+                            <h2>Campaign 4</h2>
+                            <p>Creator: <span id="creator-name-4">John Doe</span></p>
+                            <ul>
+                                <li>Name</li>
+                                <li>DoB</li>
+                                <li>Occupation</li>
+                            </ul>
+                        </div>
+                        <div id="campaign-5" class="campaign">
+                            <h2>Campaign 5</h2>
+                            <p>Creator: <span id="creator-name-5">John Doe</span></p>
+                            <ul>
+                                <li>Name</li>
+                                <li>DoB</li>
+                                <li>Occupation</li>
+                            </ul>
+                        </div>
+                        <div id="campaign-6" class="campaign">
+                            <h2>Campaign 6</h2>
+                            <p>Creator: <span id="creator-name-6">John Doe</span></p>
+                            <ul>
+                                <li>Name</li>
+                                <li>DoB</li>
+                                <li>Occupation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="selected-campaign" id="input-campaign" value="">
+
+                    <div class="button_div">
+                        <button id="button-confirm-choice" type="submit" name="button" class="button">Confirm</button>                  
+                    </div>
+
+                </form>
                 
             </div>
 

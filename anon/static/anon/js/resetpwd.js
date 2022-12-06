@@ -89,7 +89,7 @@ function chkPwds(pwd, conf) {
     }
     return false
 }
-
+ 
 
 function onClickRegisterButton() {
     if(chkPwds(document.getElementById("pwd-input").value, document.getElementById("confirm-pwd-input").value)) {

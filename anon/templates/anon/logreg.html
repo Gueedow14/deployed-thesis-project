@@ -32,74 +32,87 @@
 
             <!--  LOGIN SECTION  -->
 
-            <div id="login-container" class="login">
+            <form name="login-form" method="post">
 
-                <div>
+                {% csrf_token %}
+
+                <div id="login-container" class="login">
 
                     <div>
-                        <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail">
-                    </div>
-
-                    <div class="pwd_icon_div">
-
-                        <div class="pwd_div">
-                            <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Password" type="password">
-                        </div>  
-
-                        <div class="eye_icon_div">
-                            <span id="pwd-icon-eye" class="eye_icon">
-                                <i id="icona_pwd" class="bi bi-eye-fill"></i>
-                            </span>
+    
+                        <div>
+                            <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail">
                         </div>
-
+    
+                        <div class="pwd_icon_div">
+    
+                            <div class="pwd_div">
+                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Password" type="password">
+                            </div>  
+    
+                            <div class="eye_icon_div">
+                                <span id="pwd-icon-eye" class="eye_icon">
+                                    <i id="icona_pwd" class="bi bi-eye-fill"></i>
+                                </span>
+                            </div>
+    
+                        </div>
+                        
+                        <div class="forgot_pwd_div">
+                            <p id="forgot-pwd" class="forgot_pwd">Forgot your Password?</p>
+                        </div>
+    
+                        <div class="button_div">
+                            <button type="submit" class="button" name="button" value="login">Login</button>
+                        </div>
+    
                     </div>
-                    
-                    <div class="forgot_pwd_div">
-                        <p id="forgot-pwd" class="forgot_pwd">Forgot your Password?</p>
-                    </div>
-
-                    <div class="button_div">
-                        <button  class="button">Login</button>
-                    </div>
-
+    
                 </div>
 
-            </div>
+            </form>
 
             <!--  REGISTER SECTION  -->
 
-            <div id="register-container" class="register">
+            <form name="register-form" method="post">
 
-                <div>
-                    <h3>Choose your role</h3>
-                </div>
-                <hr>
- 
-                <div class="roles_buttons">
+                {% csrf_token %}
+
+                <div id="register-container" class="register">
 
                     <div>
-
-                        <div class="data_owner_button_div">
-                            <a style="text-decoration: none;" href="{% url 'registration' %}" id="data-owner-button" type="button" class="role_button">
-                                <span>
-                                    <i class="bi bi-person-circle button_icon"></i>  Data Owner
-                                </span>
-                            </a>
-                        </div>
-                        
-                        <div class="data_provider_button_div">
-                            <a style="text-decoration: none;" href="{% url 'registration' %}" id="data-provider-button" type="button" class="role_button">
-                                <span>
-                                    <i class="bi bi-cpu-fill button_icon"></i>  Data Provider
-                                </span>
-                            </a>
-                        </div>
-
+                        <h3>Choose your role</h3>
                     </div>
-
+                    <hr>
+     
+                    <div class="roles_buttons">
+    
+                        <div>
+    
+                            <div class="data_owner_button_div">
+                                <button id="data-owner-button" type="submit" class="role_button" name="button" value="owner">
+                                    <span>
+                                        <i class="bi bi-person-circle button_icon"></i>  Data Owner
+                                    </span>
+                                </button>
+                            </div>
+                            
+                            <div class="data_provider_button_div">
+                                <button id="data-provider-button" type="submit" class="role_button" name="button" value="provider">
+                                    <span>
+                                        <i class="bi bi-cpu-fill button_icon"></i>  Data Provider
+                                    </span>
+                                </button>
+                            </div>
+    
+                        </div>
+    
+                    </div>
+    
                 </div>
 
-            </div>
+
+            </form>
 
 
         </div>
@@ -114,7 +127,7 @@
                     </div>
 
                     <div>
-                        <input autocomplete="off" id="email-forgot" class="email_forgot_pwd" placeholder="Insert your E-Mail" />
+                        <input autocomplete="off" id="email-forgot" class="email_forgot_pwd" placeholder="E-Mail" />
                     </div>
                     
                     <div>
@@ -122,13 +135,13 @@
                     </div>
                     
                     <div>
-                        <h4>Click Send to receive an email with further instructions on how to reset your password.</h4>
+                        <h4>Click Send to reset your password.</h4>
                     </div>
 
                 </div>
             </div>
         </div>
-
+ 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://smtpjs.com/v3/smtp.js"></script>
         <script src="{% static 'anon/js/logreg.js' %}"></script>

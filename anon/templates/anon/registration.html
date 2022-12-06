@@ -16,7 +16,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
     </head>
 
-    <body>
+    <body> 
          
         <div class="section">
 
@@ -34,84 +34,91 @@
 
                 <div class="container_data">
 
-                    <!--  E-MAIL  -->
+
+                    <form method="post">
+
+                        {% csrf_token %}
 
 
-                    <div class="email_div">
+                        <!--  E-MAIL  -->
 
-                        <div class="field_name_div">
-                            <label class="field_name">E-Mail:</label>
-                        </div>
 
-                        <div class="input_div">
+                        <div class="email_div">
 
-                            <div class="field_input_div_email">
-                                <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail">
+                            <div class="field_name_div">
+                                <label class="field_name">E-Mail:</label>
+                            </div>
+
+                            <div class="input_div">
+                                <div class="field_input_div_email">
+                                    <input autocomplete="off" name="email-input" id="email-input" class="email" placeholder="E-Mail">
+                                </div>
                             </div>
 
                         </div>
 
-                    </div>
+
+                        <!--  PASSWORD  -->
 
 
-                    <!--  PASSWORD  -->
+                        <div class="pwd_div">
 
-
-                    <div class="pwd_div">
-
-                        <div class="field_name_div">
-                            <label class="field_name">Insert Password:</label>
-                        </div>
-
-                        <div class="input_div">
-
-                            <div class="field_input_div">
-                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Insert Password" type="password">
+                            <div class="field_name_div">
+                                <label class="field_name">Insert Password:</label>
                             </div>
 
-                            <div class="pwd_icon_div">
-                                <span id="pwd-icon-eye" class="eye_icon">
-                                    <i id="icona-pwd" class="bi bi-eye-fill"></i>
-                                </span>
-                            </div>
+                            <div class="input_div">
 
-                        </div>
+                                <div class="field_input_div">
+                                    <input autocomplete="off" name="pwd-input" id="pwd-input" class="pwd" placeholder="Insert Password" type="password">
+                                </div>
 
-                    </div>
-                    
+                                <div class="pwd_icon_div">
+                                    <span id="pwd-icon-eye" class="eye_icon">
+                                        <i id="icona-pwd" class="bi bi-eye-fill"></i>
+                                    </span>
+                                </div>
 
-                    <!--  CONFERMA PASSWORD  -->
-
-
-                    <div class="confirm_pwd_div">
-
-                        <div class="field_name_div">
-                            <label class="field_name">Confirm Password:</label>
-                        </div>
-
-                        <div class="input_div">
-
-                            <div class="field_input_div">
-                                <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password">
-                            </div>
-
-                            <div class="pwd_icon_div">
-                                <span id="confirm-pwd-icon-eye" class="eye_icon">
-                                    <i id="confirm-icona-pwd" class="bi bi-eye-fill"></i>
-                                </span>
                             </div>
 
                         </div>
+                        
 
-                    </div>
-                    
+                        <!--  CONFERMA PASSWORD  -->
 
-                </div>
 
-                <hr>
-                <div class="button_div">
-                    <button id="register-button" class="button">Register</button>
-                    <p>Already have an account? <a href="{% url 'logreg' %}">Sign in</a>.</p>
+                        <div class="confirm_pwd_div">
+
+                            <div class="field_name_div">
+                                <label class="field_name">Confirm Password:</label>
+                            </div>
+
+                            <div class="input_div">
+
+                                <div class="field_input_div">
+                                    <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password">
+                                </div>
+
+                                <div class="pwd_icon_div">
+                                    <span id="confirm-pwd-icon-eye" class="eye_icon">
+                                        <i id="confirm-icona-pwd" class="bi bi-eye-fill"></i>
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <hr>
+                        <div class="button_div">
+                            <button id="register-button" type="submit" name="button" value="registrate" class="button">Register</button>
+                            <p>Already have an account? <a href="{% url 'logreg' %}">Sign in</a>.</p>
+                        </div>
+
+
+                    </form>
+
+
                 </div>
                 
             </div>

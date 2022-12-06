@@ -1,8 +1,3 @@
-const typeAccount = parseInt(localStorage.getItem("typeAccount"));    // 0 => data owner;  1 => data provider
-
-console.log(typeAccount);
-
-
 var password = document.getElementById('pwd-input');
 var confirmPassword = document.getElementById('confirm-pwd-input');
 var iconPwd = document.getElementById('pwd-icon-eye');
@@ -76,7 +71,7 @@ function onClickConfirmPwd() {
         chkConfirmIcon = true;
     }
 }
-
+ 
 function chkPwds(pwd, conf) {
     if(pwd.length === 0 || conf.length === 0) {
         alert("Fill both password fields before continuing!")
@@ -126,15 +121,5 @@ codeButton.addEventListener('click', codeCheck);
 
 function codeCheck() {
     //check email code
-
-
-    if(typeAccount === 0){
-        localStorage.setItem("email", document.getElementById("email-input").value);
-        localStorage.setItem("pwd", password.value);
-        location.href = "selectcampaign";
-    } else {
-        //register in db the data provider
-        location.href = "homedataprovider";
-    }
         
 }

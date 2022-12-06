@@ -115,19 +115,6 @@ function onClickRegisterMenu() {
 
 const dataOwnerButton = document.getElementById('data-owner-button');
 const dataProviderButton = document.getElementById('data-provider-button');
-
-dataOwnerButton.addEventListener('click', openRegistration);
-dataProviderButton.addEventListener('click', openRegistration);
-
-function openRegistration() {
-
-    if(this.id === 'data-owner-button') {
-        localStorage.setItem("typeAccount", 0);     // 0 => data owner
-    } else {
-        localStorage.setItem("typeAccount", 1);     // 1 => data provider
-    }
-
-}
  
 
 function validEmail(str) {
@@ -153,7 +140,7 @@ function onButtonForgot() {
         return;
     }
 
-
+ 
     //THE EMAIL HAS TO BE IN THE DATABASE
 
 
