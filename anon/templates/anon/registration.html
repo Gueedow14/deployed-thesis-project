@@ -35,113 +35,112 @@
                 <div class="container_data">
 
 
-                    <form method="post">
+                    {% if email_flag %}
+                        <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red; margin-bottom: 10px;" id="some_flag" title="Some Flag">
+                            <p style="font-size: 18px; font-weight: bold; color: white;">Insert a valid email address.</p>
+                        </div>
+                    {% endif %}
 
-                        {% csrf_token %}
+                    {% if pwd_flag %}
+                        <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red; margin-bottom: 10px;" id="some_flag" title="Some Flag">
+                            <p style="font-size: 18px; font-weight: bold; color: white;">Make sure that the passwords match.</p>
+                        </div>
+                    {% endif %}
+
+                    {% if both_flag %}
+                        <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red; margin-bottom: 10px;" id="some_flag" title="Some Flag">
+                            <p style="font-size: 18px; font-weight: bold; color: white;">Insert a valid email address and make sure that the passwords match.</p>
+                        </div>
+                    {% endif %}
 
 
-                        <!--  E-MAIL  -->
+                    <!--  E-MAIL  -->
 
 
-                        <div class="email_div">
+                    <div class="email_div">
 
-                            <div class="field_name_div">
-                                <label class="field_name">E-Mail:</label>
+                        <div class="field_name_div">
+                            <label class="field_name">E-Mail:</label>
+                        </div>
+
+                        <div class="input_div">
+                            <div class="field_input_div_email">
+                                <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail">
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!--  PASSWORD  -->
+
+
+                    <div class="pwd_div">
+
+                        <div class="field_name_div">
+                            <label class="field_name">Insert Password:</label>
+                        </div>
+
+                        <div class="input_div">
+
+                            <div class="field_input_div">
+                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Insert Password" type="password">
                             </div>
 
-                            <div class="input_div">
-                                <div class="field_input_div_email">
-                                    <input autocomplete="off" name="email-input" id="email-input" class="email" placeholder="E-Mail">
-                                </div>
+                            <div class="pwd_icon_div">
+                                <span id="pwd-icon-eye" class="eye_icon">
+                                    <i id="icona-pwd" class="bi bi-eye-fill"></i>
+                                </span>
                             </div>
 
                         </div>
 
+                    </div>
+                    
 
-                        <!--  PASSWORD  -->
+                    <!--  CONFERMA PASSWORD  -->
 
 
-                        <div class="pwd_div">
+                    <div class="confirm_pwd_div">
 
-                            <div class="field_name_div">
-                                <label class="field_name">Insert Password:</label>
-                            </div>
-
-                            <div class="input_div">
-
-                                <div class="field_input_div">
-                                    <input autocomplete="off" name="pwd-input" id="pwd-input" class="pwd" placeholder="Insert Password" type="password">
-                                </div>
-
-                                <div class="pwd_icon_div">
-                                    <span id="pwd-icon-eye" class="eye_icon">
-                                        <i id="icona-pwd" class="bi bi-eye-fill"></i>
-                                    </span>
-                                </div>
-
-                            </div>
-
+                        <div class="field_name_div">
+                            <label class="field_name">Confirm Password:</label>
                         </div>
-                        
 
-                        <!--  CONFERMA PASSWORD  -->
+                        <div class="input_div">
 
-
-                        <div class="confirm_pwd_div">
-
-                            <div class="field_name_div">
-                                <label class="field_name">Confirm Password:</label>
+                            <div class="field_input_div">
+                                <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password">
                             </div>
 
-                            <div class="input_div">
-
-                                <div class="field_input_div">
-                                    <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password">
-                                </div>
-
-                                <div class="pwd_icon_div">
-                                    <span id="confirm-pwd-icon-eye" class="eye_icon">
-                                        <i id="confirm-icona-pwd" class="bi bi-eye-fill"></i>
-                                    </span>
-                                </div>
-
+                            <div class="pwd_icon_div">
+                                <span id="confirm-pwd-icon-eye" class="eye_icon">
+                                    <i id="confirm-icona-pwd" class="bi bi-eye-fill"></i>
+                                </span>
                             </div>
 
                         </div>
 
-                        <hr>
-                        <div class="button_div">
-                            <button id="register-button" type="submit" name="button" value="registrate" class="button">Register</button>
-                            <p>Already have an account? <a href="{% url 'logreg' %}">Sign in</a>.</p>
-                        </div>
+                    </div>
 
 
-                    </form>
+
+                    <div class="button_div">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="email-input" id="email-hidden" value="">
+                            <input type="hidden" name="pwd-input" id="pwd-hidden" value="">
+                            <input type="hidden" name="confirm-input" id="confirm-hidden" value="">
+                            <button id="register-button" type="submit" name="send" class="button">Register</button>
+                        </form>
+                        <p>Already have an account? <a href="{% url 'logreg' %}">Sign in</a>.</p>
+                    </div>
+
 
 
                 </div>
                 
             </div>
-
-
-
-
-
- 
-
-
-            <div id="id-window-email-code" class="window_email_code">
-                <div class="content_window_email_code animate">
-                    <span id="button-close-email-code" class="close"><i class="bi bi-x-circle-fill"></i></span>
-                    <h2>We've sent you an E-Mail containing a code <br>(if you didn't receive it <a href="#">Click Here</a>)</h2>
-                    <p>Insert here the code you received in the E-Mail:</p>
-                    <input autocomplete="off" id="input-code" type="text" minlength="6" maxlength="6" placeholder="es. 123456" class="code_input" onkeypress="return onlyDigits(event)"></input>
-                    <br>
-                    <button id="code-button" class="code_button">Send</button>
-                </div>
-            </div>
-
-
             
 
         </div>

@@ -1,18 +1,3 @@
-const email = localStorage.getItem("email");
-const pwd = localStorage.getItem("pwd");
-const selectedCampaign = localStorage.getItem("selectedCampaign");
-const attrData = JSON.parse(localStorage.getItem("attrData"));
-
-console.log("Email: " + email)
-console.log("Pwd: " + pwd)
-console.log("Campagna: " + selectedCampaign);
-console.log("Attr Data:\n")
-for(var i = 0 ; i<attrData.length ; i++)
-  console.log("   - " + attrData[i])
-
-
-
-
 var slider = document.getElementById("myRange");
 var value_output = document.getElementById("value");
 var level_output = document.getElementById("sec-level-p");
@@ -22,7 +7,7 @@ var iconForgot = document.getElementById('button-close-forgot');
 var kValue = document.getElementById('k-value-confirm');
 
 var value = 4;
-
+document.getElementById("kval").value = value;
 value_output.innerHTML = value;
 
 
@@ -34,8 +19,10 @@ iconForgot.addEventListener('click', onClickCloseIcon);
 slider.oninput = function() {
   calcValue(this.value);
   value_output.innerHTML = value;
+  document.getElementById("kval").value = value;
   setValueStyle();
 }
+
 
 function calcValue(n) {
 	switch(true) {
@@ -85,12 +72,3 @@ window.onclick = function(event) {
 } 
 
 
-const windowConfirmButton = document.getElementById('window-confirm-button');
-
-windowConfirmButton.addEventListener('click', confirmSecVal);
-
-function confirmSecVal() {
-  
-
-  location.href = "homedataowner";
-}

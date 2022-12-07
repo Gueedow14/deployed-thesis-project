@@ -31,27 +31,6 @@
 
                 <hr>
 
-                <!--
-
-                <div class="slider_container">
-
-                    <div class="text_container">
-                        <div class="left_container">
-                            <p>Low Security</p>
-                        </div>
-                        
-                        <div class="right_container">
-                            <p>High Security</p>
-                        </div>
-                    </div>
-                    
-                  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-                  <p>Selected Value (1-7): <span id="value"></span></p>
-                  
-                </div>
-
-                -->
-
                 <div class="content_container">
 
 
@@ -86,6 +65,7 @@
                 
                 <hr>
 
+
                 <div class="button_div">
                     <button id="confirm-button" class="button">Confirm</button>
                 </div>
@@ -99,7 +79,13 @@
                     <span id="button-close-forgot" class="close"><i class="bi bi-x-circle-fill"></i></span>
                     <h2 class="window_title">Are you sure?</h2>
                     <p class="window_text">The security value you chose is k=<span id="k-value-confirm" class="k_value_confirm">*</span></p>
-                    <button id="window-confirm-button" class="window_confirm_button">Confirm</button>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="kval" id="kval" value="">
+                        <button id="window-confirm-button" name="button" value="confirm" type="submit" class="window_confirm_button">Confirm</button>
+                    </form>
+                    
                 </div>
             </div>
 

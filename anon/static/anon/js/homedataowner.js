@@ -47,18 +47,3 @@ function overButton() {
 function leaveButton() {
   profileText.style.display = "none";
 }
-
-function openProfile() {
-  location.href = "profile"
-}
-
-
-const exitButton = document.getElementById('exit-button');
-
-exitButton.addEventListener('click', logout);
-
-function logout() {
-  //logout
-
-  location.href = "logreg";
-}

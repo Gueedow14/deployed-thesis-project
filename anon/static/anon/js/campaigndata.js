@@ -1,10 +1,36 @@
-const email = localStorage.getItem("email");
-const pwd = localStorage.getItem("pwd");
-const selectedCampaign = localStorage.getItem("selectedCampaign");
+const dataDiv = document.getElementById("data-div");
+const num_data = 3;
 
-console.log("Email: " + email)
-console.log("Pwd: " + pwd)
-console.log("Campagna: " + selectedCampaign);
+for(var i = 0; i < num_data ; i++) {
+
+    var container = document.createElement("div");
+    container.classList.add("data_container");
+
+    var divLabel = document.createElement("div");
+    divLabel.classList.add("data_label");
+    var label = document.createElement("label");
+    var labelText = document.createTextNode("Data " + (i+1) +":")
+
+    var divInput = document.createElement("div");
+    divInput.classList.add("data_input");
+    var input = document.createElement("input");
+    input.id = "data-" + (i+1);
+    input.name = "data";
+    input.autocomplete = "off";
+    input.classList.add("campaign_input");
+
+
+    label.appendChild(labelText);
+
+    divInput.appendChild(input);
+    divLabel.appendChild(label);
+
+    container.appendChild(divLabel);
+    container.appendChild(divInput);
+
+    dataDiv.appendChild(container);
+
+}
 
 
 
@@ -22,17 +48,11 @@ function checkFilledInput() {
     return true;
 }
 
+
+
+
+
 function onClickProceed() {
-    if(checkFilledInput()) {
-        var valInserted = []
-
-        for(var i = 0 ; i < inputs.length ; i++)
-            valInserted[i] = inputs[i].value
-
-        localStorage.setItem("attrData", JSON.stringify(valInserted))
-
-        location.href = "seclev";
-    } else {
+    if(!checkFilledInput())
         alert("Fill every field before proceeding!");
-    }    
 }

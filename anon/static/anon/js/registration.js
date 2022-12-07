@@ -71,55 +71,20 @@ function onClickConfirmPwd() {
         chkConfirmIcon = true;
     }
 }
- 
-function chkPwds(pwd, conf) {
-    if(pwd.length === 0 || conf.length === 0) {
-        alert("Fill both password fields before continuing!")
-    } else if(pwd != conf) {
-        alert("The passwords don't match!")
-    } else {
-        return true
-    }
-    return false
+
+function ValidateEmail(input) {
+
+    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+    if (input.value.match(validRegex))
+        return true;
+    else
+        return false;
+
 }
 
 function onClickRegisterButton() {
-
-    if(chkPwds(password.value, confirmPassword.value)) {
-        document.getElementById('id-window-email-code').style.display = 'block';
-
-        //var code = Math.floor(100000 + Math.random() * 900000);
-        //sendCodeEmail(code);
-    }
-
-}
-
-function onClickCloseEmailCode() {
-    document.getElementById('id-window-email-code').style.display = 'none';
-    document.getElementById('email-code').value = '';
-}
-
-window.onclick = function(event) {
-    if (event.target == document.getElementById('id-window-email-code')) {
-        document.getElementById('id-window-email-code').style.display = "none";
-        document.getElementById('email-code').value = '';
-    }
-}
-
-function onlyDigits(evt) {
-    var ASCIICode = (evt.which) ? evt.which : evt.keyCode
-    if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
-        return false;
-    return true;
-}
-
-
-var codeButton = document.getElementById('code-button');
-const inputCode = document.getElementById('input-button');
-
-codeButton.addEventListener('click', codeCheck);
-
-function codeCheck() {
-    //check email code
-        
+    document.getElementById("email-hidden").value = document.getElementById("email-input").value;
+    document.getElementById("pwd-hidden").value = password.value;
+    document.getElementById("confirm-hidden").value = confirmPassword.value;
 }

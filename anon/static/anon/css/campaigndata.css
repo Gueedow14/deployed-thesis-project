@@ -94,7 +94,7 @@ body{
 }
 
 .data_label {
-    width: 15%;
+    width: 25%;
 }
 
 .data_label label {
@@ -103,7 +103,7 @@ body{
 }
 
 .data_input {
-    width: 85%;
+    width: 75%;
 }
 
 

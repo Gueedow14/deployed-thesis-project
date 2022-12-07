@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
+import re
 
 def logreg(req):
     if req.method == "POST":
@@ -34,16 +35,21 @@ def logreg(req):
 
 
 def registration(req):
-    typeAccount = req.session["accountType"]
+    typeAccount = req.session["accountType"]    
 
     if req.method == "POST":
-        data = req.POST
-        action = data.get("button")
-        if action == "registrate":
+
+        email = req.POST.get("email-input")
+        pwd = req.POST.get("pwd-input")
+        confirm = req.POST.get("confirm-input")
+
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
+        if pwd == confirm and re.fullmatch(regex, email):
 
             if typeAccount == 0:
-                req.session["email"] = req.POST.get("email-input")
-                req.session["pwd"] = req.POST.get("pwd-input")
+                req.session["email-owner"] = email
+                req.session["pwd-owner"] = pwd
                 return redirect('/anon/selectcampaign')
 
             if typeAccount == 1:
@@ -59,6 +65,13 @@ def registration(req):
                     login(req, user)
                     req.session["utente"] = user
                     return redirect('/anon/homedataprovider')
+                    
+        elif pwd == confirm and not(re.fullmatch(regex, email)):
+            return render(req, 'anon/registration.html', {'email_flag': True})
+        elif pwd != confirm and re.fullmatch(regex, email):
+            return render(req, 'anon/registration.html', {'pwd_flag': True})
+        else:
+            return render(req, 'anon/registration.html', {'both_flag': True})
     
     
 
@@ -71,7 +84,6 @@ def registration(req):
 def selectCampaign(req):
     
     if req.method == "POST":
-        print(req.POST)
         campaign = req.POST.get('selected-campaign')
         if campaign != "":
             req.session["sel-camp"] = campaign
@@ -91,26 +103,58 @@ def selectCampaign(req):
 def homeDataProvider(req):
     return render(req, 'anon/homedataprovider.html')
 
+
+
 def campaignData(req):
-    email = req.session["email"]
-    pwd = req.session["pwd"]
-    campaign = req.session["sel-camp"]
+    
+    if req.method == "POST":
+        #CHECK THAT ALL DATA ARE FILLED
 
-    print("Email: " + email)
-    print("Password: " + pwd)
-    print("Selected Campaign: " + campaign)
+        attributes = req.POST.getlist("data")
 
+        chkEmptyFields = False
 
+        for attr in attributes:
+            if attr == '':
+                chkEmptyFields = True
 
-
-
+        if not(chkEmptyFields):
+            req.session["attrs"] = attributes
+            return redirect('/anon/seclev')
+        
     return render(req, 'anon/campaigndata.html')
 
+
+
+
+
 def secLev(req):
+
+    if req.method == "POST":
+
+        if req.POST.get("button") == "confirm":
+            req.session["kval"] = req.POST.get("kval")
+
+            #REGISTRATION OF USER IN DB
+
+            return redirect('/anon/homedataowner')
+
     return render(req, 'anon/seclev.html')
 
+
+
+
+
+
+
+
+
 def homeDataOwner(req):
+
     return render(req, 'anon/homedataowner.html')
+
+
+
 
 def profile(req):
     return render(req, 'anon/profile.html')

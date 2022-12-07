@@ -20,7 +20,7 @@
     <body>
         
         <div class="section">
-
+ 
 
 
             <div class="title">
@@ -29,85 +29,29 @@
 
 
 
-            <div class="container"> 
+            <div class="container">
 
 
                 <div class="text_container">
                     <p>Fill the fields with your data:</p>
                 </div>
 
-                <div class="data_div">
+                <form method="post">
 
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 1:</label>
-                        </div>
-                        <div class="data_input">
-                            <input id="data-1" class="campaign_input">
-                        </div>
-                    </div>
-    
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 2:</label>
-                        </div>
-                        <div class="data_input">
-                            <input id="data-2" class="campaign_input">
-                        </div>
-                    </div>
-    
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 3:</label>
-                        </div>
-                        <div class="data_input">
-                            <input id="data-3" class="campaign_input">
-                        </div>
-                    </div>
-    
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 4:</label>
-                        </div>
-                        <div class="data_input">
-                            <input id="data-4" class="campaign_input">
-                        </div>
-                    </div>
-    
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 5:</label>
-                        </div>
-                        <div class="data_input">
-                            <input id="data-5" class="campaign_input">
-                        </div>
-                    </div>
-    
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 6:</label>
-                        </div>
-                        <div class="data_input">
-                            <input id="data-6" class="campaign_input">
-                        </div>
-                    </div>
-    
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 7:</label>
-                        </div>
-                        <div class="data_input">
-                            <input id="data-7" class="campaign_input">
-                        </div>
+                    {% csrf_token %}
+
+                    <div class="data_div" id="data-div">
+
+                        
+
                     </div>
 
-                </div>
 
+                    <div class="button_div">
+                        <button id="proceed-button" type="submit" name="button" class="button">Proceed</button>
+                    </div>
 
-                <div class="button_div">
-                    <button id="proceed-button" class="button">Proceed</button>
-                </div>
-
+                </form>
 
             </div>
 
