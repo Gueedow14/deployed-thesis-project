@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 import re
+from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge
 
 def logreg(req):
     if req.method == "POST":
@@ -57,7 +58,8 @@ def registration(req):
                 pwd = req.POST.get("pwd-input")
 
 
-                #CREATION OF THE PROVIDER IN THE DATABASE
+                p = Provider(email=email, pwd=pwd)
+                p.save()
 
 
                 user = authenticate(username=email, password=pwd)
@@ -89,26 +91,17 @@ def selectCampaign(req):
             req.session["sel-camp"] = campaign
             return redirect('/anon/campaigndata')
 
-
-    return render(req, 'anon/selectcampaign.html')
-
+    campaigns = Campaign.objects.all()
 
 
+    return render(req, 'anon/selectcampaign.html', {'campaigns': campaigns})
 
-
-
-
-
-
-def homeDataProvider(req):
-    return render(req, 'anon/homedataprovider.html')
 
 
 
 def campaignData(req):
     
     if req.method == "POST":
-        #CHECK THAT ALL DATA ARE FILLED
 
         attributes = req.POST.getlist("data")
 
@@ -121,8 +114,14 @@ def campaignData(req):
         if not(chkEmptyFields):
             req.session["attrs"] = attributes
             return redirect('/anon/seclev')
+
+    campaigns = Campaign.objects.all()
+
+    for c in campaigns:
+        if c.name == req.session["sel-camp"]:
+            selectedCampaign = c
         
-    return render(req, 'anon/campaigndata.html')
+    return render(req, 'anon/campaigndata.html', { 'attributes': selectedCampaign.attributes.all() })
 
 
 
@@ -133,17 +132,37 @@ def secLev(req):
     if req.method == "POST":
 
         if req.POST.get("button") == "confirm":
-            req.session["kval"] = req.POST.get("kval")
 
-            #REGISTRATION OF USER IN DB
+            email = req.session["email-owner"]
+            pwd = req.session["pwd-owner"]
+            kval = req.POST.get("kval")
+
+            for c in Campaign.objects.all():
+                if c.name == req.session["sel-camp"]:
+                    selectedCampaign = c
+
+            o = Owner(email=email, pwd=pwd, k=kval, campaign=selectedCampaign)
+            o.save()
+
+            attributes = req.session["attrs"]
+
+            values = Value.objects.all()
+
+            campaignAttrs = selectedCampaign.attributes.all()
+
+            for i in range(len(attributes)):
+                v = Value(value=attributes[i])
+
+                if not(attributes[i] in values):
+                    v.save()
+                    print(v)
+
+                a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
+                a_edge.save()
 
             return redirect('/anon/homedataowner')
 
     return render(req, 'anon/seclev.html')
-
-
-
-
 
 
 
@@ -157,7 +176,30 @@ def homeDataOwner(req):
 
 
 def profile(req):
+
+    if req.method == "POST":
+        attributes = req.POST.getlist("data")
+        chkMod = False
+        for attr in attributes:
+            print(attr)
+            if attr != '':
+                chkMod = True
+        
+        if chkMod:
+            #modify fields in db and files
+            print(attributes)
+
+
     return render(req, 'anon/profile.html')
+
+
+
+
+
+
+
+def homeDataProvider(req):
+    return render(req, 'anon/homedataprovider.html')
 
 def createCampaign(req):
     return render(req, 'anon/createcampaign.html')

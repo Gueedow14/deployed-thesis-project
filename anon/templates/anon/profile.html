@@ -29,17 +29,18 @@
             </div>
 
 
+            <form class="container" method="post">
 
-            <div class="container"> 
+                {% csrf_token %}
 
-                <div class="inside_container">
+                <div id="data-div" class="inside_container">
 
                     <div class="data_container">
                         <div class="data_label">
                             <label>E-Mail:</label>
                         </div>
                         <div>
-                            <input autocomplete="off" id="email-input" class="email" value="gbernasconi3@studenti.insubria.it" disabled>
+                            <input autocomplete="off" id="email-input" class="email" disabled>
                         </div>
                     </div>
 
@@ -48,7 +49,7 @@
                             <label>Password:</label>
                         </div>
                         <div>
-                            <input autocomplete="off" id="pwd" value="eX4mPl3_-PwD" class="pwd" placeholder="Password" type="password" disabled>
+                            <input autocomplete="off" id="pwd" class="pwd" type="password" disabled>
                         </div>
                         <div id="pwd-icon-div-change" class="pwd_icon_div">
                             <i id="pwd-icon-change" class="change_icon bi bi-pencil"></i>
@@ -57,7 +58,7 @@
                             <i id="pwd-icon-see" class="change_icon bi bi-eye-fill"></i>      <!--   <i class="bi bi-eye-slash-fill"></i>   -->
                         </div>
                     </div>
-
+    
                     <div class="data_container">
                         <div class="data_label">
                             <label>Campaign:</label>
@@ -65,99 +66,21 @@
                         <div>
                             <input id="campaign" class="campaign_name" disabled>
                         </div>
-                    </div>
-
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 1:</label>
-                        </div>
-                        <div>
-                            <input class="campaign_input" disabled>
-                        </div>
-                        <div class="change_icon_div">
-                            <i class="change_icon bi bi-pencil"></i>
-                        </div>
-                    </div>
-
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 2:</label>
-                        </div>
-                        <div>
-                            <input class="campaign_input" disabled>
-                        </div>
-                        <div class="change_icon_div">
-                            <i class="change_icon bi bi-pencil"></i>
-                        </div>
-                    </div>
-
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 3:</label>
-                        </div>
-                        <div>
-                            <input class="campaign_input" disabled>
-                        </div>
-                        <div class="change_icon_div">
-                            <i class="change_icon bi bi-pencil"></i>
-                        </div>
-                    </div>
-
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 4:</label>
-                        </div>
-                        <div>
-                            <input class="campaign_input" disabled>
-                        </div>
-                        <div class="change_icon_div">
-                            <i class="change_icon bi bi-pencil"></i>
-                        </div>
-                    </div>
-
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 5:</label>
-                        </div>
-                        <div>
-                            <input class="campaign_input" disabled>
-                        </div>
-                        <div class="change_icon_div">
-                            <i class="change_icon bi bi-pencil"></i>
-                        </div>
-                    </div>
-
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 6:</label>
-                        </div>
-                        <div>
-                            <input class="campaign_input" disabled>
-                        </div>
-                        <div class="change_icon_div">
-                            <i class="change_icon bi bi-pencil"></i>
-                        </div>
-                    </div>
-
-                    <div class="data_container">
-                        <div class="data_label">
-                            <label>Data 7:</label>
-                        </div>
-                        <div>
-                            <input class="campaign_input" disabled>
-                        </div>
-                        <div class="change_icon_div">
-                            <i class="change_icon bi bi-pencil"></i>
-                        </div>
-                    </div>
+                    </div>                    
 
                 </div>
 
-            </div>
+    
+                <div class="button_div">
+                    <button id="button" type="submit" class="button">Done</button>
+                </div>
 
-            <div class="button_div">
-                <button id="button" class="button">Done</button>
-            </div>
+
+            </form>
+
+            
+
+            
 
         </div>
 

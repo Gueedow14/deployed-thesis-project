@@ -15,9 +15,10 @@ function onClickCampaign() {
         $('#' + this.id).removeClass("campaign");
         $('#' + this.id).addClass("selected_campaign");
 
-        document.getElementById("input-campaign").value = this.id;
+        document.getElementById("input-campaign").value = this.children[0].textContent;
 
         selectedCampaign = this;
+
     } else if ($('#' + this.id).hasClass("selected_campaign")) {
         $('#' + this.id).removeClass("selected_campaign");
         $('#' + this.id).addClass("campaign");
@@ -30,9 +31,10 @@ function onClickCampaign() {
         $('#' + this.id).removeClass("campaign");
         $('#' + this.id).addClass("selected_campaign");
 
-        document.getElementById("input-campaign").value = this.id;
+        document.getElementById("input-campaign").value = this.children[0].textContent;
 
         selectedCampaign = this;
+
     }
 }
 

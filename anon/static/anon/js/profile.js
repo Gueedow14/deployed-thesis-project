@@ -1,3 +1,49 @@
+const dataDiv = document.getElementById("data-div");
+const num_data = 5;
+
+for(var i = 0; i < num_data ; i++) {
+
+    var container = document.createElement("div");
+    container.classList.add("data_container");
+
+    var divLabel = document.createElement("div");
+    divLabel.classList.add("data_label");
+    var label = document.createElement("label");
+    var labelText = document.createTextNode("Data " + (i+1) +":")
+
+    var divInput = document.createElement("div");
+    var input = document.createElement("input");
+    input.id = "data-" + (i+1);
+    input.name = "data";
+    input.disabled = true;
+    input.classList.add("campaign_input");
+
+    var divButton = document.createElement("div");
+    divButton.classList.add("change_icon_div");
+    var button = document.createElement("i");
+    button.classList.add("change_icon");
+    button.classList.add("bi");
+    button.classList.add("bi-pencil");
+
+
+    label.appendChild(labelText);
+
+    divInput.appendChild(input);
+    divLabel.appendChild(label);
+    divButton.appendChild(button);
+
+    container.appendChild(divLabel);
+    container.appendChild(divInput);
+    container.appendChild(divButton);
+
+    dataDiv.append(container);
+
+}
+
+
+
+
+
 var chkPwd = false;     //false: pwd not visible
 
 const pwd = document.getElementById("pwd");
@@ -49,9 +95,12 @@ const doneButton = document.getElementById('button');
 doneButton.addEventListener('click', applyChanges);
 
 function applyChanges() {
-    //apply changes in db
 
-    location.href = "homedataowner";
+    for(var i = 0 ; i<num_data ; i++) {
+        var input = document.getElementById("data-" + (i+1))
+        input.disabled = false;
+    }
+    
 }
 
 
@@ -71,3 +120,5 @@ function modifyData() {
     var selectedInput = document.getElementById(inputId);
     selectedInput.disabled = false;
 }
+
+

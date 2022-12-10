@@ -42,7 +42,16 @@
 
                     <div class="data_div" id="data-div">
 
-                        
+                        {% for attr in attributes %}
+                            <div class="data_container">
+                                <div class="data_label">
+                                    <label>{{ attr }}:</label>
+                                </div>
+                                <div class="data_input">
+                                    <input id="data-{{ forloop.counter }}" name="data" class="campaign_input">
+                                </div>
+                            </div>
+                        {% endfor %}
 
                     </div>
 

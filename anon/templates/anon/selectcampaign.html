@@ -34,60 +34,25 @@
                     {% csrf_token %}
 
                     <div class="campaigns">
-                        <div id="campaign-1" class="campaign">
-                            <h2>Campaign 1</h2>
-                            <p>Creator: <span id="creator-name-1">John Doe</span></p>
-                            <ul>
-                                <li>Name</li>
-                                <li>DoB</li>
-                                <li>Occupation</li>
-                            </ul>
-                        </div>
-                        <div id="campaign-2" class="campaign">
-                            <h2>Campaign 2</h2>
-                            <p>Creator: <span id="creator-name-2">John Doe</span></p>
-                            <ul>
-                                <li>Name</li>
-                                <li>DoB</li>
-                                <li>Occupation</li>
-                            </ul>
-                        </div>
-                        <div id="campaign-3" class="campaign">
-                            <h2>Campaign 3</h2>
-                            <p>Creator: <span id="creator-name-3">John Doe</span></p>
-                            <ul>
-                                <li>Name</li>
-                                <li>DoB</li>
-                                <li>Occupation</li>
-                            </ul>
-                        </div>
-                        <div id="campaign-4" class="campaign">
-                            <h2>Campaign 4</h2>
-                            <p>Creator: <span id="creator-name-4">John Doe</span></p>
-                            <ul>
-                                <li>Name</li>
-                                <li>DoB</li>
-                                <li>Occupation</li>
-                            </ul>
-                        </div>
-                        <div id="campaign-5" class="campaign">
-                            <h2>Campaign 5</h2>
-                            <p>Creator: <span id="creator-name-5">John Doe</span></p>
-                            <ul>
-                                <li>Name</li>
-                                <li>DoB</li>
-                                <li>Occupation</li>
-                            </ul>
-                        </div>
-                        <div id="campaign-6" class="campaign">
-                            <h2>Campaign 6</h2>
-                            <p>Creator: <span id="creator-name-6">John Doe</span></p>
-                            <ul>
-                                <li>Name</li>
-                                <li>DoB</li>
-                                <li>Occupation</li>
-                            </ul>
-                        </div>
+
+                        {% for campaign in campaigns %}
+                            <div id="campaign-{{ forloop.counter }}" class="campaign">
+                                <h2 id="campaign-name-{{ forloop.counter }}">{{ campaign.name }}</h2>
+                                <p>Creator: <br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
+                                <ul>
+
+                                    {% for attr in campaign.attributes.all %}
+                                        <li>{{ attr }}</li>
+                                    {% endfor %}
+
+                                    {% for rel in campaign.relationships.all %}
+                                        <li>{{ rel }}</li>
+                                    {% endfor %}
+                            
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    
                     </div>
 
                     <input type="hidden" name="selected-campaign" id="input-campaign" value="">
