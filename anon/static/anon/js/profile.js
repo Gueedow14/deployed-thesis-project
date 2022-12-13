@@ -1,49 +1,3 @@
-const dataDiv = document.getElementById("data-div");
-const num_data = 5;
-
-for(var i = 0; i < num_data ; i++) {
-
-    var container = document.createElement("div");
-    container.classList.add("data_container");
-
-    var divLabel = document.createElement("div");
-    divLabel.classList.add("data_label");
-    var label = document.createElement("label");
-    var labelText = document.createTextNode("Data " + (i+1) +":")
-
-    var divInput = document.createElement("div");
-    var input = document.createElement("input");
-    input.id = "data-" + (i+1);
-    input.name = "data";
-    input.disabled = true;
-    input.classList.add("campaign_input");
-
-    var divButton = document.createElement("div");
-    divButton.classList.add("change_icon_div");
-    var button = document.createElement("i");
-    button.classList.add("change_icon");
-    button.classList.add("bi");
-    button.classList.add("bi-pencil");
-
-
-    label.appendChild(labelText);
-
-    divInput.appendChild(input);
-    divLabel.appendChild(label);
-    divButton.appendChild(button);
-
-    container.appendChild(divLabel);
-    container.appendChild(divInput);
-    container.appendChild(divButton);
-
-    dataDiv.append(container);
-
-}
-
-
-
-
-
 var chkPwd = false;     //false: pwd not visible
 
 const pwd = document.getElementById("pwd");
@@ -104,21 +58,22 @@ function applyChanges() {
 }
 
 
-var dataDivs = document.getElementsByClassName("change_icon_div");
-var dataInputs = document.getElementsByClassName("campaign_input");
+var attrDivs = document.getElementsByClassName("change_icon_div_attr");
 
-
-for(var i = 0 ; i < dataDivs.length ; i++) {
-    dataDivs[i].id = "data-" + (i+1) + "-icon-change";
-    dataDivs[i].addEventListener('click', modifyData);
-    dataInputs[i].id = "data-" + (i+1);
+for(var i = 0 ; i < attrDivs.length ; i++) {
+    attrDivs[i].addEventListener('click', modifyAttrs);
 }
 
 
-function modifyData() {
-    var inputId = this.id.slice(0,6);
+function modifyAttrs() {
+    var idLen = this.id.length;
+    var inputId = "input-" + this.id.slice(7,idLen);
     var selectedInput = document.getElementById(inputId);
     selectedInput.disabled = false;
+    selectedInput.setSelectionRange(selectedInput.value.length, selectedInput.value.length);
+    selectedInput.focus()
 }
+
+
 
 

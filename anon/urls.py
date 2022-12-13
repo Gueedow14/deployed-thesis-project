@@ -16,5 +16,6 @@ urlpatterns = [
     path('compareresults', views.compareResults, name="compareresults"),
     path('anonymize', views.anonymize, name="anonymize"),
     path('resetpwd', views.resetPwd, name="resetPwd"),
+    path('userrelationships', views.userRelationships, name="userRelationships"),
     
 ]

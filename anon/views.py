@@ -1,3 +1,5 @@
+import json
+from types import SimpleNamespace
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
@@ -48,6 +50,7 @@ def registration(req):
 
         if pwd == confirm and re.fullmatch(regex, email):
 
+
             if typeAccount == 0:
                 req.session["email-owner"] = email
                 req.session["pwd-owner"] = pwd
@@ -57,17 +60,14 @@ def registration(req):
                 email = req.POST.get("email-input")
                 pwd = req.POST.get("pwd-input")
 
-
                 p = Provider(email=email, pwd=pwd)
                 p.save()
 
+                req.session["provider"] = p
 
-                user = authenticate(username=email, password=pwd)
-                if user is not None:
-                    login(req, user)
-                    req.session["utente"] = user
-                    return redirect('/anon/homedataprovider')
+                return redirect('/anon/homedataprovider')
                     
+
         elif pwd == confirm and not(re.fullmatch(regex, email)):
             return render(req, 'anon/registration.html', {'email_flag': True})
         elif pwd != confirm and re.fullmatch(regex, email):
@@ -92,7 +92,6 @@ def selectCampaign(req):
             return redirect('/anon/campaigndata')
 
     campaigns = Campaign.objects.all()
-
 
     return render(req, 'anon/selectcampaign.html', {'campaigns': campaigns})
 
@@ -159,6 +158,8 @@ def secLev(req):
 
                 a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
                 a_edge.save()
+            
+            req.session["owner"] = o.email
 
             return redirect('/anon/homedataowner')
 
@@ -170,19 +171,75 @@ def secLev(req):
 
 def homeDataOwner(req):
 
-    return render(req, 'anon/homedataowner.html')
+    owners = Owner.objects.all()
+
+    for owner in owners:
+        if owner.email == req.session["owner"]:
+            o = owner
+
+    if req.method == "POST":
+        req.session["owner"] = o.email
+        return redirect('/anon/profile')
+
+    return render(req, 'anon/homedataowner.html', { 'owner': o })
 
 
 
 
 def profile(req):
 
+    owners = Owner.objects.all()
+
+    for owner in owners:
+        if owner.email == req.session["owner"]:
+            o = owner
+
+    attrEdges = []
+
+    for attrEdge in Attribute_Edge.objects.all():
+        if str(attrEdge.owner) == o.email:
+            attrEdges.append(attrEdge)
+
+    rels = o.campaign.relationships.all()
+
+    userRelsTmp = []
+    inputRelsTmp = []
+
+    for rel in rels:
+        rel = []
+        inputRel = ""
+        for relEdge in Relationship_Edge.objects.all():
+            if str(relEdge.owner1) == o.email:
+                rel.append(str(relEdge.owner2))
+                inputRel += relEdge.owner2.email + "|"
+        userRelsTmp.append(rel)
+        inputRelsTmp.append(inputRel)
+
+    userRels = zip(rels, userRelsTmp)
+    inputRels = zip(rels, inputRelsTmp)
+
+    ##########################################
+
+    
     if req.method == "POST":
+        print(req.POST)
+
+        if "rels" in req.POST:
+            req.session["currentRel"] = req.POST.get("rels")
+            return redirect('/anon/userrelationships')
+
         attributes = req.POST.getlist("data")
+
+        previousAttrs = []
+
+        for a in attrEdges:
+            previousAttrs.append(a.value.value)
+
+        modifications = zip(previousAttrs, attributes)
+
         chkMod = False
-        for attr in attributes:
-            print(attr)
-            if attr != '':
+        for prev, attr in modifications:
+            if prev != attr and attr != '':
                 chkMod = True
         
         if chkMod:
@@ -190,9 +247,56 @@ def profile(req):
             print(attributes)
 
 
-    return render(req, 'anon/profile.html')
+    return render(req, 'anon/profile.html', { 'owner': o, 'attrs': attrEdges, 'owners': owners, 'userRelationships': userRels, 'inputRels': inputRels })
 
 
+
+
+def userRelationships(req):
+
+    currentRel = req.session["currentRel"]
+
+    owners = Owner.objects.all()
+
+    for owner in owners:
+        if owner.email == req.session["owner"]:
+            o = owner
+
+    userRels = []
+
+    inputRels = ""
+
+    for relEdge in Relationship_Edge.objects.all():
+        if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel:
+            userRels.append(relEdge.owner2.email)
+            inputRels += relEdge.owner2.email + "|"
+
+    if req.method == "POST":
+        if inputRels == req.POST.get("selectedUsers"):
+            del req.session['currentRel']
+            return redirect('/anon/profile')
+        else:
+            previousUsers = inputRels.split('|')
+            selectedUsers = req.POST.get("selectedUsers").split('|')
+            for u in selectedUsers:
+                if not(u in previousUsers):
+                    for rel in Relationship.objects.all():
+                        if rel.name == currentRel:
+                            r = rel
+                    for owner2 in owners:
+                        if owner2.email == u:
+                            o2 = owner2
+                    e = Relationship_Edge(owner1=o, relationship=r, owner2=o2)
+                    e.save()
+            for u in previousUsers:
+                if not(u in selectedUsers):
+                    for relEdge in Relationship_Edge.objects.all():
+                        if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel and relEdge.owner2.email == u:
+                            relEdge.delete()
+            return redirect('/anon/profile')
+
+
+    return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': owners, 'currentRel': currentRel, 'inputRels': inputRels })
 
 
 

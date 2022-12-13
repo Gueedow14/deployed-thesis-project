@@ -18,16 +18,13 @@
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
     </head>
 
-    <body>
+    <body id="body">
         
         <div class="section">
-
-
 
             <div class="title">
                 <h1>Profile</h1>
             </div>
-
 
             <form class="container" method="post">
 
@@ -40,7 +37,7 @@
                             <label>E-Mail:</label>
                         </div>
                         <div>
-                            <input autocomplete="off" id="email-input" class="email" disabled>
+                            <input autocomplete="off" id="email-input" class="email" value="{{ owner.email }}" disabled>
                         </div>
                     </div>
 
@@ -49,7 +46,7 @@
                             <label>Password:</label>
                         </div>
                         <div>
-                            <input autocomplete="off" id="pwd" class="pwd" type="password" disabled>
+                            <input autocomplete="off" id="pwd" class="pwd" type="password" value="{{ owner.pwd }}" disabled>
                         </div>
                         <div id="pwd-icon-div-change" class="pwd_icon_div">
                             <i id="pwd-icon-change" class="change_icon bi bi-pencil"></i>
@@ -64,40 +61,67 @@
                             <label>Campaign:</label>
                         </div>
                         <div>
-                            <input id="campaign" class="campaign_name" disabled>
+                            <input id="campaign" class="campaign_name" value="{{ owner.campaign }}" disabled>
                         </div>
-                    </div>                    
+                    </div>
+                    
+                    {% for attr in attrs %}
+                        <div class="data_container">
+                            <div class="data_label">
+                                <label>{{ attr.attribute }}:</label>
+                            </div>
+                            <div>
+                                <input id="input-{{ attr.attribute }}" name="data" class="campaign_input" value="{{ attr.value }}" disabled>
+                            </div>
+                            <div id="button-{{ attr.attribute }}" class="change_icon_div_attr">
+                                <i class="change_icon bi bi-pencil"></i>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    {% for rel, input in inputRels %}
+                        <div class="data_container">
+                            <div class="data_label">
+                                <label>{{ rel.name }}:</label>
+                            </div>
+                            <div>
+                                <input id="input-{{ rel.name }}" type="hidden" value="{{ input }}" name="data" disabled>
+                            </div>
+                            
+                            <div id="button-{{ rel.name }}" class="change_icon_div_rel">
+                                <button class="relButton" type="submit" value="{{ rel.name }}" name="rels">
+                                    <i class="change_icon bi bi-pencil"></i>
+                                </button>
+                            </div>
+                            
+                        </div>
+                    {% endfor %}
 
                 </div>
 
     
                 <div class="button_div">
-                    <button id="button" type="submit" class="button">Done</button>
+                    <button id="button" type="submit" name="done" class="button_profile">Apply Changes</button>
                 </div>
 
 
-            </form>
-
-            
-
-            
+            </form>            
 
         </div>
 
 
-
         <div id="id-window-change" class="window_change_pwd">
-            <form class="content_window_change_pwd animate">
+            <form class="content_window_change_pwd animate" method="post">
+                {% csrf_token %}
                 <span id="button-close" class="close"><i class="bi bi-x-circle-fill"></i></span>
                 <div>
-
                     <div>
                         <h2 class="window_change_text">Are you sure you want to change your password?</h2>
                     </div>
                     
                     <div class="button_div">
-                        <button id="confirm-reset-pwd" class="button">Yes</button>
-                        <button id="cancel-reset-pwd" class="button">Cancel</button>
+                        <button id="confirm-reset-pwd" type="submit" name="yes" class="button">Yes</button>
+                        <button id="cancel-reset-pwd" type="submit" name="no" class="button">Cancel</button>
                     </div>
 
                 </div>
@@ -106,7 +130,6 @@
 
 
 
- 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         
         <script src="{% static 'anon/js/profile.js' %}"></script>

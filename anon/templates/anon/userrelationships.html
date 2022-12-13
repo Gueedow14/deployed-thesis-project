@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">User Relationships</title>
+        <link rel="stylesheet" href="{% static 'anon/css/userrelationships.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body id="body">
+        
+        <div class="section">
+
+            <div class="title">
+                <h1>{{ currentRel }}</h1>
+            </div>
+
+            <form class="container" method="post">
+
+                {% csrf_token %}
+
+                <div id="data-div" class="inside_container">
+
+                    <ul id="list" class="list">
+                        {% for o in owners %}
+                            {% if o.email != owner.email %}
+
+                                <li class="owner">
+
+                                    {% if o.email in userRels %}
+
+                                        <div>
+                                            <span name="selected-{{ currentRel }}">
+                                                {{ o.email }}
+                                            </span>
+                                        </div>
+
+                                        <div>
+                                            <span class="selected">
+                                                <i class="icona bi bi-check"></i>
+                                            </span>
+                                            <span>
+                                                <i class="icona bi bi-x"></i>
+                                            </span>
+                                        </div>
+
+                                    {% else %}
+
+                                        <div>
+                                            <span name="deselected-{{ currentRel }}">{{ o.email }}</span>
+                                        </div>
+
+                                        <div>
+                                            <span>
+                                                <i class="icona bi bi-check"></i>
+                                            </span>
+                                            <span class="deselected">
+                                                <i class="icona bi bi-x"></i>
+                                            </span>
+                                        </div>
+
+                                    {% endif %}
+                                    
+                                </li>
+                                
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+
+                </div>
+
+
+                <input type="hidden" id="selected-users" name="selectedUsers" value="{{ inputRels }}">
+                <input type="hidden" name="currentRel" value="{{ currentRel }}">
+
+    
+                <div class="button_div">
+                    <button id="button-{{ currentRel }}" name="submit-button" type="submit" class="button">Done</button>
+                </div>
+
+
+            </form>            
+
+        </div>
+
+ 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/userrelationships.js' %}"></script>
+
+    </body>
+
+</html>

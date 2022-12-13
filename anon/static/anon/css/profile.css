@@ -108,7 +108,7 @@ body{
     outline: none;
 }
 
-.change_icon_div {
+.change_icon_div_attr {
     border: 1px solid black;
     border-radius: 50%;
     height: 50px;
@@ -122,7 +122,25 @@ body{
     transition: .4s all ease;
 }
 
-.change_icon_div:hover {
+.change_icon_div_attr:hover {
+    color: red;
+}
+
+.change_icon_div_rel {
+    border: 1px solid black;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    padding: 10px;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 1px 1px 5px grey;
+    transition: .4s all ease;
+}
+
+.change_icon_div_rel:hover {
     color: red;
 }
 
@@ -218,40 +236,6 @@ body{
     to {transform: scale(1)}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-.button_div {
-    text-align: center;
-    margin-top: 20px;
-}
-
-
-.button {
-    width: 200px;
-    color: white;
-    background: red;
-    border: 3px solid #9B0000;
-    border-radius: 10px;
-    font-size: 25px;
-    line-height: 20px;
-    font-weight: bold;
-    padding: 10px;
-    transition: .3s all ease-in-out;
-}
-
-.button:hover {
-    background: #DB0000;
-    transform: scale(1.1);
-}
 
 
 
@@ -362,8 +346,40 @@ body{
     transform: scale(1.1);
 }
 
+.button_profile {
+    margin: 30px;
+    width: 300px;
+    color: white;
+    background: red;
+    border: 3px solid #9B0000;
+    border-radius: 10px;
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.button_profile:hover {
+    background: #DB0000;
+    transform: scale(1.1);
+}
 
 
+
+
+
+
+.relButton {
+    border: none;
+    outline: none;
+    background: none;
+    transition: .4s all ease;
+}
+
+.relButton:hover {
+    color: red;
+}
 
 
 

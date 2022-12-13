@@ -1,0 +1,307 @@
+body{
+    background-color: blue;
+    font-family: 'Lato', sans-serif;
+}
+
+.section{
+    border: 5px solid #9B0000;
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 100px auto;
+    height: 750px;
+    position: relative;
+    background: white;
+}
+
+.title {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    font-size: 25px;
+    line-height: 15px;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    padding: 20px 50px 0;
+    height: 75%;
+}
+
+.inside_container {
+    padding: 10px 50px;
+    height: 100%;
+    border: 3px solid #9B0000;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.inside_container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.inside_container::-webkit-scrollbar:hover {
+    cursor: pointer;
+}
+  
+.inside_container::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+   
+.inside_container::-webkit-scrollbar-thumb {
+    background: red; 
+    border-radius: 10px;
+}
+  
+.inside_container::-webkit-scrollbar-thumb:hover {
+    background-color: #9B0000;
+}
+
+
+
+
+
+
+
+.data_container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 30px 0;
+}
+
+.data_label {
+    font-size: 28px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.change_icon {
+    font-size: 28px;
+}
+
+.campaign_name:disabled {
+    width: 450px;
+    padding: 5px 10px 5px 10px;
+    font-size: 28px;
+    border-top: #fff;
+    border-left: #fff;
+    border-right: #fff;
+    color: #000;
+    background: transparent;
+    outline: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+  
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+.close {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    color: #000;
+    font-size: 25px;
+    font-weight: bold;
+  }
+  
+.close:hover, .close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+
+ 
+
+
+
+
+
+
+
+.button_div {
+    text-align: center;
+    height: 15%;
+}
+
+
+.button {
+    margin: 10px 30px;
+    width: 200px;
+    color: white;
+    background: red;
+    border: 3px solid #9B0000;
+    border-radius: 10px;
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.button:hover {
+    background: #DB0000;
+    transform: scale(1.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.window_relationship {
+    display: none;
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    transition: all 1s ease-in-out;
+    align-items: center;
+    justify-content: center;
+}
+
+.content_window_relationship {
+    background-color: #fff;
+    border: 3px solid red;
+    border-radius: 5px;
+    padding: 50px;
+    width: 60%;
+    height: 55%;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+
+
+
+
+.list_div {
+    height: 85%;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border-radius: 7px;
+    border: 1px solid black;
+    margin-bottom: 20px;
+}
+
+.list_div::-webkit-scrollbar {
+    width: 10px;
+}
+
+.list_div::-webkit-scrollbar:hover {
+    cursor: pointer;
+}
+  
+.list_div::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+   
+.list_div::-webkit-scrollbar-thumb {
+    background: red; 
+    border-radius: 10px;
+}
+  
+.list_div::-webkit-scrollbar-thumb:hover {
+    background-color: #9B0000;
+}
+
+
+.list {
+    border-radius: 10px;
+    margin-right: 37px;
+    position: relative;
+}
+
+.owner {
+    list-style: none;
+    padding: 10px 20px;
+    width: 100%;
+    font-size: 27px;
+    box-shadow: 0 2px 15px rgba(0,0,0,.1);
+    transition: .2s all ease-in-out;
+    display: flex;
+    justify-content: space-between;
+}
+
+.owner:hover {
+    transform: scale(1.05);
+    border: 2px solid black;
+    border-radius: 15px;
+}
+
+.selected {
+    color: #00B000;
+}
+
+.deselected {
+    color: red;
+}
+
+.icona {
+    font-size: 35px;
+    line-height: 0px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*, *::before, *::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}

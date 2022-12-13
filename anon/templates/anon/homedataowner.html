@@ -21,7 +21,15 @@
         <div class="section">
 
             <div class="title">
-                <button id="exit-button" class="exit_button">Exit</button>
+
+                <div>
+                    <label class="logged_email">User Logged: &ensp; {{ owner.email }}</label>
+                </div>
+
+                <div>
+                    <button id="exit-button" class="exit_button">Exit</button>
+                </div>
+
             </div>
 
 
@@ -31,11 +39,15 @@
  
                     <div id="profile-text" class="button_text">Profile</div>
 
-                    <button href="{% url 'profile' %}" id="profile-button" class="profile_button animate">
-                        <span>
-                            <i class="bi bi-person-fill"></i>
-                        </span>
-                    </button>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button name="profile" type="submit" id="profile-button" class="profile_button animate">
+                            <span>
+                                <i class="bi bi-person-fill"></i>
+                            </span>
+                        </button>
+                    </form>
+                    
                     
                 </div>
 
