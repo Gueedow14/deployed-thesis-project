@@ -228,23 +228,34 @@ def profile(req):
             req.session["currentRel"] = req.POST.get("rels")
             return redirect('/anon/userrelationships')
 
-        attributes = req.POST.getlist("data")
+        if "done" in req.POST:
+            attributes = req.POST.getlist("data")
 
-        previousAttrs = []
+            previousAttrs = []
 
-        for a in attrEdges:
-            previousAttrs.append(a.value.value)
+            for a in attrEdges:
+                previousAttrs.append(a.value.value)
 
-        modifications = zip(previousAttrs, attributes)
+            modifications = zip(o.campaign.attributes.all(), previousAttrs, attributes)
 
-        chkMod = False
-        for prev, attr in modifications:
-            if prev != attr and attr != '':
-                chkMod = True
-        
-        if chkMod:
-            #modify fields in db and files
-            print(attributes)
+            for attr, prev, newVal in modifications:
+                if prev != newVal and newVal != '':
+                    for attributeEdge in attrEdges:
+                        if attributeEdge.attribute == attr:
+                            if not(newVal in Value.objects.all()):
+                                val = Value(value=newVal)
+                                val.save()
+                                attr = attributeEdge.attribute
+                                attributeEdge.delete()
+                                a = Attribute_Edge(owner=o, attribute=attr, value=val)
+                                a.save()
+                            else:
+                                val = Value(value=newVal)
+                                attr = attributeEdge.attribute
+                                attributeEdge.delete()
+                                a = Attribute_Edge(owner=o, attribute=attr, value=val)
+                                a.save()
+            return redirect('/anon/homedataowner')
 
 
     return render(req, 'anon/profile.html', { 'owner': o, 'attrs': attrEdges, 'owners': owners, 'userRelationships': userRels, 'inputRels': inputRels })
