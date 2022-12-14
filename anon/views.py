@@ -1,8 +1,4 @@
-import json
-from types import SimpleNamespace
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, authenticate
 import re
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge
 
@@ -10,20 +6,30 @@ def logreg(req):
     if req.method == "POST":
         data = req.POST
         action = data.get("button")
+
         if action == "login":
-            form = AuthenticationForm(req, data=req.POST)
-            if form.is_valid():
-                email = form.cleaned_data.get('email-input')
-                pwd = form.cleaned_data.get('pwd-input')
-                user= authenticate(username=email, password=pwd)
-                if user is not None:
-                    login(req, user)
-                    if user.type == "provider":
-                        req.session["utente"] = user
-                        return redirect('/anon/homedataprovider')
-                    elif user.type == "owner":
-                        req.session["utente"] = user
+            print(req.POST)
+            email = req.POST.get("email")
+            pwd = req.POST.get("pwd")
+            regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            if email != "" and pwd != "" and re.fullmatch(regex, email):
+                owners = Owner.objects.all()
+                providers = Provider.objects.all()
+
+                #check in owners
+                for o in owners:
+                    if o.email == email and o.pwd == pwd:
+                        req.session["owner"] = email;
                         return redirect('/anon/homedataowner')
+
+                #check in providers
+                for p in providers:
+                    if p.email == email and p.pwd == pwd:
+                        req.session["provider"] = email;
+                        return redirect('/anon/homedataprovider')
+
+                return render(req, 'anon/logreg.html', {'not_found_flag': True})
+                
         if action == "owner":
             req.session["accountType"] = 0
             return redirect('/anon/registration')
@@ -31,7 +37,7 @@ def logreg(req):
             req.session["accountType"] = 1
             return redirect('/anon/registration')
 
-    return render(req, 'anon/logreg.html')
+    return render(req, 'anon/logreg.html', {'not_found_flag': False})
 
 
 

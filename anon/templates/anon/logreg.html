@@ -30,6 +30,7 @@
                 <div class="line_menu"></div>
             </div>
 
+
             <!--  LOGIN SECTION  -->
 
             <form name="login-form" method="post">
@@ -38,35 +39,83 @@
 
                 <div id="login-container" class="login">
 
-                    <div>
-    
-                        <div>
-                            <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail">
-                        </div>
-    
-                        <div class="pwd_icon_div">
-    
-                            <div class="pwd_div">
-                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Password" type="password">
-                            </div>  
-    
-                            <div class="eye_icon_div">
-                                <span id="pwd-icon-eye" class="eye_icon">
-                                    <i id="icona_pwd" class="bi bi-eye-fill"></i>
-                                </span>
+                    {% if not_found_flag %}
+
+                        <div style="display: block;">
+
+                            <div style="padding: 0 60px 60px;">
+                                <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red;" id="some_flag" title="Some Flag">
+                                    <p style="font-size: 25px; line-height: 10px; font-weight: bold; color: white;">User not found in the database.</p>
+                                </div>
                             </div>
     
-                        </div>
+                            <div>
                         
-                        <div class="forgot_pwd_div">
-                            <p id="forgot-pwd" class="forgot_pwd">Forgot your Password?</p>
+                                <div>
+                                    <input autocomplete="off" id="email-input" name="email" class="email" placeholder="E-Mail">
+                                </div>
+        
+                                <div class="pwd_icon_div">
+        
+                                    <div class="pwd_div">
+                                        <input autocomplete="off" id="pwd-input" name="pwd" class="pwd" placeholder="Password" type="password">
+                                    </div>  
+        
+                                    <div class="eye_icon_div">
+                                        <span id="pwd-icon-eye" class="eye_icon">
+                                            <i id="icona_pwd" class="bi bi-eye-fill"></i>
+                                        </span>
+                                    </div>
+        
+                                </div>
+                                
+                                <div class="forgot_pwd_div">
+                                    <p id="forgot-pwd" class="forgot_pwd">Forgot your Password?</p>
+                                </div>
+        
+                                <div class="button_div">
+                                    <button type="submit" id="login-button" class="button" name="button" value="login">Login</button>
+                                </div>
+        
+                            </div>
+
                         </div>
-    
-                        <div class="button_div">
-                            <button type="submit" class="button" name="button" value="login">Login</button>
+
+                    {% else %}
+                    
+                        <div>
+                        
+                            <div>
+                                <input autocomplete="off" id="email-input" name="email" class="email" placeholder="E-Mail">
+                            </div>
+
+                            <div class="pwd_icon_div">
+
+                                <div class="pwd_div">
+                                    <input autocomplete="off" id="pwd-input" name="pwd" class="pwd" placeholder="Password" type="password">
+                                </div>  
+
+                                <div class="eye_icon_div">
+                                    <span id="pwd-icon-eye" class="eye_icon">
+                                        <i id="icona_pwd" class="bi bi-eye-fill"></i>
+                                    </span>
+                                </div>
+
+                            </div>
+                            
+                            <div class="forgot_pwd_div">
+                                <p id="forgot-pwd" class="forgot_pwd">Forgot your Password?</p>
+                            </div>
+
+                            <div class="button_div">
+                                <button type="submit" id="login-button" class="button" name="button" value="login">Login</button>
+                            </div>
+
                         </div>
+
+                    {% endif %}
     
-                    </div>
+                    
     
                 </div>
 

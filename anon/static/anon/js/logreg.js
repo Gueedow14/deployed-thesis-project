@@ -140,12 +140,35 @@ function onButtonForgot() {
         return;
     }
 
- 
-    //THE EMAIL HAS TO BE IN THE DATABASE
-
-
-
     localStorage.setItem("email-forgot-pwd", document.getElementById("email-forgot").value);
     location.href = "resetpwd";
+}
 
+var loginButton = document.getElementById("login-button");
+
+loginButton.addEventListener('click', onClickLogin);
+
+function ValidateEmail(input) {
+
+    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+    if (input.match(validRegex))
+        return true;
+    else
+        return false;
+
+}
+
+function onClickLogin() {
+    inputEmail = document.getElementById("email-input").value;
+    inputPwd = password.value;
+
+    if(inputEmail == "" && inputPwd == "") {
+        alert("Remember to fill both fields.")
+        return;
+    }
+    
+    if(!ValidateEmail(inputEmail)) {
+        alert("Insert a valid e-mail address.")
+    }
 }
