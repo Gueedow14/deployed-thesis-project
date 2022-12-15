@@ -139,9 +139,6 @@ function onButtonForgot() {
         alert("Insert a valid E-Mail address");
         return;
     }
-
-    localStorage.setItem("email-forgot-pwd", document.getElementById("email-forgot").value);
-    location.href = "resetpwd";
 }
 
 var loginButton = document.getElementById("login-button");

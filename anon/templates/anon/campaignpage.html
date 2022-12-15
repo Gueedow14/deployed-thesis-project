@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title id="campaign-name-title">Campaign N</title>
+        <title>{{ campaign.name }}</title>
         <link rel="stylesheet" href="{% static 'anon/css/campaignpage.css' %}">        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
@@ -21,7 +21,7 @@
         <div class="section">
 
             <div class="title">
-                <h1 id="campaign-name-header">Campaign N</h1>
+                <h1>{{ campaign.name }}</h1>
             </div>
 
 
@@ -31,19 +31,21 @@
                     <img id="img-kg" class="img_kg" src="https://d1.awsstatic.com/products/Neptune/knowledge_graph.b0e9408219d92f2ca3c7a05cccf9a5a72e34ddbd.png">
                 </figure>
 
-                <div id="buttons-div" class="buttons_div">
+                <div id="buttons-div" class="buttons_div_container">
 
-                    <div>
-                        <button id="compare-button" class="button">Compare</button>
-                    </div>
+                    <form method="post" class="buttons_div">
+                        {% csrf_token %}
+                        <button id="compare-button" type="submit" name="compare" class="button">Compare</button>
+                    </form>
 
-                    <div>
+                    <div class="buttons_div">
                         <button id="info-button" class="button">Information</button>
                     </div> 
 
-                    <div>
-                        <button id="anon-button" class="button">Anonymize</button>
-                    </div>
+                    <form method="post" class="buttons_div">
+                        {% csrf_token %}
+                        <button id="anon-button" type="submit" name="anonymize" class="button">Anonymize</button>
+                    </form>
 
                 </div>
 

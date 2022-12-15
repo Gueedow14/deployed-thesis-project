@@ -3,7 +3,6 @@ var confirmPassword = document.getElementById('confirm-pwd-input');
 var iconPwd = document.getElementById('pwd-icon-eye');
 var iconConfirmPwd = document.getElementById('confirm-pwd-icon-eye');
 var registerButton = document.getElementById('register-button');
-var iconCloseEmailCode = document.getElementById('button-close-email-code');
 
 var chkIcon = true;
 var chkConfirmIcon = true;
@@ -13,7 +12,6 @@ confirmPassword.addEventListener('keyup', logKeyConfirmPwd);
 iconPwd.addEventListener('click', onClickPwd);
 iconConfirmPwd.addEventListener('click', onClickConfirmPwd);
 registerButton.addEventListener('click', onClickRegisterButton);
-iconCloseEmailCode.addEventListener('click', onClickCloseEmailCode);
 
  
 function logKeyPwd(e) {

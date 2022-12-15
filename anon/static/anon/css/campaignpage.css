@@ -55,11 +55,11 @@ body{
 
 
 
-.buttons_div {
+.buttons_div_container {
     display: flex;
 }
 
-.buttons_div div {
+.buttons_div {
     width: 33.5%;
 }
 

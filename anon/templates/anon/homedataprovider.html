@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Security Level</title>
+        <title>Home</title>
         <link rel="stylesheet" href="{% static 'anon/css/homedataprovider.css' %}">        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
@@ -21,72 +21,71 @@
         <div class="section">
 
             <div class="title">
-                <button id="exit-button" class="exit_button">Exit</button>
+
+                <div>
+                    <label class="logged_email">User Logged: &ensp; {{ provider.email }}</label>
+                </div>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div>
+                        <button id="exit-button" type="submit" name="logout" class="exit_button">Exit</button>
+                    </div>
+
+                </form>
+                
+
             </div>
 
 
             <div class="container">
 
-                <div class="campaigns">
-                    <div id="campaign-1" class="campaign">
-                        <h2>Campaign 1</h2>
-                        <p>Creator: <span id="creator-name-1">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-2" class="campaign">
-                        <h2>Campaign 2</h2>
-                        <p>Creator: <span id="creator-name-2">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-3" class="campaign">
-                        <h2>Campaign 3</h2>
-                        <p>Creator: <span id="creator-name-3">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-4" class="campaign">
-                        <h2>Campaign 4</h2>
-                        <p>Creator: <span id="creator-name-4">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-5" class="campaign">
-                        <h2>Campaign 5</h2>
-                        <p>Creator: <span id="creator-name-5">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                    <div id="campaign-6" class="campaign">
-                        <h2>Campaign 6</h2>
-                        <p>Creator: <span id="creator-name-6">John Doe</span></p>
-                        <ul>
-                            <li>Name</li>
-                            <li>DoB</li>
-                            <li>Occupation</li>
-                        </ul>
-                    </div>
-                </div>
+                <form method="post" class="campaigns">
 
-                <div class="button_div">
-                    <button id="button-create" class="button">Create Campaign</button>                  
-                </div>
+                    {% csrf_token %}
+
+                    {% for campaign in campaigns %}
+
+                        <button id="campaign-{{ campaign.name }}" type="submit" name="campaign" value="{{ campaign.name }}" class="campaign">
+                            <h2>{{ campaign.name }}</h2>
+                            <p>Creator: <br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
+                            <div class="attr_list_container">
+                                <dl>
+
+                                    <label style="text-decoration: underline; font-size: 18px;">Attributes:</label>
+
+                                    {% for attr in campaign.attributes.all %}
+                                        <dd>{{ attr }}</dd>
+                                    {% empty %}
+                                        <dd style="color: red;">None</dd>
+                                    {% endfor %}
+
+                                    <br>
+                                    
+                                    <label style="text-decoration: underline; font-size: 18px;">Relationships:</label>
+                                    
+                                    {% for rel in campaign.relationships.all %}
+                                        <dd>{{ rel }}</dd>
+                                    {% empty %}
+                                        <dd style="color: red;">None</dd>
+                                    {% endfor %}
+    
+                                </dl>
+                            </div>
+                        </button>
+
+                    {% endfor %}
+ 
+                </form>
+
+                <form method="post">
+                    <div class="button_div">
+                        <button id="button-create" type="submit" name="create" class="button">Create Campaign</button>                  
+                    </div>
+                </form>
+                
 
             </div>
 

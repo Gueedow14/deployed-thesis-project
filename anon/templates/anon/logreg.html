@@ -166,34 +166,73 @@
 
         </div>
 
-        <div id="id-window-forgot" class="window_forgot_pwd">
-            <div class="content_window_forgot_pwd animate">
-                <span id="button-close-forgot" class="close"><i class="bi bi-x-circle-fill"></i></span>
-                <div>
+        {% if not_valid_email_reset %}
 
+            <div id="id-window-forgot" class="window_forgot_pwd_error">
+                <div class="content_window_forgot_pwd animate">
+                    <span id="button-close-forgot" class="close"><i class="bi bi-x-circle-fill"></i></span>
                     <div>
-                        <h2>Insert your E-Mail:</h2>
-                    </div>
 
-                    <div>
-                        <input autocomplete="off" id="email-forgot" class="email_forgot_pwd" placeholder="E-Mail" />
-                    </div>
-                    
-                    <div>
-                        <button id="button-forgot-pwd" class="button_forgot_pwd">Send</button>
-                    </div>
-                    
-                    <div>
-                        <h4>Click Send to reset your password.</h4>
-                    </div>
+                        <div>
+                            <h2>Insert your E-Mail:</h2>
+                        </div>
 
+                        <div>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input autocomplete="off" id="email-forgot" name="email-reset" value="{{ emailreset }}" class="email_forgot_pwd" placeholder="E-Mail" />
+                                <br>
+                                <button id="button-forgot-pwd" type="submit" name="resetpwd" class="button_forgot_pwd">Send</button>
+                            </form>
+                            
+                        </div>
+                        
+                        <div>
+                            <h4>Click Send to reset your password.</h4>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
+
+        {% else %}
+
+            <div id="id-window-forgot" class="window_forgot_pwd">
+                <div class="content_window_forgot_pwd animate">
+                    <span id="button-close-forgot" class="close"><i class="bi bi-x-circle-fill"></i></span>
+                    <div>
+
+                        <div>
+                            <h2>Insert your E-Mail:</h2>
+                        </div>
+
+                        <div>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input autocomplete="off" id="email-forgot" name="email-reset" class="email_forgot_pwd" placeholder="E-Mail" />
+                                <br>
+                                <button id="button-forgot-pwd" type="submit" name="resetpwd" class="button_forgot_pwd">Send</button>
+                            </form>
+                            
+                        </div>
+                        
+                        <div>
+                            <h4>Click Send to reset your password.</h4>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
  
+
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://smtpjs.com/v3/smtp.js"></script>
         <script src="{% static 'anon/js/logreg.js' %}"></script>
+
+
 
     </body>
 

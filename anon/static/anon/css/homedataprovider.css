@@ -16,7 +16,21 @@ body{
 .title {
     background-color: red;
     padding: 5px;
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title div {
+    display: flex;
+    align-items: center;
+}
+
+.logged_email {
+    margin-left: 20px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    background: transparent;
 }
 
 .exit_button {
@@ -44,7 +58,7 @@ body{
 .campaigns {
     margin: 50px;
     margin-bottom: 35px;
-    padding: 30px;
+    padding: 30px 30px 0;
     height: 100%;
     display: flex;
     overflow-x: scroll;
@@ -84,6 +98,7 @@ body{
 
 .campaign {
     width: 350px;
+    min-width: 350px;
     margin: 10px;
     height: 90%;
     display: inline-block;
@@ -91,6 +106,7 @@ body{
     border: 6px solid black;
     transition: all .3s ease-in-out;
     box-shadow: 5px 5px 15px black;
+    background: white;
 }
 
 .campaign:hover {
@@ -105,17 +121,25 @@ body{
 
 .campaign p {
     text-align: center;
-    font-size: 25px;
-    font-weight: bold;
-}
-
-.campaign ul {
-    margin:  0 70px 0;
-}
-
-.campaign ul li {
     font-size: 20px;
     font-weight: bold;
+}
+
+.attr_list_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.attr_list_container dl {
+    list-style: none;
+    text-align: center;
+}
+
+.attr_list_container dl dd {
+    font-size: 20px;
+    font-weight: bold;
+    margin-inline-start: 0;
 }
 
 

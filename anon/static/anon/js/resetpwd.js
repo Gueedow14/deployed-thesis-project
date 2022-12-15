@@ -1,7 +1,3 @@
-const emailForgot = localStorage.getItem("email-forgot-pwd");
-
-
-
 var password = document.getElementById('pwd-input');
 var confirmPassword = document.getElementById('confirm-pwd-input');
 var iconPwd = document.getElementById('pwd-icon-eye');
@@ -90,11 +86,12 @@ function chkPwds(pwd, conf) {
     return false
 }
  
+document.getElementById("register-button").addEventListener('click', onClickRegisterButton);
 
 function onClickRegisterButton() {
-    if(chkPwds(document.getElementById("pwd-input").value, document.getElementById("confirm-pwd-input").value)) {
-        //register modification in files
-        location.href = "logreg";
-    }
+
+    document.getElementById("pwd-hidden").value = password.value;
+    document.getElementById("confirm-hidden").value = confirmPassword.value;
+
 }
 

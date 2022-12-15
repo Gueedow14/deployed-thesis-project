@@ -26,9 +26,16 @@
                     <label class="logged_email">User Logged: &ensp; {{ owner.email }}</label>
                 </div>
 
-                <div>
-                    <button id="exit-button" class="exit_button">Exit</button>
-                </div>
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div>
+                        <button id="exit-button" type="submit" name="logout" class="exit_button">Exit</button>
+                    </div>
+
+                </form>
+                
 
             </div>
 
@@ -41,7 +48,7 @@
 
                     <form method="post">
                         {% csrf_token %}
-                        <button name="profile" type="submit" id="profile-button" class="profile_button animate">
+                        <button name="profile" type="submit" name="profile" id="profile-button" class="profile_button animate">
                             <span>
                                 <i class="bi bi-person-fill"></i>
                             </span>

@@ -92,7 +92,12 @@
 
                 <hr>
                 <div class="button_div">
-                    <button id="register-button" class="button">Register</button>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input id="pwd-hidden" type="hidden" name="pwd">
+                        <input id="confirm-hidden" type="hidden" name="confirm">
+                        <button id="register-button" class="button">Register</button>
+                    </form>
                 </div>
                 
             </div>

@@ -37,26 +37,3 @@ window.onclick = function(event) {
     if (event.target == infoWindow)
         infoWindow.style.display = "none";
 }
-
-
-
-const compareButton = document.getElementById('compare-button');
-
-compareButton.addEventListener('click', compareCampaign);
-
-function compareCampaign() {
-    //data to be passed
-
-    location.href = "comparehome";
-}
-
-
-const anonButton = document.getElementById('anon-button');
-
-anonButton.addEventListener('click', anonCampaign);
-
-function anonCampaign() {
-    //data to be passed
-
-    location.href = "anonymize";
-}

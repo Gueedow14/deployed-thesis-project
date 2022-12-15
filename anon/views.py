@@ -8,7 +8,6 @@ def logreg(req):
         action = data.get("button")
 
         if action == "login":
-            print(req.POST)
             email = req.POST.get("email")
             pwd = req.POST.get("pwd")
             regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -28,16 +27,88 @@ def logreg(req):
                         req.session["provider"] = email;
                         return redirect('/anon/homedataprovider')
 
-                return render(req, 'anon/logreg.html', {'not_found_flag': True})
+                return render(req, 'anon/logreg.html', {'not_found_flag': True, 'not_valid_email_reset': False})
                 
         if action == "owner":
             req.session["accountType"] = 0
             return redirect('/anon/registration')
+
         if action == "provider":
             req.session["accountType"] = 1
             return redirect('/anon/registration')
+        
+        if "resetpwd" in req.POST:
+            email = req.POST.get("email-reset")
+            regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
-    return render(req, 'anon/logreg.html', {'not_found_flag': False})
+            chkDB = False
+
+            for o in Owner.objects.all():
+                if o.email == email:
+                    chkDB = True
+            
+            for p in Provider.objects.all():
+                if p.email == email:
+                    chkDB = True
+
+            if email != "" and re.fullmatch(regex, email) and chkDB:
+                print(req.POST)
+                req.session["email-reset"] = email
+                req.session["originalpage"] = "logreg"
+                return redirect('/anon/resetpwd')
+            elif email == "" or not(re.fullmatch(regex, email)) or not(chkDB):
+                return render(req, 'anon/logreg.html', {'not_found_flag': False, 'not_valid_email_reset': True, 'emailreset': email })
+
+    return render(req, 'anon/logreg.html', {'not_found_flag': False, 'not_valid_email_reset': False})
+
+
+
+
+def resetPwd(req):
+
+    email = req.session["email-reset"]
+    origin = req.session["originalpage"]
+
+    if req.method == "POST":
+        pwd = req.POST.get("pwd")
+        confirm = req.POST.get("confirm")
+        if pwd == confirm:
+
+            user = None
+            type = None
+
+            for o in Owner.objects.all():
+                if o.email == email:
+                    user = o
+                    type = "owner"
+            
+            for p in Provider.objects.all():
+                if p.email == email:
+                    user = p
+                    type = "provider"
+
+            if type == "owner":
+                o = Owner(email=user.email, pwd=pwd, k=user.k, campaign=user.campaign)
+                user.delete()
+                o.save()
+
+            if type == "provider":
+                p = Provider(email=user.email, pwd=pwd)
+                user.delete()
+                p.save()
+
+            if origin == "logreg":
+                del req.session["originalpage"]
+                del req.session["email-reset"]
+                return redirect('/anon/logreg')
+            
+            if origin == "profile":
+                del req.session["originalpage"]
+                del req.session["email-reset"]
+                return redirect('/anon/profile')
+
+
+    return render(req, 'anon/resetpwd.html')
 
 
 
@@ -160,7 +231,6 @@ def secLev(req):
 
                 if not(attributes[i] in values):
                     v.save()
-                    print(v)
 
                 a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
                 a_edge.save()
@@ -184,8 +254,18 @@ def homeDataOwner(req):
             o = owner
 
     if req.method == "POST":
-        req.session["owner"] = o.email
-        return redirect('/anon/profile')
+        if "profile" in req.POST:
+            req.session["owner"] = o.email
+            return redirect('/anon/profile')
+        if "logout" in req.POST:
+            del req.session["owner"]
+            del req.session["attrs"]
+            del req.session["kval"]
+            del req.session["pwd-owner"]
+            del req.session["email-owner"]
+            del req.session["sel-camp"]
+            return redirect('/anon/logreg')
+            
 
     return render(req, 'anon/homedataowner.html', { 'owner': o })
 
@@ -228,7 +308,6 @@ def profile(req):
 
     
     if req.method == "POST":
-        print(req.POST)
 
         if "rels" in req.POST:
             req.session["currentRel"] = req.POST.get("rels")
@@ -317,16 +396,68 @@ def userRelationships(req):
 
 
 
-
-
 def homeDataProvider(req):
-    return render(req, 'anon/homedataprovider.html')
+
+    providers = Provider.objects.all()
+
+    for p in providers:
+        if p.email == req.session["provider"]:
+            provider = p
+
+    campaigns = Campaign.objects.all()
+
+
+
+
+    if req.method == "POST":
+
+        if "campaign" in req.POST:
+            req.session["sel-camp-prov"] = req.POST.get("campaign")
+            return redirect('/anon/campaignpage')
+
+        if "logout" in req.POST:
+            del req.session["provider"]
+            return redirect('/anon/logreg')
+
+
+
+    return render(req, 'anon/homedataprovider.html', { "provider": provider, "campaigns": campaigns })
+
+
+
+
+
+
 
 def createCampaign(req):
     return render(req, 'anon/createcampaign.html')
 
+
+
+
+
 def campaignPage(req):
-    return render(req, 'anon/campaignpage.html')
+
+    for c in Campaign.objects.all():
+        if c.name == req.session["sel-camp-prov"]:
+            campaign = c
+
+    if req.method == "POST":
+
+        if "compare" in req.POST:
+            print("compare")
+            return redirect('/anon/comparehome')
+
+        if "anonymize" in req.POST:
+            print("anonymize")
+            return redirect('/anon/anonymize')
+
+
+    return render(req, 'anon/campaignpage.html', { 'campaign': campaign })
+
+
+
+
 
 def compareHome(req):
     return render(req, 'anon/comparehome.html')
@@ -336,6 +467,3 @@ def compareResults(req):
 
 def anonymize(req):
     return render(req, 'anon/anonymize.html')
-
-def resetPwd(req):
-    return render(req, 'anon/resetpwd.html')
