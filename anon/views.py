@@ -418,6 +418,9 @@ def homeDataProvider(req):
         if "logout" in req.POST:
             del req.session["provider"]
             return redirect('/anon/logreg')
+        
+        if "create" in req.POST:
+            return redirect('/anon/createcampaign')
 
 
 
@@ -430,7 +433,57 @@ def homeDataProvider(req):
 
 
 def createCampaign(req):
-    return render(req, 'anon/createcampaign.html')
+
+    for p in Provider.objects.all():
+        if p.email == req.session["provider"]:
+            provider = p
+
+    if req.method == "POST":
+
+        name = req.POST.get("name")
+        attrsInput = req.POST.getlist("attr")
+        relsInput = req.POST.getlist("rel")
+
+        attributes = []
+        relationships = []
+
+        for c in Campaign.objects.all():
+            if c.name == name:
+                return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True })
+        
+        for attr in attrsInput:
+            try:
+                a = Attribute.objects.get(pk=attr.capitalize())
+            except Attribute.DoesNotExist:
+                a = None
+            if a == None:
+                a = Attribute(name=attr.capitalize())
+                a.save()
+            attributes.append(a)
+
+        for rel in relsInput:
+            try:
+                r = Relationship.objects.get(pk=rel.capitalize())
+            except Relationship.DoesNotExist:
+                r = None
+            if r == None:
+                r = Relationship(name=rel.capitalize())
+                r.save()
+            relationships.append(r)
+
+        c = Campaign(name=name, creator=provider)
+        c.save()
+
+        for a in attributes:
+            c.attributes.add(a)
+
+        for r in relationships:
+            c.relationships.add(r)
+
+        return redirect('/anon/homedataprovider')
+        
+
+    return render(req, 'anon/createcampaign.html', { 'name_existing_flag': False })
 
 
 

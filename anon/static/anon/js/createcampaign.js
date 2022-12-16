@@ -56,6 +56,8 @@ window.onclick = function(event) {
     }
 }
 
+const form = document.getElementById("fields")
+
 function addAttribute() {
     if(dataNum == 0) {
         noDataDiv.style.display = "none";
@@ -66,7 +68,8 @@ function addAttribute() {
     dataList.appendChild(data);
 
     const name = document.createElement("span");
-    name.innerText = setName(attrName.value);
+    name.innerText = setName(attrName.value.trimStart().trimEnd());
+
     if(name.innerHTML == "***ERROR***") {
         if(dataNum == 0) {
             noDataDiv.style.display = "block";
@@ -74,7 +77,18 @@ function addAttribute() {
         }
         dataList.removeChild(data);
         return;
+    } else {
+    
+        //adding element to form
+
+        var newAttr = document.createElement("input");
+        newAttr.type = "hidden";
+        newAttr.name = "attr";
+        newAttr.setAttribute("value", name.innerHTML.toLowerCase());
+        form.appendChild(newAttr)
+
     }
+
     name.classList.add("data_name");
     name.style.color = "blue";
     data.appendChild(name);
@@ -101,8 +115,6 @@ function addAttribute() {
     emojiBin.classList.add("bi-trash3");
     del.appendChild(emojiBin);
 
-
-
     dataNum++;
     attrNameDiv.style.display = "none";
     attrName.value = "";
@@ -124,7 +136,7 @@ function addRelationship() {
     dataList.appendChild(data);
 
     const name = document.createElement("span");
-    name.innerText = setName(relName.value);
+    name.innerText = setName(relName.value.trimStart().trimEnd());
     if(name.innerHTML == "***ERROR***") {
         if(dataNum == 0) {
             noDataDiv.style.display = "block";
@@ -132,7 +144,18 @@ function addRelationship() {
         }
         dataList.removeChild(data);
         return;
+    } else {
+    
+        //adding element to form
+
+        var newRel = document.createElement("input");
+        newRel.type = "hidden";
+        newRel.name = "rel";
+        newRel.setAttribute("value", name.innerHTML.toLowerCase());
+        form.appendChild(newRel)
+
     }
+
     name.classList.add("data_name");
     name.style.color = "red";
     data.appendChild(name);
@@ -158,8 +181,6 @@ function addRelationship() {
     emojiBin.classList.add("bi");
     emojiBin.classList.add("bi-trash3");
     del.appendChild(emojiBin);
-
-
 
     dataNum++;
     relNameDiv.style.display = "none";
@@ -207,6 +228,8 @@ function setName(str) {
 function removeAttr() {
     var li = document.getElementById(this.parentElement.id);
 
+    removeAttrFromForm(this.parentElement.children[0].innerHTML)
+
     var count = 0;
     while(listDataNames[count] != li.firstChild.innerHTML)
         count++;
@@ -227,6 +250,8 @@ function removeAttr() {
 function removeRel() {
     var li = document.getElementById(this.parentElement.id);
 
+    removeRelFromForm(this.parentElement.children[0].innerHTML)
+
     var count = 0;
     while(listDataNames[count] != li.firstChild.innerHTML)
         count++;
@@ -241,6 +266,26 @@ function removeRel() {
         noDataDiv.style.display = "block";
         dataList.style.display = "none";
     }
+}
+
+function removeAttrFromForm(elem) {
+    
+    var attributes = document.getElementsByName("attr");
+
+    for(var i = 0 ; i < attributes.length ; i++)
+        if(attributes[i].value == elem)
+            attributes[i].remove()
+
+}
+
+function removeRelFromForm(elem) {
+    
+    var relationships = document.getElementsByName("rel");
+
+    for(var i = 0 ; i < relationships.length ; i++)
+        if(relationships[i].value == elem)
+        relationships[i].remove()
+
 }
 
 
@@ -282,6 +327,8 @@ function applyModAttr() {
         listDataNames.push(currentName);
         modAttrName.value = "";
         return;
+    } else {
+        modifyAttrFromForm(currentName, selectedLi.firstChild.innerHTML)
     }
 
     modAttrName.value = "";
@@ -303,6 +350,8 @@ function applyModRel() {
         listDataNames.push(currentName);
         modRelName.value = "";
         return;
+    } else {
+        modifyRelFromForm(currentName, selectedLi.firstChild.innerHTML)
     }
 
     modRelName.value = "";
@@ -310,18 +359,44 @@ function applyModRel() {
     modRelNameDiv.style.display = "none";
 }
 
+function modifyAttrFromForm(prevVal, newVal) {
+    
+    var attributes = document.getElementsByName("attr");
+
+    for(var i = 0 ; i < attributes.length ; i++)
+        if(attributes[i].value == prevVal)
+        attributes[i].value = newVal
+
+}
+
+function modifyRelFromForm(prevVal, newVal) {
+    
+    var relationships = document.getElementsByName("rel");
+
+    for(var i = 0 ; i < relationships.length ; i++)
+        if(relationships[i].value == prevVal)
+        relationships[i].value = newVal
+
+}
+
+
+
 var createButton = document.getElementById("create-campaign-button");
 
 createButton.addEventListener('click', createCampaign);
 
 function createCampaign() {
+
+    if(document.getElementById("name-campaign").value != "") {
+        document.getElementById("name-hidden").value = document.getElementById("name-campaign").value;
+    } else {
+        alert("A campaign needs a name in order to be created!");
+        return;
+    }
+
     if(dataNum == 0) {
         alert("A campaign requires data in order to be created!");
         return;
-    } else {
-        //create in db
-
-        location.href = "homedataprovider";
     }
 }
 

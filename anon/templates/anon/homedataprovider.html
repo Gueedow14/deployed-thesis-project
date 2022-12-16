@@ -81,6 +81,7 @@
                 </form>
 
                 <form method="post">
+                    {% csrf_token %}
                     <div class="button_div">
                         <button id="button-create" type="submit" name="create" class="button">Create Campaign</button>                  
                     </div>

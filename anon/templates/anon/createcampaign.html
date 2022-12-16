@@ -27,6 +27,13 @@
 
             <div class="container">
 
+                <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-right: 30px;">
+                        <label style="font-size: 30px; font-weight: bold;">Insert Campaign Name:</label>
+                    </div>
+                    <input autocomplete="off" id="name-campaign" class="name" style="margin-top: 0; width: 40%;" placeholder="Campaign name..." type="text" maxlength="20" >
+                </div>
+
                 <div class="buttons_div">
 
                     <div class="attribute_button_div">
@@ -51,10 +58,16 @@
 
                 </div>
 
-                <div class="button_div">
-                    <button id="create-campaign-button" class="button">Create Campaign</button>
-                </div>
+                <form id="fields" method="post">
+                    {% csrf_token %}
+                    <!--    <input type="hidden" name="attr" (or name="rel") value="actual-name" >    -->
+                    <input type="hidden" id="name-hidden" name="name" value="">
+                    <div class="button_div">
+                        <button id="create-campaign-button" type="submit" name="create" class="button">Create Campaign</button>
+                    </div>
+                </form>
 
+                
             </div>
 
         </div>
@@ -65,7 +78,7 @@
         <div id="attr-name-div" class="name_div">
             <div class="content animate">
                 <div class="input_name_div">
-                    <input autocomplete="off" id="attr-name" class="name" placeholder="Insert attribute name..." type="text" maxlength="30" />
+                    <input autocomplete="off" id="attr-name" class="name" placeholder="Insert attribute name..." type="text" maxlength="15" />
                 </div>
                 <div class="icon_div">
                     <span id="attr-name-button" class="button_name">
@@ -78,7 +91,7 @@
         <div id="rel-name-div" class="name_div">
             <div class="content animate">
                 <div class="input_name_div">
-                    <input autocomplete="off" id="rel-name" class="name" placeholder="Insert relationship name..." type="text" maxlength="30" />
+                    <input autocomplete="off" id="rel-name" class="name" placeholder="Insert relationship name..." type="text" maxlength="15" />
                 </div>
                 <div class="icon_div">
                     <span id="rel-name-button" class="button_name">
@@ -94,7 +107,7 @@
         <div id="mod-attr-name-div" class="name_div">
             <div class="content animate">
                 <div class="input_name_div">
-                    <input autocomplete="off" id="mod-attr-name" class="name" placeholder="Insert new attribute name..." type="text" maxlength="30" />
+                    <input autocomplete="off" id="mod-attr-name" class="name" placeholder="Insert new attribute name..." type="text" maxlength="15" />
                 </div>
                 <div class="icon_div">
                     <span id="mod-attr-name-button" class="button_name">
@@ -107,7 +120,7 @@
         <div id="mod-rel-name-div" class="name_div">
             <div class="content animate">
                 <div class="input_name_div">
-                    <input autocomplete="off" id="mod-rel-name" class="name" placeholder="Insert new relationship name..." type="text" maxlength="30" />
+                    <input autocomplete="off" id="mod-rel-name" class="name" placeholder="Insert new relationship name..." type="text" maxlength="15" />
                 </div>
                 <div class="icon_div">
                     <span id="mod-rel-name-button" class="button_name">
@@ -117,6 +130,14 @@
             </div>  
         </div>
 
+
+        {% if name_existing_flag %}
+
+            <script>
+                alert("Campaign name already in use.");
+            </script>
+
+        {% endif %}
 
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
