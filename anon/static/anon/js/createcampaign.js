@@ -228,7 +228,7 @@ function setName(str) {
 function removeAttr() {
     var li = document.getElementById(this.parentElement.id);
 
-    removeAttrFromForm(this.parentElement.children[0].innerHTML)
+    removeAttrFromForm(this.parentElement.children[0].innerHTML.toLowerCase())
 
     var count = 0;
     while(listDataNames[count] != li.firstChild.innerHTML)
@@ -250,7 +250,7 @@ function removeAttr() {
 function removeRel() {
     var li = document.getElementById(this.parentElement.id);
 
-    removeRelFromForm(this.parentElement.children[0].innerHTML)
+    removeRelFromForm(this.parentElement.children[0].innerHTML.toLowerCase())
 
     var count = 0;
     while(listDataNames[count] != li.firstChild.innerHTML)

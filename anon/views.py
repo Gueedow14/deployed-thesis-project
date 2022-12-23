@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import re
+import subprocess
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge
 
 def logreg(req):
@@ -91,11 +92,15 @@ def resetPwd(req):
                 o = Owner(email=user.email, pwd=pwd, k=user.k, campaign=user.campaign)
                 user.delete()
                 o.save()
+                terminal = 'cd ../personalized-anony-kg && python reset_owner_pwd.py --owner=' + o.email + ' --pwd=' + o.pwd + ' --kval=' + str(o.k) + ' --campaign=\"' + o.campaign.name.lower() + '\"'
+                subprocess.call(terminal, shell=True)
 
             if type == "provider":
                 p = Provider(email=user.email, pwd=pwd)
                 user.delete()
                 p.save()
+                terminal = 'cd ../personalized-anony-kg && python reset_provider_pwd.py --provider=' + p.email + ' --pwd=\"' + p.pwd + '\"'
+                subprocess.call(terminal, shell=True)
 
             if origin == "logreg":
                 del req.session["originalpage"]
@@ -104,6 +109,7 @@ def resetPwd(req):
             
             if origin == "profile":
                 del req.session["originalpage"]
+                req.session["owner"] = o.email
                 del req.session["email-reset"]
                 return redirect('/anon/profile')
 
@@ -140,7 +146,11 @@ def registration(req):
                 p = Provider(email=email, pwd=pwd)
                 p.save()
 
-                req.session["provider"] = p
+                terminal = 'cd ../personalized-anony-kg && python generate_provider.py --provider=' + email + ' --pwd=' + pwd
+                subprocess.call(terminal, shell=True)
+
+
+                req.session["provider"] = p.email
 
                 return redirect('/anon/homedataprovider')
                     
@@ -220,6 +230,10 @@ def secLev(req):
             o = Owner(email=email, pwd=pwd, k=kval, campaign=selectedCampaign)
             o.save()
 
+            terminal = 'cd ../personalized-anony-kg && python -u generate_owner.py --owner=' + email + ' --pwd=\"' + pwd + '\" --kval=' + kval + ' --campaign=\"' + selectedCampaign.name.lower() + "\""
+            subprocess.call(terminal, shell=True)
+
+
             attributes = req.session["attrs"]
 
             values = Value.objects.all()
@@ -231,9 +245,16 @@ def secLev(req):
 
                 if not(attributes[i] in values):
                     v.save()
+                    terminal = 'cd ../personalized-anony-kg && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
+                    pValue = subprocess.call(terminal, shell=True)
+                    print("Subprocess di valore " + attributes[i].lower() + ":   " + str(pValue))
 
                 a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
                 a_edge.save()
+                terminal = 'cd ../personalized-anony-kg && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + campaignAttrs[i].name.lower() + ' --value=' + v.value.lower()
+                pEdge = subprocess.call(terminal, shell=True)
+                print("Subprocess di edge attr " + o.email.lower() + "---[" + campaignAttrs[i].name.lower() + "]-->" + v.value.lower() + ":   " + str(pEdge))
+
             
             req.session["owner"] = o.email
 
@@ -260,7 +281,6 @@ def homeDataOwner(req):
         if "logout" in req.POST:
             del req.session["owner"]
             del req.session["attrs"]
-            del req.session["kval"]
             del req.session["pwd-owner"]
             del req.session["email-owner"]
             del req.session["sel-camp"]
@@ -309,6 +329,8 @@ def profile(req):
     
     if req.method == "POST":
 
+        print(req.POST)
+
         if "rels" in req.POST:
             req.session["currentRel"] = req.POST.get("rels")
             return redirect('/anon/userrelationships')
@@ -341,6 +363,12 @@ def profile(req):
                                 a = Attribute_Edge(owner=o, attribute=attr, value=val)
                                 a.save()
             return redirect('/anon/homedataowner')
+        
+        if "yes" in req.POST:
+            req.session["email-reset"] = o.email
+            req.session["originalpage"] = "profile"
+            del req.session["owner"]
+            return redirect('/anon/resetpwd')
 
 
     return render(req, 'anon/profile.html', { 'owner': o, 'attrs': attrEdges, 'owners': owners, 'userRelationships': userRels, 'inputRels': inputRels })
@@ -407,8 +435,6 @@ def homeDataProvider(req):
     campaigns = Campaign.objects.all()
 
 
-
-
     if req.method == "POST":
 
         if "campaign" in req.POST:
@@ -448,7 +474,7 @@ def createCampaign(req):
         relationships = []
 
         for c in Campaign.objects.all():
-            if c.name == name:
+            if c.name.lower() == name.lower():
                 return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True })
         
         for attr in attrsInput:
@@ -459,6 +485,9 @@ def createCampaign(req):
             if a == None:
                 a = Attribute(name=attr.capitalize())
                 a.save()
+                terminal = 'cd ../personalized-anony-kg && python generate_attribute.py --attr=\"' + a.name.lower() + '\"'
+                subprocess.call(terminal, shell=True)
+
             attributes.append(a)
 
         for rel in relsInput:
@@ -469,16 +498,32 @@ def createCampaign(req):
             if r == None:
                 r = Relationship(name=rel.capitalize())
                 r.save()
+                terminal = 'cd ../personalized-anony-kg && python generate_relationship.py --rel=\"' + r.name.lower() + '\"'
+                subprocess.call(terminal, shell=True)
+
             relationships.append(r)
 
         c = Campaign(name=name, creator=provider)
         c.save()
 
+        scriptAttrs = ""
+        scriptRels = ""
+
         for a in attributes:
             c.attributes.add(a)
+            scriptAttrs += (a.name.lower() + "|")
 
         for r in relationships:
             c.relationships.add(r)
+            scriptRels += (r.name.lower() + "|")
+
+        scriptAttrs = scriptAttrs[:-1]
+        scriptRels = scriptRels[:-1]
+
+
+        terminal = 'cd ../personalized-anony-kg && python generate_campaign.py --name=\"' + c.name.lower() + '\" --creator=\"' + c.creator.email + '\" --attrs=\"' + scriptAttrs + '\" --rels=\"' + scriptRels + '\"'
+        subprocess.call(terminal, shell=True)
+
 
         return redirect('/anon/homedataprovider')
         
