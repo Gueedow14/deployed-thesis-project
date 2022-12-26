@@ -70,7 +70,7 @@
                             <label>K-Value:</label>
                         </div>
                         <div>
-                            <input id="campaign" class="campaign_name" value="{{ owner.k }}" disabled>
+                            <input class="campaign_name" value="{{ owner.k }}" disabled>
                         </div>
                     </div>
 
@@ -80,7 +80,8 @@
                                 <label>{{ attr.attribute }}:</label>
                             </div>
                             <div>
-                                <input id="input-{{ attr.attribute }}" name="data" class="campaign_input" value="{{ attr.value }}" disabled>
+                                <input id="attr-{{ attr.attribute }}" type="hidden" name="attribute" value="{{ attr.attribute }}" disabled>
+                                <input id="input-{{ attr.attribute }}" autocomplete="off" name="data" class="campaign_input" value="{{ attr.value }}" disabled>
                             </div>
                             <div id="button-{{ attr.attribute }}" class="change_icon_div_attr">
                                 <i class="change_icon bi bi-pencil"></i>
@@ -136,7 +137,6 @@
                 </div>
             </form>
         </div>
-
 
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>

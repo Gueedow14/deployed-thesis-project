@@ -72,6 +72,9 @@ function modifyAttrs() {
     selectedInput.disabled = false;
     selectedInput.setSelectionRange(selectedInput.value.length, selectedInput.value.length);
     selectedInput.focus()
+    var attributeId = "attr-" + this.id.slice(7,idLen);
+    var selectedAttribute = document.getElementById(attributeId);
+    selectedAttribute.disabled = false;
 }
 
 

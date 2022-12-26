@@ -246,15 +246,13 @@ def secLev(req):
                 if not(attributes[i] in values):
                     v.save()
                     terminal = 'cd ../personalized-anony-kg && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
-                    pValue = subprocess.call(terminal, shell=True)
-                    print("Subprocess di valore " + attributes[i].lower() + ":   " + str(pValue))
+                    subprocess.call(terminal, shell=True)
 
                 a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
                 a_edge.save()
                 terminal = 'cd ../personalized-anony-kg && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + campaignAttrs[i].name.lower() + ' --value=' + v.value.lower()
-                pEdge = subprocess.call(terminal, shell=True)
-                print("Subprocess di edge attr " + o.email.lower() + "---[" + campaignAttrs[i].name.lower() + "]-->" + v.value.lower() + ":   " + str(pEdge))
-
+                subprocess.call(terminal, shell=True)
+                
             
             req.session["owner"] = o.email
 
@@ -279,11 +277,16 @@ def homeDataOwner(req):
             req.session["owner"] = o.email
             return redirect('/anon/profile')
         if "logout" in req.POST:
-            del req.session["owner"]
-            del req.session["attrs"]
-            del req.session["pwd-owner"]
-            del req.session["email-owner"]
-            del req.session["sel-camp"]
+            if "owner" in req.session:
+                del req.session["owner"]
+            if "attrs" in req.session:
+                del req.session["attrs"]
+            if "pwd-owner" in req.session:
+                del req.session["pwd-owner"]
+            if "email-owner" in req.session:
+                del req.session["email-owner"]
+            if "sel-camp" in req.session:
+                del req.session["sel-camp"]
             return redirect('/anon/logreg')
             
 
@@ -301,10 +304,17 @@ def profile(req):
             o = owner
 
     attrEdges = []
+    allAttributes = []
+    
+    for attr in Attribute.objects.all():
+        allAttributes.append(attr.name)
 
-    for attrEdge in Attribute_Edge.objects.all():
-        if str(attrEdge.owner) == o.email:
-            attrEdges.append(attrEdge)
+    allAttributes.sort()
+
+    for attr in allAttributes:
+        for attrEdge in Attribute_Edge.objects.all():
+            if attrEdge.owner.email == o.email and attrEdge.attribute.name == attr:
+                attrEdges.append(attrEdge)
 
     rels = o.campaign.relationships.all()
 
@@ -329,39 +339,61 @@ def profile(req):
     
     if req.method == "POST":
 
+        print("\n\n")
         print(req.POST)
+        print("\n\n")
 
         if "rels" in req.POST:
             req.session["currentRel"] = req.POST.get("rels")
             return redirect('/anon/userrelationships')
 
         if "done" in req.POST:
-            attributes = req.POST.getlist("data")
+
+            modifiedAttrs = []
+
+            for attr in req.POST.getlist("attribute"):
+                modifiedAttrs.append(Attribute(name=attr))
+
+            newAttrs = req.POST.getlist("data")
 
             previousAttrs = []
 
             for a in attrEdges:
-                previousAttrs.append(a.value.value)
+                if a.attribute in modifiedAttrs:
+                    previousAttrs.append(a.value.value)
 
-            modifications = zip(o.campaign.attributes.all(), previousAttrs, attributes)
+            campAttrs = []
+
+            for attr in allAttributes:
+                a = Attribute(name=attr)
+                if a in o.campaign.attributes.all() and a in modifiedAttrs:
+                    campAttrs.append(a)
+
+            modifications = zip(campAttrs, previousAttrs, newAttrs)
 
             for attr, prev, newVal in modifications:
                 if prev != newVal and newVal != '':
                     for attributeEdge in attrEdges:
                         if attributeEdge.attribute == attr:
-                            if not(newVal in Value.objects.all()):
-                                val = Value(value=newVal)
+                            val = Value(value=newVal.capitalize())
+                            if not(val in Value.objects.all()):
                                 val.save()
+                                terminal = 'cd ../personalized-anony-kg && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
+                                subprocess.call(terminal, shell=True)
                                 attr = attributeEdge.attribute
                                 attributeEdge.delete()
                                 a = Attribute_Edge(owner=o, attribute=attr, value=val)
                                 a.save()
+                                terminal = 'cd ../personalized-anony-kg && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
+                                subprocess.call(terminal, shell=True)
                             else:
-                                val = Value(value=newVal)
                                 attr = attributeEdge.attribute
                                 attributeEdge.delete()
                                 a = Attribute_Edge(owner=o, attribute=attr, value=val)
                                 a.save()
+                                terminal = 'cd ../personalized-anony-kg && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
+                                subprocess.call(terminal, shell=True)
+
             return redirect('/anon/homedataowner')
         
         if "yes" in req.POST:
@@ -412,11 +444,17 @@ def userRelationships(req):
                             o2 = owner2
                     e = Relationship_Edge(owner1=o, relationship=r, owner2=o2)
                     e.save()
+                    terminal = 'cd ../personalized-anony-kg && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=' + r.name.lower() + ' --o2=' + o2.email.lower()
+                    subprocess.call(terminal, shell=True)
+
             for u in previousUsers:
                 if not(u in selectedUsers):
                     for relEdge in Relationship_Edge.objects.all():
                         if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel and relEdge.owner2.email == u:
+                            terminal = 'cd ../personalized-anony-kg && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower()
+                            subprocess.call(terminal, shell=True)
                             relEdge.delete()
+
             return redirect('/anon/profile')
 
 
