@@ -16,9 +16,13 @@ body{
 .title {
     background-color: red;
     color: white;
-    padding: 5px;
+    padding: 20px;
     font-size: 25px;
     text-align: center;
+}
+
+.title_text {
+    line-height: 0px;
 }
 
 .container {
@@ -28,39 +32,17 @@ body{
 
 
 
-.img_div {
-    border: 3px solid black;
-    border-radius: 15px;
-    margin: 15px 260px;
-    background-position: 50% 50%;
-    position: relative;
-    width: 750px;
-    overflow: hidden;
-    cursor: zoom-in;
-    background-image: url(https://d1.awsstatic.com/products/Neptune/knowledge_graph.b0e9408219d92f2ca3c7a05cccf9a5a72e34ddbd.png);
-    box-shadow: 2px 2px 10px grey;
-}
-
-.img_kg {
-    transition: opacity 0.5s;
-    display: block;
-    width: 100%;
-}
-
-.img_kg:hover {
-    opacity: 0;
-}
-
-
-
-
 
 .buttons_div_container {
     display: flex;
+    margin-top: 30px;
 }
 
 .buttons_div {
-    width: 33.5%;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .button {
@@ -81,20 +63,12 @@ body{
 
 
 
-.zoom_buttons_div {
-    position: absolute;
-    font-size: 35px;
-    width: 70px;
-    top: 2%;
-    left: 68%;
-}
 
-.zoom_in_button:hover {
-    color: #CB0000;
-}
-
-.zoom_out_button:hover {
-    color: #CB0000;
+.canvas_div {
+    width: 33.5%;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
 }
 
 
@@ -104,60 +78,6 @@ body{
 
 
 
-.info_window {
-    display: none;
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    padding-top: 100px;
-    transition: all 1s ease-in-out;
-}
-
-.content_info_window {
-    background-color: #fff;
-    margin: 8% auto; /* 8% from the top and centered */
-    border: 3px solid black;
-    border-radius: 5px;
-    width: 50%;
-    height: 45%;
-    text-align: center;
-    position: relative;
-}
-
-.animate {
-    -webkit-animation: animatezoom 0.6s;
-    animation: animatezoom 0.6s
-}
-  
-@-webkit-keyframes animatezoom {
-    from {-webkit-transform: scale(0)} 
-    to {-webkit-transform: scale(1)}
-}
-    
-@keyframes animatezoom {
-    from {transform: scale(0)} 
-    to {transform: scale(1)}
-}
-
-.close {
-    position: absolute;
-    right: 1%;
-    top: 1%;
-    color: white;
-    font-size: 25px;
-    font-weight: bold;
-  }
-  
-.close:hover, .close:focus {
-    color: #000;
-    cursor: pointer;
-}
 
 .info_title {
     background-color: red;

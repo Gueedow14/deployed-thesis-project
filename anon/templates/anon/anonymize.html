@@ -27,10 +27,17 @@
             </div>
 
 
-
             <div id="container" class="container">
 
+                {% if clusterError == True %}
 
+                    <div style="padding: 20px;">
+                        <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red;" id="some_flag" title="Some Flag">
+                            <p style="font-size: 25px; line-height: 10px; font-weight: bold; color: white;">Error in Clustering: Min cluster size must be greater than 1.</p>
+                        </div>
+                    </div>
+
+                {% endif %}
 
 
                 <div class="text_div">
@@ -40,65 +47,81 @@
                 </div>
 
 
-
-
                 <div class="clustering_buttons_div">
-
-                    <div>
-                        <button id="hdbscan-button" class="button">HDBSCAN</button>
-                    </div>
-
-                    <div>
-                        <button id="k-medoids-button" class="button">k-Medoids</button>
-                    </div>
 
                     <div>
                         <button id="vac-button" class="button">VAC</button>
                     </div>
 
-                </div>
+                    <div>
 
-
-
-
-                <div id="clustering-kgs-container" class="kgs_container">
-
-
-                    <div id="clustering-kgs" class="kgs">
-
-
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Conceptual_Diagram_-_Example.svg/800px-Conceptual_Diagram_-_Example.svg.png">
-                            </div>
+                        <div>
+                            <button id="hdbscan-button" class="button">HDBSCAN</button>
                         </div>
-    
-    
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://theinnovator.news/wp-content/uploads/2020/12/bio_kg-2.png">
+
+                        <div style="display: flex; justify-content: center;">
+
+                            <div id="hdbscan-options" class="radio_container">
+
+                                <label class="radio_option">
+                                    <input id="hdbscan-min" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Min</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="hdbscan-mean" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Mean</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="hdbscan-max" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Max</span>
+                                </label>
+                                
                             </div>
+
                         </div>
-    
-    
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://miro.medium.com/max/909/1*2ZnrhrKUGk0KkPOa8RaXsA.png">
-                            </div>
-                        </div>
-    
-    
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://timbr.ai/wp-content/uploads/2020/05/ontology.jpg">
-                            </div>
-                        </div>
-    
-    
+
                     </div>
 
+                    <div>
+
+                        <div>
+                            <button id="km-button" class="button">k-Medoids</button>
+                        </div>
+    
+
+                        <div style="display: flex; justify-content: center;">
+
+                            <div id="km-options" class="radio_container">
+                                <label class="radio_option">
+                                    <input id="km-min" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Min</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="km-mean" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Mean</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="km-max" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Max</span>
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
+
                 
 
 
@@ -115,124 +138,58 @@
                 <div id="validation-buttons-div" class="validation_buttons_div">
 
                     <div>
-                        <button id="invalid-removal-button" class="disabled_button">Invalid Removal</button>
+                        <button id="sr-button" class="disabled_button">Invalid Removal</button>
                     </div>
 
                     <div>
-                        <button id="ms-alg-button" class="disabled_button">MS-Algorithm</button>
+                        <button id="ms-button" class="disabled_button">MS-Algorithm</button>
                     </div>
 
                 </div>
 
 
 
-                <div id="validation-kgs-container" class="kgs_container">
 
-                    <div id="validation-kgs" class="kgs">
+                <div class="text_div">
 
+                    <p>Would you like to download the anonymized graph?</p>
 
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Conceptual_Diagram_-_Example.svg/800px-Conceptual_Diagram_-_Example.svg.png">
-                            </div>
-                        </div>
+                </div>
+                
 
 
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://theinnovator.news/wp-content/uploads/2020/12/bio_kg-2.png">
-                            </div>
-                        </div>
+                <div id="save-choice-div" class="save_choice_div">
 
+                    <div>
+                        <button id="yes-button" class="disabled_button">Yes</button>
+                    </div>
 
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://miro.medium.com/max/909/1*2ZnrhrKUGk0KkPOa8RaXsA.png">
-                            </div>
-                        </div>
-
-
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://timbr.ai/wp-content/uploads/2020/05/ontology.jpg">
-                            </div>
-                        </div>
-
-
+                    <div>
+                        <button id="no-button" class="disabled_button">No</button>
                     </div>
 
                 </div>
 
 
+                <form id="anonymize-button-container" class="anonymize_button_div" method="post">
 
-                
+                    {% csrf_token %}
 
+                    <input id="selected-clust" type="hidden" name="clust-alg" value="">
 
-                <div id="anonymize-text-div" class="anonymize_text_div">
+                    <input id="selected-valid" type="hidden" name="valid-alg" value="">
 
-                    <p>Select KGs for Generalization:</p>
+                    <input id="selected-save" type="hidden" name="save-choice" value="">
 
-                </div>
+                    <button id="anon-button" type="submit" class="button">Anonymize</button>
 
-
-                
-                <div id="generalization-kgs-container" class="kgs_container">
-
-
-                    <div id="anonymization-kgs" class="kgs">
-
-
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Conceptual_Diagram_-_Example.svg/800px-Conceptual_Diagram_-_Example.svg.png">
-                            </div>
-                        </div>
-    
-    
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://theinnovator.news/wp-content/uploads/2020/12/bio_kg-2.png">
-                            </div>
-                        </div>
-    
-    
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://miro.medium.com/max/909/1*2ZnrhrKUGk0KkPOa8RaXsA.png">
-                            </div>
-                        </div>
-    
-    
-                        <div class="kg">
-                            <div class="imageBox">
-                                <img class="image" src="https://timbr.ai/wp-content/uploads/2020/05/ontology.jpg">
-                            </div>
-                        </div>
-    
-    
-                    </div>
-
-
-                </div>
-
-                
-
-
-
-
-
-                <div id="anonymize-button-container" class="anonymize_button_div">
-
-                    <button id="anon-button" class="disabled_button">Anonymize</button>
- 
-                </div>
-
-
-                
-
+                </form>
 
 
             </div>
+
+
+            
 
 
         </div>

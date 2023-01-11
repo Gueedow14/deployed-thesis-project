@@ -16,20 +16,37 @@
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
     </head>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
     <body>
         
         <div class="section">
 
             <div class="title">
-                <h1>{{ campaign.name }}</h1>
+                <h1 class="title_text">{{ campaign.name }}</h1>
             </div>
 
 
             <div class="container">
 
-                <figure id="img-div" class="img_div">
-                    <img id="img-kg" class="img_kg" src="https://d1.awsstatic.com/products/Neptune/knowledge_graph.b0e9408219d92f2ca3c7a05cccf9a5a72e34ddbd.png">
-                </figure>
+                <div style="display: flex; height: 450px;">
+
+                    <div class="canvas_div">
+                        <canvas id="numNodesChart" style="width:100%; max-width:600px; height: 370px;"></canvas>
+                    </div>
+
+
+                    <div class="canvas_div">
+                        <canvas id="numRelationsChart" style="width:100%; max-width:600px; height: 370px;"></canvas>
+                    </div>
+
+
+                    <div class="canvas_div">
+                        <canvas id="numEdgesChart" style="width:100%; max-width:600px; height: 370px;"></canvas>
+                    </div>
+
+                </div>
+
 
                 <div id="buttons-div" class="buttons_div_container">
 
@@ -37,10 +54,6 @@
                         {% csrf_token %}
                         <button id="compare-button" type="submit" name="compare" class="button">Compare</button>
                     </form>
-
-                    <div class="buttons_div">
-                        <button id="info-button" class="button">Information</button>
-                    </div> 
 
                     <form method="post" class="buttons_div">
                         {% csrf_token %}
@@ -52,51 +65,118 @@
             </div>
 
 
-            <div id="info-window" class="info_window">
-                <div class="content_info_window animate">
-
-                    <div class="info_title">
-                        <h1>Information</h1>
-                    </div>
-
-                    <div class="info_data">
-
-                        <p>
-                            <span class="data_name">Clustering Algorithm: </span>
-                            <span class="data_info">test</span>
-                        </p>
-
-                        <p>
-                            <span class="data_name">Validation Algorithm: </span>
-                            <span class="data_info">test</span>
-                        </p>
-
-                        <p>
-                            <span class="data_name">Average Information Loss: </span>
-                            <span class="data_info">test</span>
-                        </p>
-
-                        <p>
-                            <span class="data_name">Ratio of Removed Users: </span>
-                            <span class="data_info">test</span>
-                        </p>
-
-                    </div>
-
-                    <div class="close_info_window">
-                        <span id="info-close" class="close">
-                            <i class="bi bi-x-circle-fill"></i>
-                        </span>
-                    </div>
-                    
-
-                </div>
-            </div>
-
-
-
  
         </div>
+
+
+        <script>
+
+            var xValuesNodes = ["Entities", "Values"];
+            var yValuesNodes = [parseInt("{{ numEntities }}"), parseInt("{{ numValues }}")];
+            var barColors = [
+              "#b91d47",
+              "#00aba9"
+            ];
+            
+            new Chart("numNodesChart", {
+                type: "pie",
+                data: {
+                    labels: xValuesNodes,
+                    datasets: [{
+                    backgroundColor: barColors,
+                    data: yValuesNodes
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: "Total Number of Nodes: {{ numNodes }}",
+                        fontSize: 20,
+                        fontColor: "#000"
+                    },
+                    legend: {
+                        display: true,
+                        labels: {
+                            fontSize: 14,
+                            fontColor: "#000"
+                        }
+                    },
+                    animation: {
+                        duration: 1500
+                    }
+                }
+            });
+                        
+
+            var xValuesRelations = ["Relationships", "Attributes"];
+            var yValuesRelations = [parseInt("{{ numRelationships }}"), parseInt("{{ numAttributes }}")];
+
+            new Chart("numRelationsChart", {
+            type: "pie",
+            data: {
+                labels: xValuesRelations,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValuesRelations
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: "Total Number of Relations: {{ numRelations }}",
+                    fontSize: 20,
+                    fontColor: "#000"
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontSize: 14,
+                        fontColor: "#000"
+                    }
+                },
+                animation: {
+                    duration: 1500
+                }
+            }
+            });
+
+
+            var xValuesEdges = ["Attribute Edges", "Relationship Edges"];
+            var yValuesEdges = [parseInt("{{ numAttrEdges }}"), parseInt("{{ numRelEdges }}")];
+
+            new Chart("numEdgesChart", {
+            type: "pie",
+            data: {
+                labels: xValuesEdges,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValuesEdges
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: "Total Number of Edges: {{ numEdges }}",
+                    fontSize: 20,
+                    fontColor: "#000"
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontSize: 14,
+                        fontColor: "#000"
+                    }
+                },
+                animation: {
+                    duration: 1500
+                }
+            }
+            });
+
+        </script>
+
+
+
 
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>

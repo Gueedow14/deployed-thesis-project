@@ -1,6 +1,8 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
-import re
-import subprocess
+from django.http import StreamingHttpResponse
+from wsgiref.util import FileWrapper
+import re, os, mimetypes, subprocess
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge
 
 def logreg(req):
@@ -477,6 +479,16 @@ def homeDataProvider(req):
 
         if "campaign" in req.POST:
             req.session["sel-camp-prov"] = req.POST.get("campaign")
+
+            terminal = 'cd ../personalized-anony-kg && python generate_raw_kg.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\"'
+            subprocess.call(terminal, shell=True)
+
+            terminal = 'cd ../personalized-anony-kg && python generate_k_values.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\"'
+            subprocess.call(terminal, shell=True)
+
+            terminal = 'cd ../personalized-anony-kg && python generate_dist_matrix.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\" --workers=1'
+            subprocess.call(terminal, shell=True)
+
             return redirect('/anon/campaignpage')
 
         if "logout" in req.POST:
@@ -578,6 +590,53 @@ def campaignPage(req):
         if c.name == req.session["sel-camp-prov"]:
             campaign = c
 
+    campaignOwners = []
+
+    for owner in Owner.objects.all():
+        if owner.campaign == campaign:
+            campaignOwners.append(owner)
+
+    ownerValues = []    # lenght is Num of Values
+
+    for attrEdge in Attribute_Edge.objects.all():
+        if attrEdge.owner in campaignOwners:
+            ownerValues.append(attrEdge.value)
+
+    ownerValues = list(set(ownerValues))
+
+    otherEntitiesInvolved = []
+
+    for relEdge in Relationship_Edge.objects.all():
+        if relEdge.owner1 in campaignOwners and relEdge.owner2 not in campaignOwners:
+            otherEntitiesInvolved.append(relEdge.owner2)
+
+    otherEntitiesInvolved = list(set(otherEntitiesInvolved))
+
+    numEntities = len(otherEntitiesInvolved) + len(campaignOwners)
+
+    numNodes = len(ownerValues) + numEntities
+    
+    numRelationships = len(campaign.relationships.all())
+
+    numAttributes = len(campaign.attributes.all())
+
+    numRelations = numRelationships + numAttributes
+
+    campaignRelEdges = []
+
+    for relEdge in Relationship_Edge.objects.all():
+        if relEdge.owner1 in campaignOwners:
+            campaignRelEdges.append(relEdge)
+
+    campaignAttrEdges = []
+
+    for attrEdge in Attribute_Edge.objects.all():
+        if attrEdge.owner in campaignOwners:
+            campaignAttrEdges.append(attrEdge)
+
+    totalEdges = len(campaignAttrEdges) + len(campaignRelEdges)
+
+
     if req.method == "POST":
 
         if "compare" in req.POST:
@@ -585,11 +644,11 @@ def campaignPage(req):
             return redirect('/anon/comparehome')
 
         if "anonymize" in req.POST:
-            print("anonymize")
+            
             return redirect('/anon/anonymize')
 
 
-    return render(req, 'anon/campaignpage.html', { 'campaign': campaign })
+    return render(req, 'anon/campaignpage.html', { 'campaign': campaign, 'numEntities': numEntities, 'numValues': len(ownerValues), 'numNodes': numNodes, 'numRelations': numRelations, 'numRelationships': numRelationships, 'numAttributes': numAttributes, 'numEdges': totalEdges, 'numAttrEdges': len(campaignAttrEdges), 'numRelEdges': len(campaignRelEdges) })
 
 
 
@@ -601,5 +660,201 @@ def compareHome(req):
 def compareResults(req):
     return render(req, 'anon/compareresults.html')
 
+
+
+
+
+
+
+
+
+
+def downloadfile(req):
+
+    campaign = req.session["campaign"]
+    calgo = req.session["calgo"]
+    calgo_args = req.session["calgo_args"]
+    enforcer = req.session["enforcer"]
+    enforcer_args = req.session["enforcer_args"]
+
+    current_dir = os.getcwd()
+    base_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+    filename = 'anony_' + campaign.replace(" ", "_") + '.txt'
+
+    graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
+
+    if calgo_args is not None:
+        graph_str += ("#" + calgo_args + "_")
+    
+    graph_str += enforcer
+
+    if enforcer_args is not None:
+        graph_str += ("#1.00")      #not really the best way
+
+    filepath = os.path.join(base_dir, "personalized-anony-kg", "outputs", "anonykg_thesis_-1", campaign, "graphs", graph_str, filename)
+
+    filename = os.path.basename(filepath)
+
+    if req.method == "POST":
+
+        if "download" in req.POST:
+            path = open(filepath, 'r')
+            mime_type, _ = mimetypes.guess_type(filepath)
+            response = HttpResponse(path, mime_type)
+            response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+            return response
+
+        if "redirect" in req.POST:
+            del req.session["sel-camp-prov"]
+
+            return redirect('/anon/homedataprovider')
+
+    return render(req, 'anon/download_page.html', {"path": filepath})
+
+
+
+
 def anonymize(req):
+
+    campaign = req.session["sel-camp-prov"]
+
+    if req.method == "POST":
+
+        clust = req.POST.get("clust-alg")
+        clust_arg = None
+
+        if clust[0] != "v":
+            clust_arg = clust.split("-")[1]
+            clust = clust.split("-")[0]
+
+        valid = req.POST.get("valid-alg")
+
+        if valid == "sr":
+            valid_arg = None
+        else:
+            valid_arg = "1.00"
+
+        download = req.POST.get("save-choice")
+
+        if clust == "vac":
+            command_line = 'cd ../personalized-anony-kg && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+        else:
+            command_line = 'cd ../personalized-anony-kg && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
+
+        terminal = command_line
+        subprocess.call(terminal, shell=True)
+
+        print("\n\n\n\n")
+
+
+
+
+        current_dir = os.getcwd()
+        base_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+
+        filename = campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
+
+        if clust_arg is not None:
+            filename += ("#" + clust_arg)
+
+        filename += ".txt"
+
+        filepath = os.path.join(base_dir, "personalized-anony-kg", "outputs", "anonykg_thesis_-1", campaign.lower(), "clusters", "raw", filename)
+
+
+
+        if not os.path.isfile(filepath):
+            print("\n\n\n")
+            print("Non esiste file: " + filepath)
+            print("\n\n\n")
+            return render(req, 'anon/anonymize.html', { "clusterError": True })
+
+
+
+        if clust == "vac":
+            command_line = 'cd ../personalized-anony-kg && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+        else:
+            command_line = 'cd ../personalized-anony-kg && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
+
+
+        if valid == "sr":
+            command_line += ' --enforcer=sr'
+        else:
+            command_line += ' --enforcer=ms --enforcer_args=1'
+
+        terminal = command_line
+        subprocess.call(terminal, shell=True)
+
+        print("\n\n\n\n")
+
+        command_line = 'cd ../personalized-anony-kg && python anonymize_kg.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\"'
+
+        if clust == "vac":
+            command_line += ' --calgo=' + clust
+        else:
+            command_line += ' --calgo=' + clust + ' --calgo_args=' + clust_arg
+
+        if valid == "sr":
+            command_line += ' --enforcer=sr'
+        else:
+            command_line += ' --enforcer=ms --enforcer_args=1'
+
+        terminal = command_line
+        subprocess.call(terminal, shell=True)
+
+        print("\n\n\n\n")
+
+        #command_line = 'cd ../personalized-anony-kg && python visualize_outputs.py --data_list=anonykg_thesis --campaign={} --refresh=y,y --src_type=graphs --exp_names={},{},compare --workers=1'.format(campaign.lower(), clust, valid)
+
+        #if clust == "vac":
+            #command_line += ' --calgo=' + clust
+        #else:
+            #command_line += ' --calgo=' + clust + ' --calgo_args=' + clust_arg
+
+        #if valid == "sr":
+            #command_line += ' --enforcer=sr'
+        #else:
+            #command_line += ' --enforcer=ms --enforcer_args=1'
+
+        #terminal = command_line
+        #subprocess.call(terminal, shell=True)
+
+        #print("\n\n\n\n")
+
+
+        if download == "yes":
+
+            command_line = 'cd ../personalized-anony-kg && python generate_anon_kg_file.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+
+            if clust != "vac":
+                command_line += ' --calgo_args=' + clust_arg
+            
+            command_line += ' --enforcer=' + valid
+
+            if valid == "ms":
+                command_line += ' --enforcer_args=1'
+
+            terminal = command_line
+            subprocess.call(terminal, shell=True)
+
+            campaign = campaign.lower()
+
+            req.session["campaign"] = campaign
+            req.session["calgo"] = clust
+            req.session["calgo_args"] = clust_arg
+            req.session["enforcer"] = valid
+            req.session["enforcer_args"] = valid_arg
+
+            return redirect('/anon/download')
+
+
+
+        del req.session["sel-camp-prov"]
+
+        return redirect('/anon/homedataprovider')
+
+
+
+
     return render(req, 'anon/anonymize.html')
