@@ -1,5 +1,7 @@
 from django.db import models
 
+import datetime
+
 
 
 class Provider(models.Model):
@@ -63,3 +65,22 @@ class Relationship_Edge(models.Model):
 
     def __str__(self) -> str:
         return self.owner1.email + " ---[" + self.relationship.name + "]-->" + self.owner2.email
+
+
+class AnonyGraph(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, default='error')
+    calgo = models.CharField(max_length=20, default='error')
+    enforcer = models.CharField(max_length=20, default='error')
+    ail = models.FloatField()
+    rru = models.FloatField()
+    last_updated = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.campaign.name + " {AIL: " + str(self.ail) + "} {RRU: " + str(self.rru) + "} [" + str(self.last_updated) + "]"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['campaign', 'calgo', 'enforcer'], name='unique_campaign_calgo_enforcer_combination'
+            )
+        ]

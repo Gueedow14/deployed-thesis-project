@@ -1,9 +1,10 @@
+from datetime import datetime
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.http import StreamingHttpResponse
 from wsgiref.util import FileWrapper
-import re, os, mimetypes, subprocess
-from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge
+import re, os, mimetypes, subprocess, csv
+from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph
 
 def logreg(req):
     if req.method == "POST":
@@ -805,22 +806,77 @@ def anonymize(req):
 
         print("\n\n\n\n")
 
-        #command_line = 'cd ../personalized-anony-kg && python visualize_outputs.py --data_list=anonykg_thesis --campaign={} --refresh=y,y --src_type=graphs --exp_names={},{},compare --workers=1'.format(campaign.lower(), clust, valid)
+        command_line = 'cd ../personalized-anony-kg && python visualize_outputs.py --data_list=anonykg_thesis --campaign=\"{}\" --refresh=y,y --src_type=graphs --exp_names={},{} --workers=1'.format(campaign.lower(), clust, valid)
 
-        #if clust == "vac":
-            #command_line += ' --calgo=' + clust
-        #else:
-            #command_line += ' --calgo=' + clust + ' --calgo_args=' + clust_arg
+        if clust == "vac":
+            command_line += ' --calgo=' + clust
+        else:
+            command_line += ' --calgo=' + clust + ' --calgo_args=' + clust_arg
 
-        #if valid == "sr":
-            #command_line += ' --enforcer=sr'
-        #else:
-            #command_line += ' --enforcer=ms --enforcer_args=1'
+        if valid == "sr":
+            command_line += ' --enforcer=sr'
+        else:
+            command_line += ' --enforcer=ms --enforcer_args=1'
 
-        #terminal = command_line
-        #subprocess.call(terminal, shell=True)
+        terminal = command_line
+        subprocess.call(terminal, shell=True)
 
-        #print("\n\n\n\n")
+        print("\n\n\n\n")
+
+
+        current_dir = os.getcwd()
+        base_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+
+        filename = campaign.lower().replace(" ", "_") + ".csv"
+
+        filepath = os.path.join(base_dir, "personalized-anony-kg", "exp_data", "tuning_graphs", "anonykg_thesis_-1", filename)
+
+        agg_filename = campaign.lower().replace(" ", "_") + "_agg.csv"
+
+        agg_filepath = os.path.join(base_dir, "personalized-anony-kg", "exp_data", "tuning_graphs", "anonykg_thesis_-1", agg_filename)
+
+        print("Path: " + agg_filepath)
+
+        with open(agg_filepath, 'r') as f:
+            csvreader = csv.reader(f)
+
+            enforcer_index = -1
+            calgo_index = -1
+            ail_index = -1
+            removed_entities_index = -1
+            raw_entities_index = -1
+
+            for i, row in enumerate(csvreader):
+                if i == 0:
+                    enforcer_index = row.index("enforcer_str")
+                    calgo_index = row.index("calgo_str")
+                    ail_index = row.index("radm")
+                    removed_entities_index = row.index("removed_entities")
+                    raw_entities_index = row.index("num_raw_entities")
+
+                else:
+                    enforcer = row[enforcer_index]
+                    calgo = row[calgo_index]
+                    ail = row[ail_index]
+                    rem_ent = row[removed_entities_index]
+                    raw_ent = row[raw_entities_index]
+
+                    for c in Campaign.objects.all():
+                        if c.name.lower() == campaign.lower():
+                            selectedCampaign = c
+
+                    rru = float(rem_ent)/float(raw_ent)
+
+                    graph = AnonyGraph.objects.filter(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer)
+
+                    if not graph:
+                        new_graph = AnonyGraph(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer, ail=float(ail), rru=rru)
+                        new_graph.save()
+                    else:
+                        graph[0].ail = float(ail)
+                        graph[0].rru = rru
+                        graph[0].last_updated = datetime.now()
+                        graph[0].save()
 
 
         if download == "yes":
