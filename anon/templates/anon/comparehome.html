@@ -23,128 +23,73 @@
 
 
             <div class="title">
-                <h1>Compare</h1>
+                <h1>Compare {{ campaign.name }} Anony Graphs</h1>
             </div>
 
 
 
             <div class="container">
 
+                <div class="compare_div">
+                    <p>Click on the lines below and proceed to the next screen<br>where you can compare the data from the various anonymized graphs.</p>
+                </div>
 
+
+                {% if not graphs %}
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">No Graphs Created</p>
+                    </div>
+
+                {% else %}
+
+                    <div id="tableBox" class="tableBox">
+                        <table id="graph-table" class="table">
+
+                            <tr class="table_row title_row">
+                                <th id="column-calgo" style="width:25%">Clustering Algorithm</th>
+                                <th id="column-enforcer" style="width:25%">Validation Algorithm</th>
+                                <th id="column-rru" style="width:15%">RRU</th>
+                                <th id="column-ail" style="width:15%">AIL</th>
+                                <th style="width:20%">Last Update</th>
+                            </tr>
+
+                            {% for graph, last_update, calgo in graphs %}
+
+                                <tr id="row-{{ forloop.counter }}" class="table_row">
+                                    <td style="width:25%">{{ calgo }}</td>
+
+                                    {% if graph.enforcer != "sr" %}
+                                        <td style="width:25%">MS-Algorithm#1.00</td>
+                                    {% else %}
+                                        <td style="width:25%">Invalid Removal</td>
+                                    {% endif %}
+
+                                    <td style="width:15%">{{ graph.rru }}</td>
+                                    <td style="width:15%">{{ graph.ail }}</td>
+                                    <td style="width:20%">{{ last_update }}</td>
+                                </tr>
+                            
+                            {% endfor %}
+
+                        </table>
+                    </div>
+
+                {% endif %}
+                
 
                 <div class="buttons_div">
-                    
+
                     <div class="filter_div">
-                        <button id="filter-button" class="button">Filter</button>
-                        <p id="num-filters" class="num_filters">3</p>
+                        <button id="filter-button" class="filter_button">Filter</button>
                     </div>
 
-                    <div class="sort_div">
-                        <p id="selected-sort-param" class="sort">--Reset--</p>
-                        <button id="sort-button" class="button">Sort</button>
-                    </div>
-
-
-                    <div id="sort-params" class="sort_params">
-
-                        <dl id="list-sort-params" class="list_sort_params">
-                            <dt class="sort_param">--Reset--</dt>
-                            <dt class="sort_param">Highest RRU</dt>
-                            <dt class="sort_param">Lowest RRU</dt>
-                            <dt class="sort_param">Highest AIL</dt>
-                            <dt class="sort_param">Lowest AIL</dt>
-                            <dt class="sort_param">Alphabetical</dt>
-                            <dt class="sort_param">Clustering Algorithm</dt>
-                            <dt class="sort_param">Validation Algorithm</dt>
-                        </dl>
-        
-                    </div>
-
-
-
-                </div>
-
-
-
-                <div id="kgs" class="kgs">
-
-                    <div class="kg">
-
-                        <div class="imageBox">
-                            <img class="image" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Conceptual_Diagram_-_Example.svg/800px-Conceptual_Diagram_-_Example.svg.png">
-                        </div>
-
-                        <div class="content">
-                            <div>
-                                <h2>Desenzano</h2>
-
-                                <p>RRU: <span>1.7</span></p>
-                                <p>AIL: <span>3.7</span></p>
-                                <p>Clustering Algorithm: <span>VAC</span></p>
-                                <p>Validation Algorithm: <span>MS-Algorithm</span></p>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="kg">
-                        <div class="imageBox">
-                            <img class="image" src="https://theinnovator.news/wp-content/uploads/2020/12/bio_kg-2.png">
-                        </div>
-                        <div class="content">
-                            <div>
-                                <h2>Amalfi</h2>
-
-                                <p>RRU: <span id="RRU-value-2">1.3</span></p>
-                                <p>AIL: <span id="RRU-value-2">2.1</span></p>
-                                <p>Clustering Algorithm: <span id="clustering-alg-2">K-Medoids</span></p>
-                                <p>Validation Algorithm: <span id="validation-alg-2">Invalid Removal</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="kg">
-                        <div class="imageBox">
-                            <img class="image" src="https://miro.medium.com/max/909/1*2ZnrhrKUGk0KkPOa8RaXsA.png">
-                        </div>
-                        <div class="content">
-                            <div>
-                                <h2>Napoli</h2>
-
-                                <p>RRU: <span id="RRU-value-3">3.1</span></p>
-                                <p>AIL: <span id="RRU-value-3">2.9</span></p>
-                                <p>Clustering Algorithm: <span id="clustering-alg-3">VAC</span></p>
-                                <p>Validation Algorithm: <span id="validation-alg-3">Invalid Removal</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="kg">
-                        <div class="imageBox">
-                            <img class="image" src="https://timbr.ai/wp-content/uploads/2020/05/ontology.jpg">
-                        </div>
-                        <div class="content">
-                            <div>
-                                <h2>Zurigo</h2>
-
-                                <p>RRU: <span id="RRU-value-4">2.4</span></p>
-                                <p>AIL: <span id="RRU-value-4">1.5</span></p>
-                                <p>Clustering Algorithm: <span id="clustering-alg-4">HDBSCAN</span></p>
-                                <p>Validation Algorithm: <span id="validation-alg-4">MS-Algorithm</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div class="proceed_div">
-
-                    <button id="proceed-button" class="proceed_button">Proceed</button>
-
+                    <form method="post" class="proceed_div">
+                        {% csrf_token %}
+                        <input id="selected-graphs-input" type="hidden" name="selected-graphs" value="">
+                        <button type="submit" name="proceed" id="proceed-button" class="proceed_button">Proceed</button>
+                    </form>
+                    
                 </div>
 
 
@@ -186,7 +131,7 @@
                         <div class="values_slider_div">
                             <span id="AIL-min" class="filter_value_min">0</span>
                             <div class="slider_div">
-                                <input id="AIL-filter" class="filter_range" type="range" step="0.1">
+                                <input id="AIL-filter" class="filter_range" type="range" step="0.0001">
                             </div>
                             <span id="AIL-max" class="filter_value_max">100</span>
                         </div>
@@ -249,6 +194,27 @@
 
             </div>
         </div>
+
+
+        <script>
+
+            function getMaxRRU() {
+                return "{{ maxrru }}";
+            }
+
+            function getMinRRU() {
+                return "{{ minrru }}";
+            }
+
+            function getMaxAIL() {
+                return "{{ maxail }}";
+            }
+
+            function getMinAIL() {
+                return "{{ minail }}";
+            }
+
+        </script>
 
 
 

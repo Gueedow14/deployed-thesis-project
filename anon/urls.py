@@ -18,6 +18,7 @@ urlpatterns = [
     path('resetpwd', views.resetPwd, name="resetPwd"),
     path('userrelationships', views.userRelationships, name="userRelationships"),
     
-    path('download', views.downloadfile)
+    path('download', views.downloadfile),
+    path('error', views.errorpage)
     
 ]

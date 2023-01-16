@@ -1,524 +1,271 @@
-var kgs = document.getElementById('kgs').children;
-var kgsParent = document.getElementById('kgs');
+var table = document.getElementById("graph-table");
+var rows = table.getElementsByTagName("tr");
 
-var kgsIndexes = [];
- 
+for (i = 1; i < rows.length; i++) {
+	rows[i].addEventListener('click', onClickRow)
+}
 
-$( document ).ready(function() {
-    for(var i = 0 ; i < kgs.length ; i++) {
-        kgs[i].id = "kg" + (i+1);
-        kgsIndexes[i] = (i+1);
-        kgs[i].addEventListener('click', onClickKG);
-    }
-});
+selectedRows = []
 
-
-function onClickKG() {
-    if(!this.classList.contains("selected_kg")) {
-        this.classList.add("selected_kg");
+function onClickRow() {
+	
+    if(selectedRows.includes(this.id)) {
+        selectedRows = selectedRows.filter(selectedRows => selectedRows != this.id)
+        this.style.color = "black"
+        this.style.fontWeight = "100"
     } else {
-        this.classList.remove("selected_kg");
+        selectedRows.push(this.id)
+        this.style.color = "red"
+        this.style.fontWeight = "bold"
     }
-        
+
 }
 
 
 
 
-var sortButton = document.getElementById("sort-button");
-var sortParams = document.getElementById("list-sort-params");
-var chkOpenParams = false;
-var selectedSortParam = document.getElementById("selected-sort-param");
-var listSortParams = document.getElementsByClassName("sort_param");
-var chkVisibleSelectedSortParam = false;
 var filterButton = document.getElementById('filter-button');
-
-
 filterButton.addEventListener('click', onClickFilter);
-sortButton.addEventListener('click', onClickSort);
-for(var i=0; i<listSortParams.length; i++)
-    listSortParams[i].addEventListener('click', onClickParameter);
 
 
 
-function onClickSort() {
-    if(chkOpenParams) {
-        sortParams.style.transform = "translateY(-400px)";
-        chkOpenParams = false;
-    } else {
-        sortParams.style.transform = "translateY(0)";
-        chkOpenParams = true;
+var calgoColumn = document.getElementById('column-calgo');
+var enforcerColumn = document.getElementById('column-enforcer');
+
+calgoColumn.addEventListener('click', onClickTextColumn);
+enforcerColumn.addEventListener('click', onClickTextColumn);
+
+chkCalgoCol = false;
+chkEnforcerCol = false;
+
+var RRUColumn = document.getElementById('column-rru');
+var AILColumn = document.getElementById('column-ail');
+
+RRUColumn.addEventListener('click', onClickNumColumn);
+AILColumn.addEventListener('click', onClickNumColumn);
+
+chkRRUCol = false;
+chkAILCol = false;
+
+function onClickTextColumn() {
+
+    if(this.id == 'column-calgo') {
+        if(chkCalgoCol) {
+            sortTableDesc(0);
+            chkCalgoCol = false;
+            calgoColumn.innerHTML = "Clustering Algorithm ▼"
+        } else {
+            sortTableAsc(0);
+            chkCalgoCol = true;
+            calgoColumn.innerHTML = "Clustering Algorithm ▲"
+        }
+        chkEnforcerCol = false;
+        chkAILCol = false;
+        chkRRUCol = false;
+        enforcerColumn.innerHTML = "Validation Algorithm"
+        RRUColumn.innerHTML = "RRU"
+        AILColumn.innerHTML = "AIL"
+    } else if(this.id == 'column-enforcer') {
+        if(chkEnforcerCol) {
+            sortTableDesc(1);
+            chkEnforcerCol = false;
+            enforcerColumn.innerHTML = "Validation Algorithm ▼"
+        } else {
+            sortTableAsc(1);
+            chkEnforcerCol = true;
+            enforcerColumn.innerHTML = "Validation Algorithm ▲"
+        }
+        chkCalgoCol = false;
+        chkAILCol = false;
+        chkRRUCol = false;
+        calgoColumn.innerHTML = "Clustering Algorithm"
+        RRUColumn.innerHTML = "RRU"
+        AILColumn.innerHTML = "AIL"
+    }
+
+
+}
+
+
+function sortTableAsc(column) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("graph-table");
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+      //start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /*Loop through all table rows (except the
+      first, which contains table headers):*/
+      for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[column];
+        y = rows[i + 1].getElementsByTagName("TD")[column];
+        //check if the two rows should switch place:
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+        }
+      }
+      if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
     }
 }
 
-async function onClickParameter() {
-    if(chkVisibleSelectedSortParam && this.innerHTML === "--Reset--") {
-        selectedSortParam.style.opacity = "0";
-        await new Promise(r => setTimeout(r, 200));
-        selectedSortParam.innerHTML = this.innerHTML;
-        chkVisibleSelectedSortParam = false;
-        resetSort();
-    } else if(!chkVisibleSelectedSortParam && this.innerHTML != "--Reset--") {
-        selectedSortParam.style.opacity = "1";
-        selectedSortParam.innerHTML = this.innerHTML;
-        chkVisibleSelectedSortParam = true;
-        callSortMethod(this.innerHTML);
-    } else if (chkVisibleSelectedSortParam && this.innerHTML != "--Reset--") {
-        selectedSortParam.innerHTML = this.innerHTML;
-        callSortMethod(this.innerHTML);
+function sortTableDesc(column) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("graph-table");
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+      //start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /*Loop through all table rows (except the
+      first, which contains table headers):*/
+      for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[column];
+        y = rows[i + 1].getElementsByTagName("TD")[column];
+        //check if the two rows should switch place:
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+      if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
     }
 }
 
-function callSortMethod(str) {
-    switch(str) {
-        case "Highest RRU": highestRRU(); break;
-        case "Lowest RRU": lowestRRU(); break;
-        case "Highest AIL": highestAIL(); break;
-        case "Lowest AIL": lowestAIL(); break;
-        case "Alphabetical": alphabetical(); break;
-        case "Clustering Algorithm": clusteringAlg(); break;
-        case "Validation Algorithm": validationAlg(); break;
-        default: console.log("ERROR");
+function onClickNumColumn() {
+
+    if(this.id == 'column-rru') {
+        if(chkRRUCol) {
+            sortTableNumDesc(2);
+            chkRRUCol = false;
+            RRUColumn.innerHTML = "RRU ▼"
+        } else {
+            sortTableNumAsc(2);
+            chkRRUCol = true;
+            RRUColumn.innerHTML = "RRU ▲"
+        }
+        chkAILCol = false;
+        chkCalgoCol = false;
+        chkEnforcerCol = false;
+        AILColumn.innerHTML = "AIL"
+        calgoColumn.innerHTML = "Clustering Algorithm"
+        enforcerColumn.innerHTML = "Validation Algorithm"
+    } else if(this.id == 'column-ail') {
+        if(chkAILCol) {
+            sortTableNumDesc(3);
+            chkAILCol = false;
+            AILColumn.innerHTML = "AIL ▼"
+        } else {
+            sortTableNumAsc(3);
+            chkAILCol = true;
+            AILColumn.innerHTML = "AIL ▲"
+        }
+        chkRRUCol = false;
+        chkCalgoCol = false;
+        chkEnforcerCol = false;
+        RRUColumn.innerHTML = "RRU"
+        calgoColumn.innerHTML = "Clustering Algorithm"
+        enforcerColumn.innerHTML = "Validation Algorithm"
+    }
+
+
+}
+
+
+function sortTableNumAsc(column) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("graph-table");
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+      //start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /*Loop through all table rows (except the
+      first, which contains table headers):*/
+      for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[column];
+        y = rows[i + 1].getElementsByTagName("TD")[column];
+        //check if the two rows should switch place:
+        if (parseFloat(x.innerHTML.toLowerCase()) > parseFloat(y.innerHTML.toLowerCase())) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+        }
+      }
+      if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
     }
 }
 
-function resetSort() {
-
-    for(var i = 0 ; i < kgsIndexes.length ; i++) {
-        for(var j = i ; j < kgsIndexes.length ; j++) {
-            if(kgsIndexes[j] < kgsIndexes[i]) {
-                kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-                
-                var tmp1 = kgsIndexes[i];
-                kgsIndexes[i] = kgsIndexes[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    var tmp2 = kgsIndexes[count];
-                    kgsIndexes[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-            }
+function sortTableNumDesc(column) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("graph-table");
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+      //start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+      /*Loop through all table rows (except the
+      first, which contains table headers):*/
+      for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[column];
+        y = rows[i + 1].getElementsByTagName("TD")[column];
+        //check if the two rows should switch place:
+        if (parseFloat(x.innerHTML.toLowerCase()) < parseFloat(y.innerHTML.toLowerCase())) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
         }
-    }
-
-}
-
-function getRRUs() {
-    var RRUs = [];
-
-    for(var i = 0 ; i < kgs.length ; i++)
-        RRUs[i] = kgs[i].children[1].children[0].children[1].lastChild.innerHTML;
-
-    return RRUs;
-}
-
-function getAILs() {
-    var AILs = [];
-
-    for(var i = 0 ; i < kgs.length ; i++)
-        AILs[i] = kgs[i].children[1].children[0].children[2].lastChild.innerHTML;
-
-    return AILs;
-}
-
-function getNames() {
-    var names = [];
-
-    for(var i = 0 ; i < kgs.length ; i++)
-        names[i] = kgs[i].children[1].children[0].children[0].innerHTML;
-
-    return names;
-}
-
-function getClusteringAlgs() {
-    var clustAlgs = [];
-
-    for(var i = 0 ; i < kgs.length ; i++)
-        clustAlgs[i] = kgs[i].children[1].children[0].children[3].lastChild.innerHTML;
-
-    return clustAlgs;
-}
-
-function getValidationAlgs() {
-    var valAlgs = [];
-
-    for(var i = 0 ; i < kgs.length ; i++)
-        valAlgs[i] = kgs[i].children[1].children[0].children[4].lastChild.innerHTML;
-
-    return valAlgs;
-}
-
-function highestRRU() {
-    var valuesRRU = getRRUs();
-    
-    for(var i = 0 ; i < valuesRRU.length ; i++) {
-        for(var j = i ; j < valuesRRU.length ; j++) {
-            if(parseFloat(valuesRRU[i]) < parseFloat(valuesRRU[j])) {
-                kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-
-                var tmp1 = valuesRRU[i];
-                var tmp2;
-                valuesRRU[i] = valuesRRU[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = valuesRRU[count];
-                    valuesRRU[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-                
-                
-                tmp1 = kgsIndexes[i];
-                kgsIndexes[i] = kgsIndexes[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = kgsIndexes[count];
-                    kgsIndexes[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-            }
-        }
+      }
+      if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
     }
 }
-
-function lowestRRU() {
-    var valuesRRU = getRRUs();
-
-    for(var i = 0 ; i < valuesRRU.length ; i++) {
-        for(var j = i ; j < valuesRRU.length ; j++) {
-            if(parseFloat(valuesRRU[i]) > parseFloat(valuesRRU[j])) {
-                kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-
-                var tmp1 = valuesRRU[i];
-                var tmp2;
-                valuesRRU[i] = valuesRRU[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = valuesRRU[count];
-                    valuesRRU[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-                
-                
-                tmp1 = kgsIndexes[i];
-                kgsIndexes[i] = kgsIndexes[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = kgsIndexes[count];
-                    kgsIndexes[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-            }
-        }
-    }
-}
-
-
-
-function highestAIL() {
-    var valuesAIL = getAILs();
-
-    for(var i = 0 ; i < valuesAIL.length ; i++) {
-        for(var j = i ; j < valuesAIL.length ; j++) {
-            if(parseFloat(valuesAIL[i]) < parseFloat(valuesAIL[j])) {
-                kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-
-                var tmp1 = valuesAIL[i];
-                var tmp2;
-                valuesAIL[i] = valuesAIL[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = valuesAIL[count];
-                    valuesAIL[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-                
-                
-                tmp1 = kgsIndexes[i];
-                kgsIndexes[i] = kgsIndexes[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = kgsIndexes[count];
-                    kgsIndexes[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-            }
-        }
-    }
-}  
-
-function lowestAIL() {
-    var valuesAIL = getAILs();
-
-    for(var i = 0 ; i < valuesAIL.length ; i++) {
-        for(var j = i ; j < valuesAIL.length ; j++) {
-            if(parseFloat(valuesAIL[i]) > parseFloat(valuesAIL[j])) {
-                kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-
-                var tmp1 = valuesAIL[i];
-                var tmp2;
-                valuesAIL[i] = valuesAIL[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = valuesAIL[count];
-                    valuesAIL[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-                
-                
-                tmp1 = kgsIndexes[i];
-                kgsIndexes[i] = kgsIndexes[j];
-                for(var count = i+1 ; count < j+1 ; count++) {
-                    tmp2 = kgsIndexes[count];
-                    kgsIndexes[count] = tmp1;
-                    tmp1 = tmp2;
-                }
-
-            }
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-var ascOrDesc = true;
-var ascOrDescClust = true;
-var ascOrDescVal = true;
-
-
-function alphabetical() {
-
-    var names = getNames();
-
-    if(ascOrDesc) {
-
-        for(var i = 0 ; i < names.length ; i++) {
-            for(var j = i ; j < names.length ; j++) {
-                if(names[i] > names[j]) {
-
-                    kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-    
-                    var tmp1 = names[i];
-                    var tmp2;
-                    names[i] = names[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = names[count];
-                        names[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                    
-                    
-                    tmp1 = kgsIndexes[i];
-                    kgsIndexes[i] = kgsIndexes[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = kgsIndexes[count];
-                        kgsIndexes[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-                }
-            }
-        }
-
-        ascOrDesc = false;
-        ascOrDescClust = true;
-        ascOrDescVal = true;
-
-    } else {
-
-        for(var i = 0 ; i < names.length ; i++) {
-            for(var j = i ; j < names.length ; j++) {
-                if(names[i] < names[j]) {
-                    kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-    
-                    var tmp1 = names[i];
-                    var tmp2;
-                    names[i] = names[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = names[count];
-                        names[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                    
-                    
-                    tmp1 = kgsIndexes[i];
-                    kgsIndexes[i] = kgsIndexes[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = kgsIndexes[count];
-                        kgsIndexes[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-                }
-            }
-        }
-
-        ascOrDesc = true;
-        ascOrDescClust = true;
-        ascOrDescVal = true;
-
-    }
-
-}
-
-function clusteringAlg() {
-
-    var clusteringAlgs = getClusteringAlgs();
-
-    if(ascOrDescClust) {
-
-        for(var i = 0 ; i < clusteringAlgs.length ; i++) {
-            for(var j = i ; j < clusteringAlgs.length ; j++) {
-                if(clusteringAlgs[i] > clusteringAlgs[j]) {
-
-                    kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-    
-                    var tmp1 = clusteringAlgs[i];
-                    var tmp2;
-                    clusteringAlgs[i] = clusteringAlgs[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = clusteringAlgs[count];
-                        clusteringAlgs[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                    
-                    
-                    tmp1 = kgsIndexes[i];
-                    kgsIndexes[i] = kgsIndexes[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = kgsIndexes[count];
-                        kgsIndexes[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-                }
-            }
-        }
-
-        ascOrDesc = true;
-        ascOrDescClust = false;
-        ascOrDescVal = true;
-
-    } else {
-
-        for(var i = 0 ; i < clusteringAlgs.length ; i++) {
-            for(var j = i ; j < clusteringAlgs.length ; j++) {
-                if(clusteringAlgs[i] < clusteringAlgs[j]) {
-                    kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-    
-                    var tmp1 = clusteringAlgs[i];
-                    var tmp2;
-                    clusteringAlgs[i] = clusteringAlgs[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = clusteringAlgs[count];
-                        clusteringAlgs[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                    
-                    
-                    tmp1 = kgsIndexes[i];
-                    kgsIndexes[i] = kgsIndexes[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = kgsIndexes[count];
-                        kgsIndexes[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-                }
-            }
-        }
-
-        ascOrDesc = true;
-        ascOrDescClust = true;
-        ascOrDescVal = true;
-
-    }
-
-}
-
-function validationAlg() {
-
-    var validationAlgs = getValidationAlgs();
-
-    if(ascOrDescVal) {
-
-        for(var i = 0 ; i < validationAlgs.length ; i++) {
-            for(var j = i ; j < validationAlgs.length ; j++) {
-                if(validationAlgs[i] > validationAlgs[j]) {
-
-                    kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-    
-                    var tmp1 = validationAlgs[i];
-                    var tmp2;
-                    validationAlgs[i] = validationAlgs[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = validationAlgs[count];
-                        validationAlgs[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                    
-                    
-                    tmp1 = kgsIndexes[i];
-                    kgsIndexes[i] = kgsIndexes[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = kgsIndexes[count];
-                        kgsIndexes[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                }
-            }
-        }
-
-        ascOrDesc = true;
-        ascOrDescClust = true;
-        ascOrDescVal = false;
-
-    } else {
-
-        for(var i = 0 ; i < validationAlgs.length ; i++) {
-            for(var j = i ; j < validationAlgs.length ; j++) {
-                if(validationAlgs[i] < validationAlgs[j]) {
-
-                    kgsParent.insertBefore(document.getElementById("kg" + kgsIndexes[j]), document.getElementById("kg" + kgsIndexes[i]));
-                    
-                    var tmp1 = validationAlgs[i];
-                    var tmp2;
-                    validationAlgs[i] = validationAlgs[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = validationAlgs[count];
-                        validationAlgs[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                    
-                    
-                    tmp1 = kgsIndexes[i];
-                    kgsIndexes[i] = kgsIndexes[j];
-                    for(var count = i+1 ; count < j+1 ; count++) {
-                        tmp2 = kgsIndexes[count];
-                        kgsIndexes[count] = tmp1;
-                        tmp1 = tmp2;
-                    }
-
-                }
-            }
-        }
-
-        ascOrDesc = true;
-        ascOrDescClust = true;
-        ascOrDescVal = true;
-
-    }
-
-}
-
 
 
 
@@ -559,50 +306,9 @@ var numFiltersApplied = 0;
 var filtersApplied = [false, false, false, false];
 
 
-function getMaxRRU() {
-    var valuesRRU = getRRUs();
-    var max = parseFloat(valuesRRU[0]);
-    for(var i = 0 ; i < valuesRRU.length ; i++)
-        if(parseFloat(valuesRRU[i]) > max) 
-            max = parseFloat(valuesRRU[i]) 
-
-    return max;
-}
-
-function getMinRRU() {
-    var valuesRRU = getRRUs();
-    var min = parseFloat(valuesRRU[0]);
-    for(var i = 0 ; i < valuesRRU.length ; i++)
-        if(parseFloat(valuesRRU[i]) < min) 
-            min = parseFloat(valuesRRU[i]) 
-
-    return min;
-}
-
-function getMaxAIL() {
-    var valuesAIL = getAILs();
-    var max = parseFloat(valuesAIL[0]);
-    for(var i = 0 ; i < valuesAIL.length ; i++)
-        if(parseFloat(valuesAIL[i]) > max) 
-            max = parseFloat(valuesAIL[i]) 
-
-    return max;
-}
-
-function getMinAIL() {
-    var valuesAIL = getAILs();
-    var min = parseFloat(valuesAIL[0]);
-    for(var i = 0 ; i < valuesAIL.length ; i++)
-        if(parseFloat(valuesAIL[i]) < min) 
-            min = parseFloat(valuesAIL[i]) 
-
-    return min;
-}
 
 
 function onClickFilter() {
-    sortParams.style.transform = "translateY(-400px)";
-    chkOpenParams = false;
 
     minRRU.innerHTML = getMinRRU();
     maxRRU.innerHTML = getMaxRRU();
@@ -615,9 +321,9 @@ function onClickFilter() {
     sliderAIL.max = getMaxAIL();
 
     if(filtersApplied[0] === false)
-        sliderRRU.value = sliderRRU/2;
+        sliderRRU.value = (sliderRRU.max + sliderRRU.min)/2;
     if(filtersApplied[1] === false)
-        sliderAIL.value = sliderAIL/2;
+        sliderAIL.value = (sliderAIL.max + sliderAIL.min)/2;
 
     windowFilters.style.display = "block";
 }
@@ -714,85 +420,110 @@ setFiltersButton.addEventListener('click', setFilters);
 
 function setFilters() {
 
-    numFiltersApplied = 0;
-
-    for(var i = 0 ; i < kgs.length ; i++)
-        document.getElementById("kg" + kgsIndexes[i]).style.display = "block";
-
+    for(var i = 1 ; i < rows.length ; i++)
+        document.getElementById("row-" + i).style.display = "table-row";
 
 
     if(filtersApplied[0] === true) {
 
-        numFiltersApplied++;
+        for (i = 1; i < rows.length; i++) {
+            td = rows[i].getElementsByTagName("td")[2];
+            if(td) {
+                txtValue = parseFloat(td.textContent || td.innerText);
+                console.log(txtValue)
 
-        var valuesRRU = getRRUs();
+                if(filterRRUValue) {    //equal or less
 
-        if(filterRRUValue)
-            for(var i = 0 ; i < valuesRRU.length ; i++) {
-                if(parseFloat(valuesRRU[i]) > currentRRUValue) {
-                    document.getElementById("kg" + kgsIndexes[i]).style.display = "none";
+                    if(txtValue <= currentRRUValue && rows[i].style.display != "none") {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+
+                } else {                //equal or more
+
+                    if(txtValue >= currentRRUValue && rows[i].style.display != "none") {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+
                 }
-            }   
-        else
-            for(var i = 0 ; i < valuesRRU.length ; i++) {
-                if(parseFloat(valuesRRU[i]) < currentRRUValue) {
-                    document.getElementById("kg" + kgsIndexes[i]).style.display = "none";
-                }
-            }    
-        
-        
+
+            }
+        }
+
     }
 
     if(filtersApplied[1] === true) {
 
-        numFiltersApplied++;
+        for (i = 1; i < rows.length; i++) {
+            td = rows[i].getElementsByTagName("td")[3];
+            if(td) {
+                txtValue = parseFloat(td.textContent || td.innerText);
+                console.log(txtValue)
 
+                if(filterRRUValue) {    //equal or less
 
-        var valuesAIL = getAILs();
+                    if(txtValue <= currentAILValue && rows[i].style.display != "none") {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
 
-        if(filterAILValue)
-            for(var i = 0 ; i < valuesAIL.length ; i++) {
-                if(parseFloat(valuesAIL[i]) > currentAILValue) {
-                    document.getElementById("kg" + kgsIndexes[i]).style.display = "none";
+                } else {                //equal or more
+
+                    if(txtValue >= currentAILValue && rows[i].style.display != "none") {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+
                 }
-            }          
-        else
-            for(var i = 0 ; i < valuesAIL.length ; i++) {
-                if(parseFloat(valuesAIL[i]) < currentAILValue) {
-                    document.getElementById("kg" + kgsIndexes[i]).style.display = "none";
-                }
-            }    
 
+            }
+        }
 
     }
 
     if(filtersApplied[2] === true) {
 
-        numFiltersApplied++;
+        for (i = 1; i < rows.length; i++) {
+            td = rows[i].getElementsByTagName("td")[0];
+            if(td) {
+                txtValue = (td.textContent || td.innerText).split("#")[0];
+                console.log(txtValue)
 
-        
-        var clustAlgs = getClusteringAlgs();
+                if(txtValue === currentFilterClust && rows[i].style.display != "none") {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
 
-        for(var i = 0 ; i < clustAlgs.length ; i++)
-            if(clustAlgs[i] != currentFilterClust)
-                document.getElementById("kg" + kgsIndexes[i]).style.display = "none";
-    
+            }
+        }
     }
 
     if(filtersApplied[3] === true) {
 
-        numFiltersApplied++;
+        for (i = 1; i < rows.length; i++) {
+            td = rows[i].getElementsByTagName("td")[1];
+            if(td) {
+                txtValue = (td.textContent || td.innerText).split("#")[0];
+                console.log(txtValue)
 
-        var valAlgs = getValidationAlgs();
+                if(txtValue === currentFilterValid && rows[i].style.display != "none") {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
 
-        for(var i = 0 ; i < valAlgs.length ; i++)
-            if(valAlgs[i] != currentFilterValid)
-                document.getElementById("kg" + kgsIndexes[i]).style.display = "none";
-
+            }
+        }
+        
     }
 
-    numFilters.style.opacity = 1;
-    numFilters.innerHTML = numFiltersApplied;
+
     windowFilters.style.display = "none";
 
 }
@@ -801,10 +532,7 @@ function setFilters() {
 
 
 var resetFiltersButton = document.getElementById('reset-button');
-
-
 resetFiltersButton.addEventListener('click', resetFilters);
-
 
 function resetFilters() {
     sliderRRU.value = sliderRRU/2;
@@ -821,29 +549,33 @@ function resetFilters() {
         if(radios[i].checked === true)
             radios[i].checked = false;    
 
-    numFilters.style.opacity = 0;
-
     filtersApplied = [false, false, false, false];
 
-    for(var i = 0 ; i < kgs.length ; i++)
-        document.getElementById("kg" + kgsIndexes[i]).style.display = "block";
+    for(var i = 1 ; i < rows.length ; i++)
+        document.getElementById("row-" + i).style.display = "table-row";
 
 }
 
 
-var proceedButton = document.getElementById("proceed-button");
+const inputProceed = document.getElementById("selected-graphs-input");
 
-
+const proceedButton = document.getElementById("proceed-button");
 proceedButton.addEventListener('click', onClickProceed);
 
 function onClickProceed() {
-    var selectedKGs = document.getElementsByClassName("selected_kg");
-    console.log(selectedKGs.length);
-    if(selectedKGs.length === 0)
-        alert("You need to select at least one KG in order to proceed!");
-    else {
-        //data to be passed
+    tmp = ""
 
-        location.href = "compareresults";
-    }
+    if(selectedRows.length === 0)
+        alert("You need to select at least one Row in order to proceed!");
+    else
+        for(var i = 0 ; i<selectedRows.length ; i++) {
+            thisRow = document.getElementById(selectedRows[i]);
+            values = thisRow.getElementsByTagName("TD");
+            for(var j = 0 ; j<values.length ; j++)
+                tmp += (values[j].innerHTML + ";")
+            tmp = tmp.slice(0,-1);
+            tmp += "|"
+        }
+    tmp = tmp.slice(0,-1);
+    inputProceed.value = tmp
 }

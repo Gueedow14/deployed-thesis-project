@@ -64,19 +64,27 @@
                     
 
                     <div id="tableBox" class="tableBox">
-                        <table id="myTable" class="table">
+                        <table id="graph-table" class="table">
 
-                            <tr>
-                              <th style="width:40%">Features</th>
-                              <th style="width:10%">RRU</th>
-                              <th style="width:10%">AIL</th>
-                              <th style="width:20%">Clustering Alg.</th>
-                              <th style="width:20%">Validation Alg.</th>
+                            <tr class="table_row title_row">
+                                <th id="column-calgo" style="width:30%">Clustering Algorithm</th>
+                                <th id="column-enforcer" style="width:30%">Validation Algorithm</th>
+                                <th id="column-rru" style="width:20%">RRU</th>
+                                <th id="column-ail" style="width:20%">AIL</th>
                             </tr>
 
-                            
+                            {% for calgo, enforcer, rru, ail in graphs %}
 
-                          </table>
+                                <tr id="row-{{ forloop.counter }}" class="table_row">
+                                    <td style="width:30%">{{ calgo }}</td>
+                                    <td style="width:30%">{{ enforcer }}</td>
+                                    <td style="width:20%">{{ rru }}</td>
+                                    <td style="width:20%">{{ ail }}</td>
+                                </tr>
+                            
+                            {% endfor %}
+
+                        </table>
                     </div>
 
 
@@ -85,11 +93,10 @@
 
 
 
-                <div id="finish-button-container" class="button_div">
-
+                <form method="post" id="finish-button-container" class="button_div">
+                    {% csrf_token %}
                     <button id="finish-button" class="button">Done</button>
-
-                </div>
+                </form>
 
 
  
@@ -101,8 +108,99 @@
         </div>
 
 
-
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+
+            var names = {{ names|safe }};
+            var RRUs = {{ rrus|safe }};
+            var AILs = {{ ails|safe }};
+
+            const data = {
+                labels: names,
+                datasets: [{
+                    label: 'RRU',
+                    data: RRUs,
+                    backgroundColor: [
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)',
+                        'rgba(255, 0, 0, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)',
+                        'rgba(255, 0, 0, 1)'
+                    ],
+                    borderWidth: 1.5
+                } , 
+                {
+                    label: 'AIL',
+                    data: AILs,
+                    backgroundColor: [
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)',
+                        'rgba(0, 0, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)',
+                        'rgba(0, 0, 255, 1)'
+                    ],
+                    borderWidth: 1.5
+                }
+            ]
+            };
+
+            // config 
+            const config = {
+                type: 'bar',
+                data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+
+            // render init block
+            const myChart = new Chart( document.getElementById('myChart') , config );
+
+
+        </script>
+
  
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         

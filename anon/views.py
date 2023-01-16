@@ -1,8 +1,8 @@
 from datetime import datetime
+import json
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
-from django.http import StreamingHttpResponse
-from wsgiref.util import FileWrapper
+import numpy as np
 import re, os, mimetypes, subprocess, csv
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph
 
@@ -70,6 +70,9 @@ def logreg(req):
 
 def resetPwd(req):
 
+    if not "email-reset" in req.session or not "originalpage" in req.session:
+        return redirect("/anon/error")
+
     email = req.session["email-reset"]
     origin = req.session["originalpage"]
 
@@ -124,6 +127,10 @@ def resetPwd(req):
 
 
 def registration(req):
+
+    if not "accountType" in req.session:
+        return redirect("/anon/error")
+
     typeAccount = req.session["accountType"]    
 
     if req.method == "POST":
@@ -174,6 +181,9 @@ def registration(req):
 
 
 def selectCampaign(req):
+
+    if not "email-owner" in req.session or not "pwd-owner" in req.session:
+        return redirect("/anon/error")
     
     if req.method == "POST":
         campaign = req.POST.get('selected-campaign')
@@ -189,6 +199,9 @@ def selectCampaign(req):
 
 
 def campaignData(req):
+
+    if not "email-owner" in req.session or not "sel-camp" in req.session or not "pwd-owner" in req.session:
+        return redirect("/anon/error")
     
     if req.method == "POST":
 
@@ -217,6 +230,9 @@ def campaignData(req):
 
 
 def secLev(req):
+
+    if not "email-owner" in req.session or not "sel-camp" in req.session or not "pwd-owner" in req.session or not "attrs" in req.session:
+        return redirect("/anon/error")
 
     if req.method == "POST":
 
@@ -269,6 +285,9 @@ def secLev(req):
 
 def homeDataOwner(req):
 
+    if not "owner" in req.session:
+        return redirect("/anon/error")
+
     owners = Owner.objects.all()
 
     for owner in owners:
@@ -299,6 +318,9 @@ def homeDataOwner(req):
 
 
 def profile(req):
+
+    if not "owner" in req.session:
+        return redirect("/anon/error")
 
     owners = Owner.objects.all()
 
@@ -413,6 +435,9 @@ def profile(req):
 
 def userRelationships(req):
 
+    if not "currentRel" in req.session:
+        return redirect("/anon/error")
+
     currentRel = req.session["currentRel"]
 
     owners = Owner.objects.all()
@@ -467,6 +492,9 @@ def userRelationships(req):
 
 def homeDataProvider(req):
 
+    if not "provider" in req.session:
+        return redirect("/anon/error")
+
     providers = Provider.objects.all()
 
     for p in providers:
@@ -474,6 +502,37 @@ def homeDataProvider(req):
             provider = p
 
     campaigns = Campaign.objects.all()
+
+    campaignAttrs = []
+
+    for campaign in campaigns:
+        campaign_str = ""
+        campaign_attrs = campaign.attributes.all()
+
+        for attr in campaign_attrs:
+            campaign_str += (attr.name + " , ")
+
+        if campaign_attrs:
+            campaign_str = campaign_str[:-3]
+        else:
+            campaign_str = None
+
+        campaignAttrs.append(campaign_str)
+
+    campaignRels = []
+
+    for campaign in campaigns:
+        campaign_str = ""
+
+        for rel in campaign.relationships.all():
+            campaign_str += (rel.name + " , ")
+
+        if campaign.relationships.all():
+            campaign_str = campaign_str[:-3]
+        else:
+            campaign_str = None
+
+        campaignRels.append(campaign_str)
 
 
     if req.method == "POST":
@@ -499,9 +558,12 @@ def homeDataProvider(req):
         if "create" in req.POST:
             return redirect('/anon/createcampaign')
 
+    
+    campaign_data = zip(campaigns, campaignAttrs, campaignRels)
 
 
-    return render(req, 'anon/homedataprovider.html', { "provider": provider, "campaigns": campaigns })
+
+    return render(req, 'anon/homedataprovider.html', { "provider": provider, "campaigns": campaign_data })
 
 
 
@@ -510,6 +572,9 @@ def homeDataProvider(req):
 
 
 def createCampaign(req):
+
+    if not "provider" in req.session:
+        return redirect("/anon/error")
 
     for p in Provider.objects.all():
         if p.email == req.session["provider"]:
@@ -587,6 +652,9 @@ def createCampaign(req):
 
 def campaignPage(req):
 
+    if not "sel-camp-prov" in req.session:
+        return redirect("/anon/error")
+
     for c in Campaign.objects.all():
         if c.name == req.session["sel-camp-prov"]:
             campaign = c
@@ -656,21 +724,98 @@ def campaignPage(req):
 
 
 def compareHome(req):
-    return render(req, 'anon/comparehome.html')
+
+    if not "sel-camp-prov" in req.session:
+        return redirect("/anon/error")
+
+    for c in Campaign.objects.all():
+        if c.name == req.session["sel-camp-prov"]:
+            campaign = c
+
+    campaign_graphs = []
+
+    for graph in AnonyGraph.objects.all():
+        if graph.campaign == campaign:
+            campaign_graphs.append(graph)
+
+    last_updates = []
+
+    for graph in campaign_graphs:
+        last_updates.append(graph.last_updated.strftime("%d/%m/%Y %H:%M"))
+
+    calgos = []
+
+    for graph in campaign_graphs:
+        if graph.calgo == "vac":
+            calgos.append(graph.calgo.upper())
+        else:
+            graph_calgo = graph.calgo.split("#")
+            if graph_calgo[0] == "hdbscan":
+                calgos.append((graph_calgo[0].upper() + "#" + graph_calgo[1].capitalize()))
+            else:
+                calgos.append(("k-Medoids#" + graph_calgo[1].capitalize()))
+
+    campaign_graphs_data = zip(campaign_graphs, last_updates, calgos)
+
+    rrus = []
+
+    for graph in campaign_graphs:
+        rrus.append(graph.rru)
+
+    ails = []
+
+    for graph in campaign_graphs:
+        ails.append(graph.ail)
+
+
+    if req.method == "POST":
+        if req.POST.get("selected-graphs") != "":
+            req.session["selected-graphs"] = req.POST.get("selected-graphs")
+            return redirect('/anon/compareresults')
+
+
+    return render(req, 'anon/comparehome.html', { 'graphs': campaign_graphs_data, 'campaign': campaign, 'maxail': np.max(ails), "minail": np.min(ails), 'maxrru': np.max(rrus), "minrru": np.min(rrus) })
+
 
 def compareResults(req):
-    return render(req, 'anon/compareresults.html')
 
+    if not "selected-graphs" in req.session or not "sel-camp-prov" in req.session:
+        return redirect("/anon/error")
 
+    if req.method == "POST":
+        del req.session["selected-graphs"]
+        del req.session["sel-camp-prov"]
+        return redirect("/anon/homedataprovider")
 
+    selected_graphs = req.session["selected-graphs"].split("|")
 
+    calgos = []
+    enforcers = []
+    rrus = []
+    ails = []
 
+    for graph in selected_graphs:
+        values = graph.split(";")
+        calgos.append(values[0])
+        enforcers.append(values[1])
+        rrus.append(values[2])
+        ails.append(values[3])
 
+    graph_data = zip(calgos, enforcers, rrus, ails)
 
+    names = []
 
+    for graph in selected_graphs:
+        values = graph.split(";")
+        names.append(values[0] + " - " + values[1])
+
+    return render(req, 'anon/compareresults.html', { 'graphs': graph_data, 'rrus': rrus, 'ails': ails, 'names': names })
 
 
 def downloadfile(req):
+
+    if not "campaign" in req.session or not "calgo" in req.session or not "calgo_args" in req.session or not "enforcer" in req.session or not "enforcer_args" in req.session:
+        return redirect("/anon/error")
 
     campaign = req.session["campaign"]
     calgo = req.session["calgo"]
@@ -714,9 +859,10 @@ def downloadfile(req):
     return render(req, 'anon/download_page.html', {"path": filepath})
 
 
-
-
 def anonymize(req):
+
+    if not "sel-camp-prov" in req.session:
+        return redirect("/anon/error")
 
     campaign = req.session["sel-camp-prov"]
 
@@ -865,6 +1011,11 @@ def anonymize(req):
                         if c.name.lower() == campaign.lower():
                             selectedCampaign = c
 
+                    ail_values = ail.split(".")
+                    ail_values[1] = ail_values[1][:4]
+
+                    ail = ail_values[0] + "." + ail_values[1]
+
                     rru = float(rem_ent)/float(raw_ent)
 
                     graph = AnonyGraph.objects.filter(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer)
@@ -910,7 +1061,16 @@ def anonymize(req):
 
         return redirect('/anon/homedataprovider')
 
-
-
-
     return render(req, 'anon/anonymize.html')
+
+
+def errorpage(req):
+
+    if req.method == "POST":
+
+        for key in list(req.session.keys()):
+            del req.session[key]
+
+        return redirect('/anon/logreg')
+
+    return render(req, 'anon/error_page.html')

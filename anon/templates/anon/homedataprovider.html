@@ -46,33 +46,41 @@
 
                     {% csrf_token %}
 
-                    {% for campaign in campaigns %}
+                    {% for campaign, attrs, rels in campaigns %}
 
                         <button id="campaign-{{ campaign.name }}" type="submit" name="campaign" value="{{ campaign.name }}" class="campaign">
                             <h2>{{ campaign.name }}</h2>
                             <p>Creator: <br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
                             <div class="attr_list_container">
-                                <dl>
 
+                                <div>
                                     <label style="text-decoration: underline; font-size: 18px;">Attributes:</label>
+                                </div>
 
-                                    {% for attr in campaign.attributes.all %}
-                                        <dd>{{ attr }}</dd>
-                                    {% empty %}
-                                        <dd style="color: red;">None</dd>
-                                    {% endfor %}
-
-                                    <br>
-                                    
+                                {% if attrs == None %}
+                                    <div>
+                                        <p style="color: red; line-height: 5px;">None</p>
+                                    </div>
+                                {% else %}
+                                    <div>
+                                        <p class="campaign_data">{{ attrs }}</p>
+                                    </div>       
+                                {% endif %}
+                                
+                                <div>
                                     <label style="text-decoration: underline; font-size: 18px;">Relationships:</label>
-                                    
-                                    {% for rel in campaign.relationships.all %}
-                                        <dd>{{ rel }}</dd>
-                                    {% empty %}
-                                        <dd style="color: red;">None</dd>
-                                    {% endfor %}
-    
-                                </dl>
+                                </div>
+
+                                {% if rels == None %}
+                                    <div>
+                                        <p style="color: red; line-height: 5px;">None</p>
+                                    </div>
+                                {% else %}
+                                    <div>
+                                        <p class="campaign_data">{{ rels }}</p>
+                                    </div>  
+                                {% endif %}
+
                             </div>
                         </button>
 

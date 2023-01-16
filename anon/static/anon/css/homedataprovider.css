@@ -126,22 +126,13 @@ body{
 }
 
 .attr_list_container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.attr_list_container dl {
-    list-style: none;
+    display: block;
     text-align: center;
 }
 
-.attr_list_container dl dd {
-    font-size: 20px;
-    font-weight: bold;
-    margin-inline-start: 0;
+.campaign_data {
+    margin: 0 0 10px;
 }
-
 
 
 .campaigns:hover .campaign {

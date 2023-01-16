@@ -160,7 +160,7 @@ function onClickLogin() {
     inputEmail = document.getElementById("email-input").value;
     inputPwd = password.value;
 
-    if(inputEmail == "" && inputPwd == "") {
+    if(inputEmail == "" || inputPwd == "") {
         alert("Remember to fill both fields.")
         return;
     }
