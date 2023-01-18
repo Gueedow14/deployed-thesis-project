@@ -30,18 +30,31 @@
 
             <div class="container">
 
-                <div class="compare_div">
-                    <p>Click on the lines below and proceed to the next screen<br>where you can compare the data from the various anonymized graphs.</p>
-                </div>
 
+                {% if maxail == None %}
 
-                {% if not graphs %}
+                    <div class="compare_div">
+                        <p>No anonymized graphs have yet been created for this campaign.<br>At least one graph needs to be created to proceed with the comparison,<br>so it is <span style="text-decoration: underline;">recommended to go back and proceed with anonymizing the kg.</span></p>
+                    </div>
 
                     <div id="no-data-div" class="p_div">
-                        <p id="no-data-p" class="no_data">No Graphs Created</p>
+                        <p id="no-data-p" class="no_data">No KGs Anonymized</p>
+                    </div>
+
+                    <div class="buttons_div" style="display: flex; align-items: center; justify-content: center;">
+
+                        <form method="post" class="proceed_div">
+                            {% csrf_token %}
+                            <button type="submit" name="campaign-page" id="home-button" class="proceed_button" style="width: 300px; font-size: 30px;">Go Back</button>
+                        </form>
+                        
                     </div>
 
                 {% else %}
+
+                    <div class="compare_div">
+                        <p>Click on the lines below and proceed to the next screen<br>where you can compare the data from the various anonymized graphs.</p>
+                    </div>
 
                     <div id="tableBox" class="tableBox">
                         <table id="graph-table" class="table">
@@ -74,23 +87,22 @@
 
                         </table>
                     </div>
-
-                {% endif %}
                 
+                    <div class="buttons_div">
 
-                <div class="buttons_div">
+                        <div class="filter_div">
+                            <button id="filter-button" class="filter_button">Filter</button>
+                        </div>
 
-                    <div class="filter_div">
-                        <button id="filter-button" class="filter_button">Filter</button>
+                        <form method="post" class="proceed_div">
+                            {% csrf_token %}
+                            <input id="selected-graphs-input" type="hidden" name="selected-graphs" value="">
+                            <button type="submit" name="proceed" id="proceed-button" class="proceed_button">Proceed</button>
+                        </form>
+                        
                     </div>
 
-                    <form method="post" class="proceed_div">
-                        {% csrf_token %}
-                        <input id="selected-graphs-input" type="hidden" name="selected-graphs" value="">
-                        <button type="submit" name="proceed" id="proceed-button" class="proceed_button">Proceed</button>
-                    </form>
-                    
-                </div>
+                {% endif %}
 
 
 

@@ -35,21 +35,37 @@
 
                     <div class="campaigns">
 
-                        {% for campaign in campaigns %}
+                        {% for campaign, attrs, rels in campaigns %}
                             <div id="campaign-{{ forloop.counter }}" class="campaign">
                                 <h2 id="campaign-name-{{ forloop.counter }}">{{ campaign.name }}</h2>
                                 <p>Creator: <br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
-                                <ul>
-
-                                    {% for attr in campaign.attributes.all %}
-                                        <li>{{ attr }}</li>
-                                    {% endfor %}
-
-                                    {% for rel in campaign.relationships.all %}
-                                        <li>{{ rel }}</li>
-                                    {% endfor %}
-                            
-                                </ul>
+                                    <div style="text-align: center;">
+                                        <label style="text-decoration: underline; font-size: 18px; color: #006657;">Attributes:</label>
+                                    </div>
+    
+                                    {% if attrs == None %}
+                                        <div>
+                                            <p style="color: #006657; line-height: 5px;">None</p>
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            <p class="campaign_data">{{ attrs }}</p>
+                                        </div>       
+                                    {% endif %}
+                                    
+                                    <div style="text-align: center;">
+                                        <label style="text-decoration: underline; font-size: 18px; color: #006657;">Relationships:</label>
+                                    </div>
+    
+                                    {% if rels == None %}
+                                        <div>
+                                            <p style="color: red; line-height: 5px;">None</p>
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            <p class="campaign_data">{{ rels }}</p>
+                                        </div>  
+                                    {% endif %}
                             </div>
                         {% endfor %}
                     

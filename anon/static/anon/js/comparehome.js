@@ -15,7 +15,7 @@ function onClickRow() {
         this.style.fontWeight = "100"
     } else {
         selectedRows.push(this.id)
-        this.style.color = "red"
+        this.style.color = "#004d41"
         this.style.fontWeight = "bold"
     }
 

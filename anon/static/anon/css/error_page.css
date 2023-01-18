@@ -1,23 +1,23 @@
 body{
-    background-color: blue;
+    background-color: #d9d9d9;
     font-family: 'Lato', sans-serif;
 }
 
 .section{
-    border: 5px solid #9B0000;
+    border: 3px solid #004d41;
     border-radius: 10px;
     min-width: 600px;
     width: 800px;
     min-height: 400px;
     height: 600px;
 
-    margin: 120px auto;
+    margin: 160px auto;
     position: relative;
     background: white;
 }
 
 .title {
-    background-color: red;
+    background: linear-gradient(#004d41, #009982);
     color: white;
     padding: 5px;
     font-size: 30px;
@@ -45,23 +45,20 @@ body{
 }
 
 .button {
+    margin: 0 30px;
+    width: 300px;
     color: white;
-    background-color: red;
-
-    border: 3px solid #9B0000;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
     border-radius: 10px;
-
     font-size: 35px;
+    line-height: 30px;
     font-weight: bold;
-
-    width: 200px;
-    height: 70px;
-
+    padding: 10px;
     transition: .3s all ease-in-out;
 }
 
 .button:hover {
-    background-color: #CB0000;
-
+    background: linear-gradient(#00806c, #00ccad);
     transform: scale(1.1);
 }

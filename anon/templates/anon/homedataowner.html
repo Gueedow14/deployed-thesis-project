@@ -31,7 +31,7 @@
                     {% csrf_token %}
 
                     <div>
-                        <button id="exit-button" type="submit" name="logout" class="exit_button">Exit</button>
+                        <button id="exit-button" type="submit" name="logout" class="exit_button">Logout<i class="bi bi-box-arrow-right" style="margin-left: 10px; font-size: 20px;"></i></button>
                     </div>
 
                 </form>
@@ -70,6 +70,10 @@
             </div>
 
         </div>
+
+        <script>
+            progressEndValue = {{ sec_perc }}
+        </script>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         

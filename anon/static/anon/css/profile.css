@@ -1,20 +1,22 @@
 body{
-    background-color: blue;
+    background-color: #d9d9d9;
     font-family: 'Lato', sans-serif;
 }
 
 .section{
-    border: 5px solid #9B0000;
+    border: 3px solid #004d41;
     border-radius: 10px;
     max-width: 1000px;
     margin: 100px auto;
     height: 750px;
     position: relative;
     background: white;
+
+    box-shadow: 5px 5px 10px grey;
 }
 
 .title {
-    background-color: red;
+    background: linear-gradient(#004d41, #009982);
     color: white;
     padding: 5px;
     font-size: 25px;
@@ -40,7 +42,7 @@ body{
 .inside_container {
     padding: 10px 50px;
     height: 100%;
-    border: 3px solid #9B0000;
+    border: 3px solid #00806c;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -59,12 +61,12 @@ body{
 }
    
 .inside_container::-webkit-scrollbar-thumb {
-    background: red; 
+    background: #d9d9d9; 
     border-radius: 10px;
 }
   
 .inside_container::-webkit-scrollbar-thumb:hover {
-    background-color: #9B0000;
+    background-color: #bfbfbf;
 }
 
 
@@ -123,7 +125,8 @@ body{
 }
 
 .change_icon_div_attr:hover {
-    color: red;
+    color: #009982;
+    background-color: #f2f2f2;
 }
 
 .change_icon_div_rel {
@@ -141,7 +144,8 @@ body{
 }
 
 .change_icon_div_rel:hover {
-    color: red;
+    color: #009982;
+    background-color: #f2f2f2;
 }
 
 .pwd_icon_div {
@@ -159,7 +163,8 @@ body{
 }
 
 .pwd_icon_div:hover {
-    color: red;
+    color: #009982;
+    background-color: #f2f2f2;
 }
 
 .change_icon {
@@ -264,7 +269,7 @@ body{
 
 .content_window_change_pwd {
     background-color: #fff;
-    border: 3px solid red;
+    border: 3px solid #004d41;
     border-radius: 5px;
     width: 40%;
     height: 35%;
@@ -302,13 +307,13 @@ body{
     position: absolute;
     right: 10px;
     top: 7px;
-    color: #000;
+    color: #009982;
     font-size: 25px;
     font-weight: bold;
   }
   
 .close:hover, .close:focus {
-    color: red;
+    color: #006657;
     cursor: pointer;
 }
 
@@ -322,17 +327,19 @@ body{
 
 
 .button_div {
-    text-align: center;
-    height: 15%;
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
 .button {
-    margin: 10px 30px;
-    width: 200px;
+    margin: 0 30px;
+    width: 300px;
     color: white;
-    background: red;
-    border: 3px solid #9B0000;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
     border-radius: 10px;
     font-size: 30px;
     line-height: 30px;
@@ -342,16 +349,16 @@ body{
 }
 
 .button:hover {
-    background: #DB0000;
+    background: linear-gradient(#00806c, #00ccad);
     transform: scale(1.1);
 }
 
 .button_profile {
-    margin: 30px;
+    margin: 0 30px;
     width: 300px;
     color: white;
-    background: red;
-    border: 3px solid #9B0000;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
     border-radius: 10px;
     font-size: 30px;
     line-height: 30px;
@@ -361,7 +368,7 @@ body{
 }
 
 .button_profile:hover {
-    background: #DB0000;
+    background: linear-gradient(#00806c, #00ccad);
     transform: scale(1.1);
 }
 
@@ -378,7 +385,8 @@ body{
 }
 
 .relButton:hover {
-    color: red;
+    color: #006657;
+    background: transparent;
 }
 
 

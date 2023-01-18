@@ -27,7 +27,14 @@
 
 
             <div class="container">
-                <h3>Set your new password</h3>
+
+                {% if pwd_error_flag %}
+                    <div class="error_msg">
+                        <p style="font-size: 25px; line-height: 5px; font-weight: bold; color: white;">The password fields values need to match.</p>
+                    </div>
+                {% else %}
+                    <h3>Set your new password</h3>
+                {% endif %}
                 <hr>
 
 

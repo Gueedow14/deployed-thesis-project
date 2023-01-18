@@ -1,20 +1,22 @@
 body{
-    background-color: blue;
+    background-color: #d9d9d9;
     font-family: 'Lato', sans-serif;
 }
 
 .section{
-    border: 5px solid #9B0000;
+    border: 3px solid #004d41;
     border-radius: 10px;
     max-width: 1000px;
     margin: 80px auto;
     height: 810px;
     position: relative;
     background: white;
+
+    box-shadow: 5px 5px 10px grey;
 }
 
 .title {
-    background-color: red;
+    background: linear-gradient(#004d41, #009982);
     color: white;
     padding: 5px;
     font-size: 25px;
@@ -95,7 +97,7 @@ body{
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: red;
+    background-color: #004d41;
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -113,7 +115,7 @@ body{
 }
 
 input:checked + .slider {
-    background-color: blue;
+    background-color: #009982;
 }
 
 input:checked + .slider:before {
@@ -217,12 +219,12 @@ input:checked + .slider:before {
 }
 
 .table::-webkit-scrollbar-thumb {
-    background: red; 
+    background: #d9d9d9; 
     border-radius: 15px;
 }
   
 .table::-webkit-scrollbar-thumb:hover {
-    background-color: #DB0000;
+    background-color: #bfbfbf;
 }
 
 th, td {
@@ -232,7 +234,7 @@ th, td {
 }
 
 tr:nth-child(even) {
-    background-color: #FFC0C7
+    background-color: rgba(0, 153, 130, .3);
 }
 
 .table_row {
@@ -315,21 +317,21 @@ tr:nth-child(even) {
 
 
 .button {
-    margin: 10px 30px;
-    width: 200px;
+    margin: 0 30px;
+    width: 250px;
     color: white;
-    background: red;
-    border: 3px solid #9B0000;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
     border-radius: 10px;
-    font-size: 25px;
-    line-height: 20px;
+    font-size: 30px;
+    line-height: 30px;
     font-weight: bold;
     padding: 10px;
     transition: .3s all ease-in-out;
 }
 
 .button:hover {
-    background: #DB0000;
+    background: linear-gradient(#00806c, #00ccad);
     transform: scale(1.1);
 }
 

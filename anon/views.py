@@ -1,9 +1,8 @@
 from datetime import datetime
-import json
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 import numpy as np
-import re, os, mimetypes, subprocess, csv
+import re, os, mimetypes, subprocess, csv, statistics
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph
 
 def logreg(req):
@@ -79,6 +78,7 @@ def resetPwd(req):
     if req.method == "POST":
         pwd = req.POST.get("pwd")
         confirm = req.POST.get("confirm")
+
         if pwd == confirm:
 
             user = None
@@ -95,17 +95,15 @@ def resetPwd(req):
                     type = "provider"
 
             if type == "owner":
-                o = Owner(email=user.email, pwd=pwd, k=user.k, campaign=user.campaign)
-                user.delete()
-                o.save()
-                terminal = 'cd ../personalized-anony-kg && python reset_owner_pwd.py --owner=' + o.email + ' --pwd=' + o.pwd + ' --kval=' + str(o.k) + ' --campaign=\"' + o.campaign.name.lower() + '\"'
+                user.pwd = pwd
+                user.save()
+                terminal = 'cd ../personalized-anony-kg && python reset_owner_pwd.py --owner=' + user.email + ' --pwd=' + user.pwd + ' --kval=' + str(user.k) + ' --campaign=\"' + user.campaign.name.lower() + '\"'
                 subprocess.call(terminal, shell=True)
 
             if type == "provider":
-                p = Provider(email=user.email, pwd=pwd)
-                user.delete()
-                p.save()
-                terminal = 'cd ../personalized-anony-kg && python reset_provider_pwd.py --provider=' + p.email + ' --pwd=\"' + p.pwd + '\"'
+                user.pwd = pwd
+                user.save()
+                terminal = 'cd ../personalized-anony-kg && python reset_provider_pwd.py --provider=' + user.email + ' --pwd=\"' + user.pwd + '\"'
                 subprocess.call(terminal, shell=True)
 
             if origin == "logreg":
@@ -115,9 +113,11 @@ def resetPwd(req):
             
             if origin == "profile":
                 del req.session["originalpage"]
-                req.session["owner"] = o.email
+                req.session["owner"] = user.email
                 del req.session["email-reset"]
                 return redirect('/anon/profile')
+        else:
+            return render(req, 'anon/resetpwd.html', { 'pwd_error_flag': True })
 
 
     return render(req, 'anon/resetpwd.html')
@@ -145,15 +145,25 @@ def registration(req):
 
 
             if typeAccount == 0:
+
+                for o in Owner.objects.all():
+                    if o.email.lower() == email.lower():
+                        return render(req, 'anon/registration.html', {'owner_flag': True})
+
                 req.session["email-owner"] = email
                 req.session["pwd-owner"] = pwd
                 return redirect('/anon/selectcampaign')
 
             if typeAccount == 1:
+
+                for p in Provider.objects.all():
+                    if p.email.lower() == email.lower():
+                        return render(req, 'anon/registration.html', {'provider_flag': True})
+
                 email = req.POST.get("email-input")
                 pwd = req.POST.get("pwd-input")
 
-                p = Provider(email=email, pwd=pwd)
+                p = Provider(email=email.lower(), pwd=pwd)
                 p.save()
 
                 terminal = 'cd ../personalized-anony-kg && python generate_provider.py --provider=' + email + ' --pwd=' + pwd
@@ -184,6 +194,41 @@ def selectCampaign(req):
 
     if not "email-owner" in req.session or not "pwd-owner" in req.session:
         return redirect("/anon/error")
+
+    campaigns = Campaign.objects.all()
+
+    campaignAttrs = []
+
+    for campaign in campaigns:
+        campaign_str = ""
+        campaign_attrs = campaign.attributes.all()
+
+        for attr in campaign_attrs:
+            campaign_str += (attr.name + " , ")
+
+        if campaign_attrs:
+            campaign_str = campaign_str[:-3]
+        else:
+            campaign_str = None
+
+        campaignAttrs.append(campaign_str)
+
+    campaignRels = []
+
+    for campaign in campaigns:
+        campaign_str = ""
+
+        for rel in campaign.relationships.all():
+            campaign_str += (rel.name + " , ")
+
+        if campaign.relationships.all():
+            campaign_str = campaign_str[:-3]
+        else:
+            campaign_str = None
+
+        campaignRels.append(campaign_str)
+
+    campaign_data = zip(campaigns, campaignAttrs, campaignRels)
     
     if req.method == "POST":
         campaign = req.POST.get('selected-campaign')
@@ -193,7 +238,7 @@ def selectCampaign(req):
 
     campaigns = Campaign.objects.all()
 
-    return render(req, 'anon/selectcampaign.html', {'campaigns': campaigns})
+    return render(req, 'anon/selectcampaign.html', {'campaigns': campaign_data})
 
 
 
@@ -260,9 +305,17 @@ def secLev(req):
             campaignAttrs = selectedCampaign.attributes.all()
 
             for i in range(len(attributes)):
-                v = Value(value=attributes[i])
 
-                if not(attributes[i] in values):
+                if ' ' in attributes[i]:
+                    words = attributes[i].split(' ')
+                    modifiedStr = ""
+                    for w in words:
+                        modifiedStr += w.capitalize() + " "
+                    v = Value(value=modifiedStr[:-1])
+                else:
+                    v = Value(value=attributes[i].capitalize())
+
+                if not(v in values):
                     v.save()
                     terminal = 'cd ../personalized-anony-kg && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
                     subprocess.call(terminal, shell=True)
@@ -294,6 +347,67 @@ def homeDataOwner(req):
         if owner.email == req.session["owner"]:
             o = owner
 
+    ails = []
+    rrus = []
+
+    for anony_graph in AnonyGraph.objects.all():
+        ails.append(anony_graph.ail)
+        rrus.append(anony_graph.rru)
+
+    mean_ail = statistics.mean(ails)
+    mean_rru = statistics.mean(rrus)
+    k_val = o.k
+
+    low = 0
+    mid = 0
+    high = 0
+
+    if mean_ail < 0.4:
+        high += 1
+    elif mean_ail >= 0.8:
+        low += 1
+    else:
+        mid += 1
+
+    if mean_rru < 0.4:
+        high += 1
+    elif mean_rru >= 0.8:
+        low += 1
+    else:
+        mid += 1
+
+    if k_val < 3:
+        low += 1
+    elif k_val >= 6:
+        high += 1
+    else:
+        mid += 1
+
+    sec_value = [low, mid, high]
+
+    sec_perc = 0
+    
+    if sec_value == [3,0,0]:
+        sec_perc = 10
+    elif sec_value == [2,1,0]: 
+        sec_perc = 20
+    elif sec_value == [2,0,1]: 
+        sec_perc = 30
+    elif sec_value == [1,2,0]:
+        sec_perc = 40
+    elif sec_value == [1,1,1]: 
+        sec_perc = 50
+    elif sec_value == [0,3,0]: 
+        sec_perc = 60
+    elif sec_value == [0,2,1]: 
+        sec_perc = 70
+    elif sec_value == [1,0,2]: 
+        sec_perc = 80
+    elif sec_value == [0,1,2]: 
+        sec_perc = 90
+    elif sec_value == [0,0,3]: 
+        sec_perc = 100
+
     if req.method == "POST":
         if "profile" in req.POST:
             req.session["owner"] = o.email
@@ -312,7 +426,7 @@ def homeDataOwner(req):
             return redirect('/anon/logreg')
             
 
-    return render(req, 'anon/homedataowner.html', { 'owner': o })
+    return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc })
 
 
 
@@ -358,15 +472,8 @@ def profile(req):
 
     userRels = zip(rels, userRelsTmp)
     inputRels = zip(rels, inputRelsTmp)
-
-    ##########################################
-
     
     if req.method == "POST":
-
-        print("\n\n")
-        print(req.POST)
-        print("\n\n")
 
         if "rels" in req.POST:
             req.session["currentRel"] = req.POST.get("rels")
@@ -400,7 +507,15 @@ def profile(req):
                 if prev != newVal and newVal != '':
                     for attributeEdge in attrEdges:
                         if attributeEdge.attribute == attr:
-                            val = Value(value=newVal.capitalize())
+                            if ' ' in newVal:
+                                words = newVal.split(' ')
+                                modifiedStr = ""
+                                for w in words:
+                                    modifiedStr += w.capitalize() + " "
+                                val = Value(value=modifiedStr[:-1])
+                            else:
+                                val = Value(value=newVal.capitalize())
+
                             if not(val in Value.objects.all()):
                                 val.save()
                                 terminal = 'cd ../personalized-anony-kg && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
@@ -426,7 +541,6 @@ def profile(req):
             req.session["originalpage"] = "profile"
             del req.session["owner"]
             return redirect('/anon/resetpwd')
-
 
     return render(req, 'anon/profile.html', { 'owner': o, 'attrs': attrEdges, 'owners': owners, 'userRelationships': userRels, 'inputRels': inputRels })
 
@@ -501,7 +615,11 @@ def homeDataProvider(req):
         if p.email == req.session["provider"]:
             provider = p
 
-    campaigns = Campaign.objects.all()
+    campaigns = []
+
+    for c in Campaign.objects.all():
+        if c.name != "":
+            campaigns.append(c)
 
     campaignAttrs = []
 
@@ -583,66 +701,73 @@ def createCampaign(req):
     if req.method == "POST":
 
         name = req.POST.get("name")
-        attrsInput = req.POST.getlist("attr")
-        relsInput = req.POST.getlist("rel")
 
-        attributes = []
-        relationships = []
+        if name != "":
+            attrsInput = req.POST.getlist("attr")
+            relsInput = req.POST.getlist("rel")
 
-        for c in Campaign.objects.all():
-            if c.name.lower() == name.lower():
-                return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True })
-        
-        for attr in attrsInput:
-            try:
-                a = Attribute.objects.get(pk=attr.capitalize())
-            except Attribute.DoesNotExist:
-                a = None
-            if a == None:
-                a = Attribute(name=attr.capitalize())
-                a.save()
-                terminal = 'cd ../personalized-anony-kg && python generate_attribute.py --attr=\"' + a.name.lower() + '\"'
-                subprocess.call(terminal, shell=True)
+            attributes = []
+            relationships = []
 
-            attributes.append(a)
+            for c in Campaign.objects.all():
+                if c.name.lower() == name.lower():
+                    return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True })
+            
+            for attr in attrsInput:
+                try:
+                    a = Attribute.objects.get(pk=attr.capitalize())
+                except Attribute.DoesNotExist:
+                    a = None
+                if a == None:
+                    a = Attribute(name=attr.capitalize())
+                    a.save()
+                    terminal = 'cd ../personalized-anony-kg && python generate_attribute.py --attr=\"' + a.name.lower() + '\"'
+                    subprocess.call(terminal, shell=True)
 
-        for rel in relsInput:
-            try:
-                r = Relationship.objects.get(pk=rel.capitalize())
-            except Relationship.DoesNotExist:
-                r = None
-            if r == None:
-                r = Relationship(name=rel.capitalize())
-                r.save()
-                terminal = 'cd ../personalized-anony-kg && python generate_relationship.py --rel=\"' + r.name.lower() + '\"'
-                subprocess.call(terminal, shell=True)
+                attributes.append(a)
 
-            relationships.append(r)
+            for rel in relsInput:
+                try:
+                    r = Relationship.objects.get(pk=rel.capitalize())
+                except Relationship.DoesNotExist:
+                    r = None
+                if r == None:
+                    r = Relationship(name=rel.capitalize())
+                    r.save()
+                    terminal = 'cd ../personalized-anony-kg && python generate_relationship.py --rel=\"' + r.name.lower() + '\"'
+                    subprocess.call(terminal, shell=True)
 
-        c = Campaign(name=name, creator=provider)
-        c.save()
+                relationships.append(r)
 
-        scriptAttrs = ""
-        scriptRels = ""
+            campaign_name = ""
 
-        for a in attributes:
-            c.attributes.add(a)
-            scriptAttrs += (a.name.lower() + "|")
+            for word in name.split(" "):
+                campaign_name += (word.lower().capitalize() + " ")
 
-        for r in relationships:
-            c.relationships.add(r)
-            scriptRels += (r.name.lower() + "|")
+            c = Campaign(name=campaign_name[:-1], creator=provider)
+            c.save()
 
-        scriptAttrs = scriptAttrs[:-1]
-        scriptRels = scriptRels[:-1]
+            scriptAttrs = ""
+            scriptRels = ""
+
+            for a in attributes:
+                c.attributes.add(a)
+                scriptAttrs += (a.name.lower() + "|")
+
+            for r in relationships:
+                c.relationships.add(r)
+                scriptRels += (r.name.lower() + "|")
+
+            scriptAttrs = scriptAttrs[:-1]
+            scriptRels = scriptRels[:-1]
 
 
-        terminal = 'cd ../personalized-anony-kg && python generate_campaign.py --name=\"' + c.name.lower() + '\" --creator=\"' + c.creator.email + '\" --attrs=\"' + scriptAttrs + '\" --rels=\"' + scriptRels + '\"'
-        subprocess.call(terminal, shell=True)
+            terminal = 'cd ../personalized-anony-kg && python generate_campaign.py --name=\"' + c.name.lower() + '\" --creator=\"' + c.creator.email + '\" --attrs=\"' + scriptAttrs + '\" --rels=\"' + scriptRels + '\"'
+            subprocess.call(terminal, shell=True)
 
 
-        return redirect('/anon/homedataprovider')
-        
+            return redirect('/anon/homedataprovider')
+            
 
     return render(req, 'anon/createcampaign.html', { 'name_existing_flag': False })
 
@@ -767,14 +892,31 @@ def compareHome(req):
     for graph in campaign_graphs:
         ails.append(graph.ail)
 
+    maxail = None
+    minail = None
+    maxrru = None
+    minrru = None
+    
+    if ails != []:
+        maxail = np.max(ails)
+        minail = np.min(ails)
+
+    if rrus != []:
+        maxrru = np.max(rrus)
+        minrru = np.min(rrus)
+
 
     if req.method == "POST":
+
+        if "campaign-page" in req.POST:
+            return redirect('/anon/campaignpage')
+
         if req.POST.get("selected-graphs") != "":
             req.session["selected-graphs"] = req.POST.get("selected-graphs")
             return redirect('/anon/compareresults')
 
 
-    return render(req, 'anon/comparehome.html', { 'graphs': campaign_graphs_data, 'campaign': campaign, 'maxail': np.max(ails), "minail": np.min(ails), 'maxrru': np.max(rrus), "minrru": np.min(rrus) })
+    return render(req, 'anon/comparehome.html', { 'graphs': campaign_graphs_data, 'campaign': campaign, 'maxail': maxail, "minail": minail, 'maxrru': maxrru, "minrru": minrru })
 
 
 def compareResults(req):
@@ -831,6 +973,8 @@ def downloadfile(req):
 
     if calgo_args is not None:
         graph_str += ("#" + calgo_args + "_")
+    else:
+        graph_str += "_"
     
     graph_str += enforcer
 

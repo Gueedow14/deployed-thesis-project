@@ -2,7 +2,6 @@ var progressCircle = document.getElementById('progress');
 var progressValue = document.getElementById('progress-value');
 
 var progressStartValue = 0;
-var progressEndValue = 85;
 var speed = 25;
 
 var progress = setInterval( () => 
@@ -38,7 +37,6 @@ var profileText = document.getElementById('profile-text');
 
 profileButton.addEventListener('mouseover', overButton);
 profileButton.addEventListener('mouseleave', leaveButton);
-profileButton.addEventListener('click', openProfile);
 
 function overButton() {
   profileText.style.display = "block";

@@ -31,7 +31,7 @@
                     {% csrf_token %}
 
                     <div>
-                        <button id="exit-button" type="submit" name="logout" class="exit_button">Exit</button>
+                        <button id="exit-button" type="submit" name="logout" class="exit_button">Logout<i class="bi bi-box-arrow-right" style="margin-left: 10px; font-size: 20px;"></i></button>
                     </div>
 
                 </form>
@@ -49,17 +49,17 @@
                     {% for campaign, attrs, rels in campaigns %}
 
                         <button id="campaign-{{ campaign.name }}" type="submit" name="campaign" value="{{ campaign.name }}" class="campaign">
-                            <h2>{{ campaign.name }}</h2>
-                            <p>Creator: <br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
+                            <h2 style="color: #006657; font-size: 40px;">{{ campaign.name }}</h2>
+                            <p><span style="color: #006657;">Creator: </span><br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
                             <div class="attr_list_container">
 
                                 <div>
-                                    <label style="text-decoration: underline; font-size: 18px;">Attributes:</label>
+                                    <label style="text-decoration: underline; font-size: 18px; color: #006657;">Attributes:</label>
                                 </div>
 
                                 {% if attrs == None %}
                                     <div>
-                                        <p style="color: red; line-height: 5px;">None</p>
+                                        <p style="color: #006657; line-height: 5px;">None</p>
                                     </div>
                                 {% else %}
                                     <div>
@@ -68,12 +68,12 @@
                                 {% endif %}
                                 
                                 <div>
-                                    <label style="text-decoration: underline; font-size: 18px;">Relationships:</label>
+                                    <label style="text-decoration: underline; font-size: 18px; color: #006657;">Relationships:</label>
                                 </div>
 
                                 {% if rels == None %}
                                     <div>
-                                        <p style="color: red; line-height: 5px;">None</p>
+                                        <p style="color: #006657; line-height: 5px;">None</p>
                                     </div>
                                 {% else %}
                                     <div>

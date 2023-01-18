@@ -36,20 +36,32 @@
 
 
                     {% if email_flag %}
-                        <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red; margin-bottom: 10px;">
+                        <div class="error_msg">
                             <p style="font-size: 18px; font-weight: bold; color: white;">Insert a valid email address.</p>
                         </div>
                     {% endif %}
 
                     {% if pwd_flag %}
-                        <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red; margin-bottom: 10px;">
+                        <div class="error_msg">
                             <p style="font-size: 18px; font-weight: bold; color: white;">Make sure that the passwords match.</p>
                         </div>
                     {% endif %}
 
                     {% if both_flag %}
-                        <div style="border: 1px solid #9D0000; border-radius: 10px; text-align: center; background-color: red; margin-bottom: 10px;">
+                        <div class="error_msg">
                             <p style="font-size: 18px; font-weight: bold; color: white;">Insert a valid email address and make sure that the passwords match.</p>
+                        </div>
+                    {% endif %}
+
+                    {% if owner_flag %}
+                        <div class="error_msg">
+                            <p style="font-size: 18px; font-weight: bold; color: white;">The email you entered matches that of another Data Owner.</p>
+                        </div>
+                    {% endif %}
+
+                    {% if provider_flag %}
+                        <div class="error_msg">
+                            <p style="font-size: 18px; font-weight: bold; color: white;">The email you entered matches that of another Data Provider.</p>
                         </div>
                     {% endif %}
 
@@ -84,7 +96,7 @@
                         <div class="input_div">
 
                             <div class="field_input_div">
-                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Insert Password" type="password">
+                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Insert Password" type="password" maxlength="30">
                             </div>
 
                             <div class="pwd_icon_div">
@@ -110,7 +122,7 @@
                         <div class="input_div">
 
                             <div class="field_input_div">
-                                <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password">
+                                <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password" maxlength="30">
                             </div>
 
                             <div class="pwd_icon_div">
@@ -133,7 +145,7 @@
                             <input type="hidden" name="confirm-input" id="confirm-hidden" value="">
                             <button id="register-button" type="submit" name="send" class="button">Register</button>
                         </form>
-                        <p>Already have an account? <a href="{% url 'logreg' %}">Sign in</a>.</p>
+                        <p>Already have an account? <a style="color: #006657;" href="{% url 'logreg' %}">Sign in</a>.</p>
                     </div>
 
 
