@@ -42,51 +42,66 @@
 
             <div class="container">
 
-                <form method="post" class="campaigns">
 
-                    {% csrf_token %}
+                {% if no_campaigns == False %}
 
-                    {% for campaign, attrs, rels in campaigns %}
+                    <form method="post" class="campaigns">
 
-                        <button id="campaign-{{ campaign.name }}" type="submit" name="campaign" value="{{ campaign.name }}" class="campaign">
-                            <h2 style="color: #006657; font-size: 40px;">{{ campaign.name }}</h2>
-                            <p><span style="color: #006657;">Creator: </span><br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
-                            <div class="attr_list_container">
+                        {% csrf_token %}
 
-                                <div>
-                                    <label style="text-decoration: underline; font-size: 18px; color: #006657;">Attributes:</label>
-                                </div>
+                        {% for campaign, attrs, rels in campaigns %}
 
-                                {% if attrs == None %}
+                            <button id="campaign-{{ campaign.name }}" type="submit" name="campaign" value="{{ campaign.name }}" class="campaign">
+                                <h2 style="color: #006657; font-size: 40px;">{{ campaign.name }}</h2>
+                                <p><span style="color: #006657;">Creator: </span><br><span id="creator-name-{{ forloop.counter }}">{{ campaign.creator }}</span></p>
+                                <div class="attr_list_container">
+
                                     <div>
-                                        <p style="color: #006657; line-height: 5px;">None</p>
+                                        <label style="text-decoration: underline; font-size: 18px; color: #006657;">Attributes:</label>
                                     </div>
-                                {% else %}
-                                    <div>
-                                        <p class="campaign_data">{{ attrs }}</p>
-                                    </div>       
-                                {% endif %}
-                                
-                                <div>
-                                    <label style="text-decoration: underline; font-size: 18px; color: #006657;">Relationships:</label>
-                                </div>
 
-                                {% if rels == None %}
+                                    {% if attrs == None %}
+                                        <div>
+                                            <p style="color: #006657; line-height: 5px;">None</p>
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            <p class="campaign_data">{{ attrs }}</p>
+                                        </div>       
+                                    {% endif %}
+                                    
                                     <div>
-                                        <p style="color: #006657; line-height: 5px;">None</p>
+                                        <label style="text-decoration: underline; font-size: 18px; color: #006657;">Relationships:</label>
                                     </div>
-                                {% else %}
-                                    <div>
-                                        <p class="campaign_data">{{ rels }}</p>
-                                    </div>  
-                                {% endif %}
 
-                            </div>
-                        </button>
+                                    {% if rels == None %}
+                                        <div>
+                                            <p style="color: #006657; line-height: 5px;">None</p>
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            <p class="campaign_data">{{ rels }}</p>
+                                        </div>  
+                                    {% endif %}
 
-                    {% endfor %}
- 
-                </form>
+                                </div>
+                            </button>
+
+                        {% endfor %}
+    
+                    </form>
+
+                {% else %}
+
+                    <div class="no_campaigns_div">
+                        <p>There are no campaigns in the database,<br>so it is <span style="text-decoration: underline;">recommended to create one</span> with the button below.</p>
+                    </div>
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">Campaigns not yet created.</p>
+                    </div>
+
+                {% endif %}
 
                 <form method="post">
                     {% csrf_token %}

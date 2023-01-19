@@ -30,55 +30,69 @@
 
                 {% csrf_token %}
 
-                <div id="data-div" class="inside_container">
+                {% if no_owners == False %}
 
-                    <ul id="list" class="list">
-                        {% for o in owners %}
-                            {% if o.email != owner.email %}
+                    <div id="data-div" class="inside_container">
 
-                                <li class="owner">
+                        <ul id="list" class="list">
+                            {% for o in owners %}
+                                {% if o.email != owner.email %}
 
-                                    {% if o.email in userRels %}
+                                    <li class="owner">
 
-                                        <div>
-                                            <span name="selected-{{ currentRel }}">
-                                                {{ o.email }}
-                                            </span>
-                                        </div>
+                                        {% if o.email in userRels %}
 
-                                        <div>
-                                            <span class="selected">
-                                                <i class="icona bi bi-check"></i>
-                                            </span>
-                                            <span>
-                                                <i class="icona bi bi-x"></i>
-                                            </span>
-                                        </div>
+                                            <div>
+                                                <span name="selected-{{ currentRel }}">
+                                                    {{ o.email }}
+                                                </span>
+                                            </div>
 
-                                    {% else %}
+                                            <div>
+                                                <span class="selected">
+                                                    <i class="icona bi bi-check"></i>
+                                                </span>
+                                                <span>
+                                                    <i class="icona bi bi-x"></i>
+                                                </span>
+                                            </div>
 
-                                        <div>
-                                            <span name="deselected-{{ currentRel }}">{{ o.email }}</span>
-                                        </div>
+                                        {% else %}
 
-                                        <div>
-                                            <span>
-                                                <i class="icona bi bi-check"></i>
-                                            </span>
-                                            <span class="deselected">
-                                                <i class="icona bi bi-x"></i>
-                                            </span>
-                                        </div>
+                                            <div>
+                                                <span name="deselected-{{ currentRel }}">{{ o.email }}</span>
+                                            </div>
 
-                                    {% endif %}
+                                            <div>
+                                                <span>
+                                                    <i class="icona bi bi-check"></i>
+                                                </span>
+                                                <span class="deselected">
+                                                    <i class="icona bi bi-x"></i>
+                                                </span>
+                                            </div>
+
+                                        {% endif %}
+                                        
+                                    </li>
                                     
-                                </li>
-                                
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
 
-                </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="no_owners_div">
+                        <p>There are no other owners in the database.<br>So, for now, you can't have relationships with anyone.</p>
+                    </div>
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">No other Data Owners.</p>
+                    </div>
+
+                {% endif %}
 
 
                 <input type="hidden" id="selected-users" name="selectedUsers" value="{{ inputRels }}">

@@ -165,9 +165,8 @@ body{
 .progress_value {
     position: relative;
     font-size: 25px;
+    width: 300px;
     font-weight: bold;
-    width: 280px;
-    height: 280px;
     text-align: center;
     padding: 130px 0;
 }

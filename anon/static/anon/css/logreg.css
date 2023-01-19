@@ -445,7 +445,16 @@ hr {
 
 
 
-
+.error_flag {
+    border: 1px solid #004d41;
+    border-radius: 10px;
+    padding: 0 50px;
+    text-align: center; 
+    background: linear-gradient(#004d41, #009982); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
 
 
 

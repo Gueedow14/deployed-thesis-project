@@ -86,8 +86,7 @@ body{
 
 
 .campaign {
-    width: 300px;
-    min-width: 300px;
+    width: 350px;
     margin: 10px;
     height: 90%;
     display: inline-block;
@@ -171,7 +170,7 @@ body{
 
 
 .selected_campaign {
-    width: 300px;
+    width: 350px;
     min-width: 300px;
     margin: 10px;
     height: 90%;

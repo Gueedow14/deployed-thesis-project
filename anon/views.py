@@ -322,7 +322,7 @@ def secLev(req):
 
                 a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
                 a_edge.save()
-                terminal = 'cd ../personalized-anony-kg && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + campaignAttrs[i].name.lower() + ' --value=' + v.value.lower()
+                terminal = 'cd ../personalized-anony-kg && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + campaignAttrs[i].name.lower() + '\" --value=\"' + v.value.lower() + '\"'
                 subprocess.call(terminal, shell=True)
                 
             
@@ -340,74 +340,13 @@ def homeDataOwner(req):
 
     if not "owner" in req.session:
         return redirect("/anon/error")
-
+    
     owners = Owner.objects.all()
 
     for owner in owners:
         if owner.email == req.session["owner"]:
             o = owner
-
-    ails = []
-    rrus = []
-
-    for anony_graph in AnonyGraph.objects.all():
-        ails.append(anony_graph.ail)
-        rrus.append(anony_graph.rru)
-
-    mean_ail = statistics.mean(ails)
-    mean_rru = statistics.mean(rrus)
-    k_val = o.k
-
-    low = 0
-    mid = 0
-    high = 0
-
-    if mean_ail < 0.4:
-        high += 1
-    elif mean_ail >= 0.8:
-        low += 1
-    else:
-        mid += 1
-
-    if mean_rru < 0.4:
-        high += 1
-    elif mean_rru >= 0.8:
-        low += 1
-    else:
-        mid += 1
-
-    if k_val < 3:
-        low += 1
-    elif k_val >= 6:
-        high += 1
-    else:
-        mid += 1
-
-    sec_value = [low, mid, high]
-
-    sec_perc = 0
     
-    if sec_value == [3,0,0]:
-        sec_perc = 10
-    elif sec_value == [2,1,0]: 
-        sec_perc = 20
-    elif sec_value == [2,0,1]: 
-        sec_perc = 30
-    elif sec_value == [1,2,0]:
-        sec_perc = 40
-    elif sec_value == [1,1,1]: 
-        sec_perc = 50
-    elif sec_value == [0,3,0]: 
-        sec_perc = 60
-    elif sec_value == [0,2,1]: 
-        sec_perc = 70
-    elif sec_value == [1,0,2]: 
-        sec_perc = 80
-    elif sec_value == [0,1,2]: 
-        sec_perc = 90
-    elif sec_value == [0,0,3]: 
-        sec_perc = 100
-
     if req.method == "POST":
         if "profile" in req.POST:
             req.session["owner"] = o.email
@@ -424,9 +363,83 @@ def homeDataOwner(req):
             if "sel-camp" in req.session:
                 del req.session["sel-camp"]
             return redirect('/anon/logreg')
+
+    campaign_anony_graphs = []
+
+    for anony_graph in AnonyGraph.objects.all():
+        if anony_graph.campaign == o.campaign:
+            campaign_anony_graphs.append(anony_graph)
+
+    if campaign_anony_graphs:
+
+        ails = []
+        rrus = []
+
+        for anony_graph in campaign_anony_graphs:
+            ails.append(anony_graph.ail)
+            rrus.append(anony_graph.rru)
+
+        mean_ail = statistics.mean(ails)
+        mean_rru = statistics.mean(rrus)
+        k_val = o.k
+
+        low = 0
+        mid = 0
+        high = 0
+
+        if mean_ail < 0.4:
+            high += 1
+        elif mean_ail >= 0.8:
+            low += 1
+        else:
+            mid += 1
+
+        if mean_rru < 0.4:
+            high += 1
+        elif mean_rru >= 0.8:
+            low += 1
+        else:
+            mid += 1
+
+        if k_val < 3:
+            low += 1
+        elif k_val >= 6:
+            high += 1
+        else:
+            mid += 1
+
+        sec_value = [low, mid, high]
+
+        sec_perc = 0
+        
+        if sec_value == [3,0,0]:
+            sec_perc = 10
+        elif sec_value == [2,1,0]: 
+            sec_perc = 20
+        elif sec_value == [2,0,1]: 
+            sec_perc = 30
+        elif sec_value == [1,2,0]:
+            sec_perc = 40
+        elif sec_value == [1,1,1]: 
+            sec_perc = 50
+        elif sec_value == [0,3,0]: 
+            sec_perc = 60
+        elif sec_value == [0,2,1]: 
+            sec_perc = 70
+        elif sec_value == [1,0,2]: 
+            sec_perc = 80
+        elif sec_value == [0,1,2]: 
+            sec_perc = 90
+        elif sec_value == [0,0,3]: 
+            sec_perc = 100
+    
+    else:
+        sec_perc = 0
+
+        return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': True })
             
 
-    return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc })
+    return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False })
 
 
 
@@ -556,9 +569,18 @@ def userRelationships(req):
 
     owners = Owner.objects.all()
 
+    other_owners = []
+
     for owner in owners:
         if owner.email == req.session["owner"]:
             o = owner
+        else:
+            other_owners.append(owner)
+
+    if other_owners:
+        no_owners = False
+    else:
+        no_owners = True
 
     userRels = []
 
@@ -600,7 +622,7 @@ def userRelationships(req):
             return redirect('/anon/profile')
 
 
-    return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': owners, 'currentRel': currentRel, 'inputRels': inputRels })
+    return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': owners, 'currentRel': currentRel, 'inputRels': inputRels, 'no_owners': no_owners })
 
 
 
@@ -679,9 +701,12 @@ def homeDataProvider(req):
     
     campaign_data = zip(campaigns, campaignAttrs, campaignRels)
 
+    no_campaigns = False
 
+    if not campaigns:
+        no_campaigns = True
 
-    return render(req, 'anon/homedataprovider.html', { "provider": provider, "campaigns": campaign_data })
+    return render(req, 'anon/homedataprovider.html', { "provider": provider, "campaigns": campaign_data, 'no_campaigns': no_campaigns })
 
 
 
@@ -714,12 +739,21 @@ def createCampaign(req):
                     return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True })
             
             for attr in attrsInput:
+                if ' ' in attr:
+                    words = attr.split(' ')
+                    attr = ""
+                    for w in words:
+                        attr += w.capitalize() + " "
+                    attr = attr[:-1]
+                else:
+                    attr = attr.capitalize()
+
                 try:
                     a = Attribute.objects.get(pk=attr.capitalize())
                 except Attribute.DoesNotExist:
                     a = None
                 if a == None:
-                    a = Attribute(name=attr.capitalize())
+                    a = Attribute(name=attr)
                     a.save()
                     terminal = 'cd ../personalized-anony-kg && python generate_attribute.py --attr=\"' + a.name.lower() + '\"'
                     subprocess.call(terminal, shell=True)
@@ -727,12 +761,21 @@ def createCampaign(req):
                 attributes.append(a)
 
             for rel in relsInput:
+                if ' ' in rel:
+                    words = rel.split(' ')
+                    rel = ""
+                    for w in words:
+                        rel += w.capitalize() + " "
+                    rel = rel[:-1]
+                else:
+                    rel = rel.capitalize()
+
                 try:
                     r = Relationship.objects.get(pk=rel.capitalize())
                 except Relationship.DoesNotExist:
                     r = None
                 if r == None:
-                    r = Relationship(name=rel.capitalize())
+                    r = Relationship(name=rel)
                     r.save()
                     terminal = 'cd ../personalized-anony-kg && python generate_relationship.py --rel=\"' + r.name.lower() + '\"'
                     subprocess.call(terminal, shell=True)
@@ -1011,6 +1054,10 @@ def anonymize(req):
     campaign = req.session["sel-camp-prov"]
 
     if req.method == "POST":
+
+        if "home" in req.POST:
+            del req.session["sel-camp-prov"]
+            return redirect('/anon/homedataprovider')
 
         clust = req.POST.get("clust-alg")
         clust_arg = None

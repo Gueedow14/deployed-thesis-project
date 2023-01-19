@@ -72,7 +72,14 @@
         </div>
 
         <script>
-            progressEndValue = {{ sec_perc }}
+            progressEndValue = {{ sec_perc }};
+
+            chkNoAnonyGraphs = false
+
+            if(progressEndValue == 0) {
+                chkNoAnonyGraphs = true
+            }
+
         </script>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>

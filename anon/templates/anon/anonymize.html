@@ -32,8 +32,14 @@
                 {% if clusterError == True %}
 
                     <div style="padding: 10px 20px;">
-                        <div style="border: 1px solid #004d41;; border-radius: 10px; text-align: center; background: linear-gradient(#004d41, #009982);" id="some_flag" title="Some Flag">
-                            <p style="font-size: 25px; line-height: 10px; font-weight: bold; color: white;">Error in Clustering: Min cluster size must be greater than 1.</p>
+                        <div class="error_flag">
+                            <p style="font-size: 25px; line-height: 10px; font-weight: bold; color: white;">Error in Clustering: Minimum cluster size must be greater than 1.</p>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div>
+                                    <button id="exit-button" type="submit" name="home" class="exit_button">Go Back Home<i class="bi bi-box-arrow-right" style="margin-left: 10px; font-size: 20px;"></i></button>
+                                </div>
+                            </form>
                         </div>
                     </div>
 
