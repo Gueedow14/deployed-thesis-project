@@ -1,0 +1,198 @@
+body{
+    background-color: #d9d9d9;
+    font-family: 'Lato', sans-serif;
+}
+
+.section{
+    border: 3px solid #004d41;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 100px auto;
+    height: 750px;
+    position: relative;
+    background: white;
+}
+ 
+.title {
+    background: linear-gradient(#004d41, #009982);
+    color: white;
+    padding: 5px;
+    font-size: 25px;
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 20px;
+}
+
+hr {
+    margin: 0 10px;
+}
+
+
+
+
+
+
+.container_data {
+    padding: 25px;
+    justify-items: center;
+}
+
+
+
+.email_div {
+    margin: 20px 0;
+}
+
+.pwd_div {
+    margin: 20px 0;
+}
+
+.confirm_pwd_div {
+    margin: 20px 0;
+}
+
+
+
+
+.field_name_div {
+    text-align: left;
+}
+
+.field_name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.input_div {
+    display: flex;
+}
+
+.pwd_icon_div {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    width: 5%;
+}
+
+.field_input_div {
+    width: 95%;
+    padding-right: 10px;
+}
+
+.field_input_div_email {
+    width: 100%;
+}
+
+.email {
+    width: 100%;
+    height: 35px;
+    font-size: 22px;
+    padding: 5px;
+    outline: none;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    border-bottom: 2px solid #006657;
+
+    color: #00806c;
+
+    font-weight: bold;
+}
+
+
+.pwd {
+    width: 100%;
+    height: 35px;
+    font-size: 22px;
+    padding: 5px;
+    outline: none;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    border-bottom: 2px solid #006657;
+
+    color: #00806c;
+
+    font-weight: bold;
+}
+
+.eye_icon {
+    opacity: 0;
+    font-size: 25px;
+    transition: .1s all linear;
+    color: #006657;
+}
+
+
+
+
+
+
+
+
+
+
+
+a:hover {
+    text-decoration: none;
+    color: #004d41;
+}
+
+
+
+
+.button_div {
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.button {
+    margin: 20px 30px;
+    width: 200px;
+    color: white;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
+    border-radius: 10px;
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.button:hover {
+    background: linear-gradient(#00806c, #00ccad);
+    transform: scale(1.1);
+}
+
+
+
+
+.error_msg {
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
+    border-radius: 10px; 
+    text-align: center; 
+    margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+*, *::before, *::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
