@@ -62,7 +62,7 @@ lmdb==0.97
 lxml==4.5.2
 Markdown==3.1.1
 mccabe==0.6.1
-mkl-fft==1.0.14
+mkl-fft==1.3.1
 mkl-random==1.1.0
 mkl-service==2.3.0
 mlxtend==0.16.0
