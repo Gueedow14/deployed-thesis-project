@@ -13,7 +13,6 @@ attrs==19.3.0
 Automat==20.2.0
 autopep8==1.4.4
 bcrypt==3.1.7
-beautifulsoup4 @ file:///home/linux1/recipes/ci/beautifulsoup4_1610988766420/work
 bibtexparser==1.2.0
 black==19.3b0
 cachetools==4.1.1
@@ -32,7 +31,6 @@ decorator==4.4.1
 dill==0.3.0
 dj-database-url==1.2.0
 Django==3.2.16
-django-heroku @ file:///home/guido/Scrivania/django-heroku-0.3.1.tar.gz
 docopt==0.6.2
 exceptiongroup==1.0.4
 fake-useragent==0.1.11
@@ -43,25 +41,21 @@ google-auth==1.23.0
 google-auth-oauthlib==0.4.2
 google-pasta==0.2.0
 googledrivedownloader==0.4
-graphviz @ file:///home/conda/feedstock_root/build_artifacts/python-graphviz_1609966316231/work
 grpcio==1.51.1
 gunicorn==20.1.0
 gviz-api==1.9.0
 h11==0.14.0
 h5py==2.10.0
 hdbscan==0.8.24
-hyperlink @ file:///tmp/build/80754af9/hyperlink_1610130746837/work
 idna==2.8
 importlib-metadata==4.13.0
 importlib-resources==5.10.1
 incremental==17.5.0
 isodate==0.6.0
 isort==4.3.21
-itemadapter @ file:///tmp/build/80754af9/itemadapter_1626442940632/work
 joblib==0.13.2
 jsonpickle==1.2
 Keras-Applications==1.0.8
-Keras-Preprocessing @ file:///home/conda/feedstock_root/build_artifacts/keras-preprocessing_1610713559828/work
 kiwisolver==1.1.0
 lazy-object-proxy==1.4.2
 lmdb==0.97
@@ -83,7 +77,6 @@ outcome==1.2.0
 packaging==19.2
 pandas==0.25.2
 paramiko==2.6.0
-parsel @ file:///tmp/build/80754af9/parsel_1613041573795/work
 pathlib2==2.3.5
 patsy==0.5.1
 pluggy==0.13.0
@@ -99,7 +92,6 @@ pycparser==2.19
 PyDispatcher==2.0.5
 pyfpgrowth==1.0
 pygraphviz==1.3
-PyHamcrest @ file:///tmp/build/80754af9/pyhamcrest_1615748656804/work
 pylint==2.4.3
 pymongo==3.9.0
 PyNaCl==1.3.0
@@ -108,7 +100,6 @@ pyparsing==2.4.2
 PySocks==1.7.1
 pytest==5.2.4
 pytest-cov==2.10.1
-pytest-runner @ file:///tmp/build/80754af9/pytest-runner_1623663836848/work
 python-dateutil==2.8.0
 python-dotenv==0.14.0
 pytorch-ignite==0.2.0
@@ -127,7 +118,6 @@ scikit-learn==1.0.2
 scikit-learn-extra==0.2.0
 scipy==1.3.1
 scp==0.13.2
-Scrapy @ file:///tmp/build/80754af9/scrapy_1606864688029/work
 seaborn==0.9.0
 selenium==3.141.0
 service-identity==18.1.0
@@ -158,7 +148,6 @@ tornado==6.0.3
 tqdm==4.36.1
 trio==0.22.0
 trio-websocket==0.9.2
-Twisted @ file:///tmp/build/80754af9/twisted_1614874405099/work
 typing_extensions==4.4.0
 urllib3==1.25.8
 w3lib==1.21.0
@@ -168,6 +157,4 @@ Werkzeug==0.16.0
 whitenoise==6.3.0
 wrapt==1.11.2
 wsproto==1.2.0
-yapf @ file:///tmp/build/80754af9/yapf_1593528177422/work
 zipp==3.11.0
-zope.interface @ file:///tmp/build/80754af9/zope.interface_1625029694761/work
