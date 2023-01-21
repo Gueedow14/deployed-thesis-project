@@ -1,3 +1,4 @@
+pkg-config==0.29.2
 absl-py==0.8.0
 appdirs==1.4.3
 arcas==1.0.0
