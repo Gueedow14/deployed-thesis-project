@@ -149,7 +149,6 @@ w3lib==1.21.0
 wcwidth==0.1.7
 webencodings==0.5.1
 Werkzeug==1.0.1
-wheel==0.38.4
 whitenoise==6.3.0
 wrapt==1.11.2
 wsproto==1.2.0
