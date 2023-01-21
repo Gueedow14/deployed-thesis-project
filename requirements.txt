@@ -1,4 +1,4 @@
-absl-py==0.8.0
+absl-py==1.0.0
 appdirs==1.4.3
 arcas==1.0.0
 arrow==0.17.0
