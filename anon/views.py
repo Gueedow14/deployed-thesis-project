@@ -5,7 +5,16 @@ import numpy as np
 import re, os, mimetypes, subprocess, csv, statistics
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph
 
+from git import Repo
+
 def logreg(req):
+
+    print("\n\n\n\n")
+    print("-----------------------")
+    print(Repo(self.rorepo.working_tree_dir))
+    print("-----------------------")
+    print("\n\n\n\n")
+
     if req.method == "POST":
         data = req.POST
         action = data.get("button")
