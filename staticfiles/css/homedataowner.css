@@ -1,0 +1,188 @@
+body{
+    background-color: #d9d9d9;
+    font-family: 'Lato', sans-serif;
+}
+
+.section{
+    border: 3px solid #004d41;
+    border-radius: 10px;
+    max-width: 1300px;
+    margin: 120px auto;
+    height: 730px;
+    position: relative;
+    background: white;
+
+    box-shadow: 5px 5px 10px grey;
+}
+
+.title {
+    background: linear-gradient(#004d41, #009982);
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title div {
+    display: flex;
+    align-items: center;
+}
+
+.logged_email {
+    margin-left: 20px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    background: transparent;
+}
+
+.exit_button {
+    height: 40px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    background: transparent;
+    border: none;
+    transition: .3s all ease-in-out;
+}
+
+.exit_button:hover {
+    transform: scale(1.1);
+}
+
+
+
+
+
+.container {
+    display: flex;
+    height: 93%;
+}
+
+
+
+
+
+
+.button_div {
+    width: 44%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile_button {
+    height: 350px;
+    width: 350px;
+    font-size: 150px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    box-shadow: 10px 10px 40px grey;
+    transition: .3s all ease-in-out;
+}
+
+.profile_button:hover {
+    background: linear-gradient(#004d41, #009982);
+    transform: scale(1.05);
+    color: white;
+}
+
+.button_text {
+    position: absolute;
+    top: 15%;
+    font-size: 40px;
+    font-weight: bold;
+    background: linear-gradient(#004d41, #009982);
+    border-radius: 10px;
+    color: white;
+    padding: 10px 15px;
+    display: none;
+}
+
+.button_text::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 15px solid #009982;
+}
+
+
+
+
+
+
+.circle_div {
+    width: 56%;
+}
+
+.progress_bar_div {
+    background: conic-gradient(red 90deg, white 0deg);
+    border-radius: 50%;
+    width: 500px;
+    height: 500px;
+    margin-top: 80px;
+    margin-left: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .3s all;
+}
+
+.progress_bar_div:hover {
+    transform: scale(1.1);
+}
+
+.progress_bar_div::before {
+    content: "";
+    position: absolute;
+    height: 400px;
+    width: 400px;
+    background: white;
+    border-radius: 50%;
+}
+
+.animate {
+    -webkit-animation: animatezoom 2s;
+    animation: animatezoom 2s
+}
+  
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+.progress_value {
+    position: relative;
+    font-size: 25px;
+    width: 300px;
+    font-weight: bold;
+    text-align: center;
+    padding: 130px 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+*, *::before, *::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
