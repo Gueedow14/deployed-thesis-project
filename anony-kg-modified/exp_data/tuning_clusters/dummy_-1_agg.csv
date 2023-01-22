@@ -1,0 +1,6 @@
+gen,info_loss,calgo,min_k,alpha_dm,range_k,info_loss_args_str,enforcer,handler_str,data,alpha_adm,enforcer_str,calgo_str,za,sample,gen_str,max_k,max_dist,anony_mode,gen_n,adm,dm,am,removed_entities,num_raw_entities,is_invalid_anonymity_clusters,num_big_clusters,radm
+static,adm,km,,0.5,,"0.50,0.50",sr,n,dummy,0.5,sr,km#max,,-1,static#0,,,anony,0,0.37166666666666665,0.37166666666666665,0.37166666666666665,0,5,0,0,0.37166666666666665
+static,adm,vac,,0.5,,"0.50,0.50",ms,n,dummy,0.5,ms#0.5,vac,,-1,static#0,,0.5,anony,0,0.2866666666666667,0.10833333333333334,0.10833333333333334,1,5,0,0,0.08666666666666667
+static,adm,vac,,0.5,,"0.50,0.50",ms,n,dummy,0.5,ms#1,vac,,-1,static#0,,1.0,anony,0,0.2866666666666667,0.10833333333333334,0.10833333333333334,1,5,0,0,0.08666666666666667
+static,adm,vac,,0.5,,"0.50,0.50",sr,n,dummy,0.5,sr,vac,,-1,static#0,,,anony,0,0.44333333333333336,0.05416666666666667,0.05416666666666667,2,5,0,0,0.043333333333333335
+zipf,adm,vac,2.0,0.5,1.0,"0.50,0.50",ms,n,dummy,0.5,ms#1.00,vac,2.0,-1,"zipf#2,5,1,2",5.0,1.0,anony,0,0.11333333333333333,0.1125,0.1125,0,5,0,0,0.11333333333333333
