@@ -10,15 +10,23 @@ from github import Github
 def logreg(req):
 
 
-    access_token = "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"
-    g=Github(access_token, retry=20)
+    #access_token = "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"
+    #g=Github(access_token, retry=20)
+
+    #print("\n\n\n\n")
+    #for repo in g.get_user().get_repos():
+        #print("-----------------------")
+        #print(repo.name)
+        #repo.edit(has_wiki=False)
+        #print("-----------------------")
+    #print("\n\n\n\n")
 
     print("\n\n\n\n")
-    for repo in g.get_user().get_repos():
-        print("-----------------------")
-        print(repo.name)
-        repo.edit(has_wiki=False)
-        print("-----------------------")
+    print(os.getenv('GUSER'))
+    print(os.getenv('GPASS'))
+    print(os.getenv('ENV'))
+    print(Github(os.getenv('GUSER'), os.getenv('GPASS')))
+    print(Github(os.getenv('ENV')))
     print("\n\n\n\n")
 
 
