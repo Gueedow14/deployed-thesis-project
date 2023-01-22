@@ -9,8 +9,9 @@ from github import Github
 
 def logreg(req):
 
-    g = Github("Gueedow14", "!!*ci.ao123CI.AO*??")
+    #g = Github("Gueedow14", "!!*ci.ao123CI.AO*??")
     access_token = "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"
+    g = Github(access_token)
 
     for repo in g.get_user().get_repos():
         print(repo)
