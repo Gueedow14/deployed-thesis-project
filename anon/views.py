@@ -16,7 +16,7 @@ def logreg(req):
     #for repo in g.get_user().get_repos():
         #print(repo)
 
-    terminal = 'cd .. && ls'
+    terminal = 'pwd && cd .. && pwd && ls'
     subprocess.call(terminal, shell=True)
 
 
