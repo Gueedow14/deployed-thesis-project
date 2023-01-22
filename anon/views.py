@@ -16,7 +16,7 @@ def logreg(req):
     #for repo in g.get_user().get_repos():
         #print(repo)
 
-    terminal = 'pwd && ls'
+    terminal = 'cd anony-app-modified/ && ls'
     subprocess.call(terminal, shell=True)
 
 
