@@ -10,11 +10,14 @@ from github import Github
 def logreg(req):
 
     #g = Github("Gueedow14", "!!*ci.ao123CI.AO*??")
-    access_token = "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"
-    g = Github(access_token)
+    #access_token = "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"
+    #g = Github(access_token)
 
-    for repo in g.get_user().get_repos():
-        print(repo)
+    #for repo in g.get_user().get_repos():
+        #print(repo)
+
+    terminal = 'ls'
+    subprocess.call(terminal, shell=True)
 
 
     if req.method == "POST":
