@@ -12,7 +12,7 @@ def logreg(req):
     g = Github("Gueedow14", "!!*ci.ao123CI.AO*??")
     access_token = "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"
 
-    for repo in g.get_user().getrepos():
+    for repo in g.get_user().get_repos():
         print(repo)
 
 
