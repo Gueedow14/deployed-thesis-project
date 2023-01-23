@@ -15,7 +15,6 @@ def main(args):
     logger.info(args)
 
     dutils.delete_rel_edge(args["o1"], args["rel"], args["o2"])
-    logger.info("deleted relationship edge {} ---[{}]--> {}".format(args["o1"], args["rel"], args["o2"]))
 
 
 if __name__ == "__main__":

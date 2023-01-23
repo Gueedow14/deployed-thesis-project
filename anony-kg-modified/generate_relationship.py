@@ -15,7 +15,6 @@ def main(args):
     logger.info(args)
 
     dutils.generate_relationship(args["rel"])
-    logger.info("created relationship {}".format(args["rel"]))
 
 
 if __name__ == "__main__":

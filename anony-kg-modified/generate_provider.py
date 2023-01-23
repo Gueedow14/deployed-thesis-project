@@ -14,7 +14,6 @@ def add_arguments(parser):
 def main(args):
     logger.info(args)
     dutils.generate_provider(args["provider"], args["pwd"])
-    logger.info("created provider {}".format(args["provider"]))
 
 
 if __name__ == "__main__":

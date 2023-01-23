@@ -99,32 +99,94 @@ def generate_owner(email, pwd, k, campaign):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     owners_file = os.path.join(raw_dir, "owners.idx")
     num_lines = countLines(owners_file)
-    f = open(owners_file, "a")
-    new_owner = email + "," + pwd + "," + str(k) + "," + get_campaign_id(campaign) + "," + str(num_lines) + "\n"
-    f.write(new_owner)
-    f.close()
+
+    chkExist = False
+
+    with open(owners_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == email:
+                chkExist = True
+
+    if chkExist == False:
+        f = open(owners_file, "a")
+        new_owner = email + "," + pwd + "," + str(k) + "," + get_campaign_id(campaign) + "," + str(num_lines) + "\n"
+        f.write(new_owner)
+        f.close()
+        logger.info("created owner {}".format(email))
+    else:
+        logger.info("owner {} already exists".format(email))
+
 
 def generate_provider(email, pwd):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     providers_file = os.path.join(raw_dir, "providers.idx")
     num_lines = countLines(providers_file)
-    f = open(providers_file, "a")
-    new_provider = email + "," + pwd + "," + str(num_lines) + "\n"
-    f.write(new_provider)
-    f.close()
+
+    chkExist = False
+
+    with open(providers_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == email:
+                chkExist = True
+
+    if chkExist == False:
+        f = open(providers_file, "a")
+        new_provider = email + "," + pwd + "," + str(num_lines) + "\n"
+        f.write(new_provider)
+        f.close()
+        logger.info("created provider {}".format(email))
+    else:
+        logger.info("provider {} already exists".format(email))
+
 
 def generate_campaign(campaign, creator):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     campaigns_file = os.path.join(raw_dir, "campaigns.idx")
     num_lines = countLines(campaigns_file)
-    f = open(campaigns_file, "a")
-    new_campaign = campaign + "," + get_provider_id(creator) + "," + str(num_lines) + "\n"
-    f.write(new_campaign)
-    f.close()
+
+    chkExist = False
+
+    with open(campaigns_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == campaign:
+                chkExist = True
+
+    if chkExist == False:
+        f = open(campaigns_file, "a")
+        new_campaign = campaign + "," + get_provider_id(creator) + "," + str(num_lines) + "\n"
+        f.write(new_campaign)
+        f.close()
+        logger.info("created campaign {}".format(campaign))
+    else:
+        logger.info("campaign {} already exists".format(campaign))
+
 
 def generate_campaign_attrs(campaign, attrs):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     campaign_attrs_file = os.path.join(raw_dir, "campaign_attrs.idx")
+
+    chkExist = False
+
+    with open(campaign_attrs_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(":")
+            if row_values[0] == get_campaign_id(campaign):
+                chkExist = True
+
+    if chkExist == True:
+        with open(campaign_attrs_file, "r") as f:
+            lines = f.readlines()
+        with open(campaign_attrs_file, "w") as f:
+            pass
+        with open(campaign_attrs_file, "w") as f:
+            for line in lines:
+                row_values = row.split(":")
+                if row_values[0] != get_campaign_id(campaign):
+                    f.write(line)
+
     f = open(campaign_attrs_file, "a")
     new_campaign = get_campaign_id(campaign)  + ":"
     for attr in attrs:
@@ -136,6 +198,26 @@ def generate_campaign_attrs(campaign, attrs):
 def generate_campaign_rels(campaign, rels):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     campaign_rels_file = os.path.join(raw_dir, "campaign_rels.idx")
+
+    chkExist = False
+
+    with open(campaign_rels_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(":")
+            if row_values[0] == get_campaign_id(campaign):
+                chkExist = True
+
+    if chkExist == True:
+        with open(campaign_rels_file, "r") as f:
+            lines = f.readlines()
+        with open(campaign_rels_file, "w") as f:
+            pass
+        with open(campaign_rels_file, "w") as f:
+            for line in lines:
+                row_values = row.split(":")
+                if row_values[0] != get_campaign_id(campaign):
+                    f.write(line)
+
     f = open(campaign_rels_file, "a")
     new_campaign = get_campaign_id(campaign) + ":"
     for rel in rels:
@@ -148,46 +230,115 @@ def generate_value(value):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     values_file = os.path.join(raw_dir, "values.idx")
     num_lines = countLines(values_file)
-    f = open(values_file, "a")
-    new_value = value  + "," + str(num_lines) + "\n"
-    f.write(new_value)
-    f.close()
+
+    chkExist = False
+
+    with open(values_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == value:
+                chkExist = True
+
+    if chkExist == False:
+        f = open(values_file, "a")
+        new_value = value  + "," + str(num_lines) + "\n"
+        f.write(new_value)
+        f.close()
+        logger.info("created value {}".format(value))
+    else:
+        logger.info("value {} already exists".format(value))
+
 
 def generate_relationship(rel):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     rels_file = os.path.join(raw_dir, "rels.idx")
     attrs_file = os.path.join(raw_dir, "attrs.idx")
     num_lines = countLines(rels_file) + countLines(attrs_file) - 1
-    f = open(rels_file, "a")
-    new_value = rel  + "_rel," + str(num_lines) + "\n"
-    f.write(new_value)
-    f.close()
+
+    chkExist = False
+
+    with open(rels_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == (rel + "_rel"):
+                chkExist = True
+
+    if chkExist == False:
+        f = open(rels_file, "a")
+        new_value = rel  + "_rel," + str(num_lines) + "\n"
+        f.write(new_value)
+        f.close()
+        logger.info("created relationship {}".format(rel))
+    else:
+        logger.info("relationship {} already exists".format(rel))
+
 
 def generate_attribute(attr):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     rels_file = os.path.join(raw_dir, "rels.idx")
     attrs_file = os.path.join(raw_dir, "attrs.idx")
     num_lines = countLines(rels_file) + countLines(attrs_file) - 1
-    f = open(attrs_file, "a")
-    new_value = attr  + "_attr," + str(num_lines) + "\n"
-    f.write(new_value)
-    f.close()
+
+    chkExist = False
+
+    with open(attrs_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == (attr + "_attr"):
+                chkExist = True
+
+    if chkExist == False:
+        f = open(attrs_file, "a")
+        new_value = attr  + "_attr," + str(num_lines) + "\n"
+        f.write(new_value)
+        f.close()
+        logger.info("created attribute {}".format(attr))
+    else:
+        logger.info("attribute {} already exists".format(attr))
+
 
 def generate_relationship_edge(owner1, rel, owner2):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     rels_file = os.path.join(raw_dir, "rels.edges")
-    f = open(rels_file, "a")
-    new_value = get_owner_id(owner1)  + "," + get_rel_id(rel + "_rel")  + "," + get_owner_id(owner2) + "\n"
-    f.write(new_value)
-    f.close()
+
+    chkExist = False
+
+    with open(rels_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == get_owner_id(owner1) and row_values[1] == get_rel_id(rel + "_rel") and row_values[2].strip('\n') == get_owner_id(owner2):
+                chkExist = True
+
+    if chkExist == False:
+        f = open(rels_file, "a")
+        new_value = get_owner_id(owner1)  + "," + get_rel_id(rel + "_rel")  + "," + get_owner_id(owner2) + "\n"
+        f.write(new_value)
+        f.close()
+        logger.info("created relationship edge {} ---[{}]--> {}".format(owner1, rel, owner2))
+    else:
+        logger.info("relationship edge {} ---[{}]--> {} already exists".format(owner1, rel, owner2))
+    
 
 def generate_attribute_edge(owner, attr, value):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     attrs_file = os.path.join(raw_dir, "attrs.edges")
-    f = open(attrs_file, "a")
-    new_value = get_owner_id(owner)  + "," + get_attr_id(attr + "_attr")  + "," + get_value_id(value) + "\n"
-    f.write(new_value)
-    f.close()
+
+    chkExist = False
+
+    with open(attrs_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == get_owner_id(owner) and row_values[1] == get_attr_id(attr + "_attr") and row_values[2].strip('\n') == get_value_id(value):
+                chkExist = True
+
+    if chkExist == False:
+        f = open(attrs_file, "a")
+        new_value = get_owner_id(owner)  + "," + get_attr_id(attr + "_attr")  + "," + get_value_id(value) + "\n"
+        f.write(new_value)
+        f.close()
+        logger.info("created attribute edge {} ---[{}]--> {}".format(owner, attr, value))
+    else:
+        logger.info("attribute edge {} ---[{}]--> {} already exists".format(owner, attr, value))
 
 
 
@@ -246,15 +397,28 @@ def delete_rel_edge(o1, rel, o2):
     rels_file = os.path.join(raw_dir, "rels.edges")
     tmp_file = os.path.join(raw_dir, "tmp.idx")
 
-    text2del = get_owner_id(o1) + "," + get_rel_id(rel + "_rel") + "," + get_owner_id(o2)
+    chkExist = False
 
-    with open(rels_file, "r") as f_input:
-        with open(tmp_file, "w") as f_output:
-            for row in f_input.readlines():
-                if row.strip("\n") != text2del:
-                    f_output.write(row)
+    with open(rels_file, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            if row_values[0] == get_owner_id(o1) and row_values[1] == get_rel_id(rel + "_rel") and row_values[2].strip('\n') == get_owner_id(o2):
+                chkExist = True
 
-    os.replace(tmp_file, rels_file)
+    if chkExist == True:
+        text2del = get_owner_id(o1) + "," + get_rel_id(rel + "_rel") + "," + get_owner_id(o2)
+
+        with open(rels_file, "r") as f_input:
+            with open(tmp_file, "w") as f_output:
+                for row in f_input.readlines():
+                    if row.strip("\n") != text2del:
+                        f_output.write(row)
+
+        os.replace(tmp_file, rels_file)
+        logger.info("deleted relationship edge {} ---[{}]--> {}".format(o1,rel,o2))
+    else:
+        logger.info("relationship edge {} ---[{}]--> {} already deleted".format(o1,rel,o2))
+
 
 
 def load_all_attr_edges():

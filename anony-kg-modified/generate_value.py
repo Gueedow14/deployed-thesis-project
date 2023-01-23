@@ -15,7 +15,6 @@ def main(args):
     logger.info(args)
 
     dutils.generate_value(args["val"])
-    logger.info("created value {}".format(args["val"]))
 
 
 if __name__ == "__main__":

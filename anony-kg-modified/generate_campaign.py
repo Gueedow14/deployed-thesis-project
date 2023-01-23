@@ -14,13 +14,9 @@ def add_arguments(parser):
 def main(args):
     logger.info(args)
 
-    # attrs = attr1|attr2|attr3|...
-    # rels = rel1|rel2|rel3|...
-
     dutils.generate_campaign(args["name"], args["creator"])
     dutils.generate_campaign_attrs(args["name"], args["attrs"].split("|"))
     dutils.generate_campaign_rels(args["name"], args["rels"].split("|"))
-    logger.info("created campaign {}".format(args["name"]))
 
 
 if __name__ == "__main__":

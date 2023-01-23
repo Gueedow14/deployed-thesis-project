@@ -15,7 +15,6 @@ def main(args):
     logger.info(args)
 
     dutils.generate_relationship_edge(args["o1"], args["rel"], args["o2"])
-    logger.info("created relationship edge {} ---[{}]--> {}".format(args["o1"], args["rel"], args["o2"]))
 
 
 if __name__ == "__main__":

@@ -14,7 +14,6 @@ def add_arguments(parser):
 def main(args):
     logger.info(args)
     dutils.generate_owner(args["owner"], args["pwd"], args["kval"], args["campaign"])
-    logger.info("created owner {}".format(args["owner"]))
 
 
 if __name__ == "__main__":
