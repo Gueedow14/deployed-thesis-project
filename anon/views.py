@@ -5,20 +5,10 @@ import numpy as np
 import re, os, mimetypes, subprocess, csv, statistics
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph
 
-from github import Github
+# cd anony-kg-modified/
+
 
 def logreg(req):
-
-    #g = Github("Gueedow14", "!!*ci.ao123CI.AO*??")
-    #access_token = "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"
-    #g = Github(access_token)
-
-    #for repo in g.get_user().get_repos():
-        #print(repo)
-
-    terminal = 'cd anony-kg-modified/ && ls'
-    subprocess.call(terminal, shell=True)
-
 
     if req.method == "POST":
         data = req.POST
@@ -111,13 +101,13 @@ def resetPwd(req):
             if type == "owner":
                 user.pwd = pwd
                 user.save()
-                terminal = 'cd ../personalized-anony-kg && python reset_owner_pwd.py --owner=' + user.email + ' --pwd=' + user.pwd + ' --kval=' + str(user.k) + ' --campaign=\"' + user.campaign.name.lower() + '\"'
+                terminal = 'cd anony-kg-modified/ && python reset_owner_pwd.py --owner=' + user.email + ' --pwd=' + user.pwd + ' --kval=' + str(user.k) + ' --campaign=\"' + user.campaign.name.lower() + '\"'
                 subprocess.call(terminal, shell=True)
 
             if type == "provider":
                 user.pwd = pwd
                 user.save()
-                terminal = 'cd ../personalized-anony-kg && python reset_provider_pwd.py --provider=' + user.email + ' --pwd=\"' + user.pwd + '\"'
+                terminal = 'cd anony-kg-modified/ && python reset_provider_pwd.py --provider=' + user.email + ' --pwd=\"' + user.pwd + '\"'
                 subprocess.call(terminal, shell=True)
 
             if origin == "logreg":
@@ -180,7 +170,7 @@ def registration(req):
                 p = Provider(email=email.lower(), pwd=pwd)
                 p.save()
 
-                terminal = 'cd ../personalized-anony-kg && python generate_provider.py --provider=' + email + ' --pwd=' + pwd
+                terminal = 'cd anony-kg-modified/ && python generate_provider.py --provider=' + email + ' --pwd=' + pwd
                 subprocess.call(terminal, shell=True)
 
 
@@ -308,7 +298,7 @@ def secLev(req):
             o = Owner(email=email, pwd=pwd, k=kval, campaign=selectedCampaign)
             o.save()
 
-            terminal = 'cd ../personalized-anony-kg && python -u generate_owner.py --owner=' + email + ' --pwd=\"' + pwd + '\" --kval=' + kval + ' --campaign=\"' + selectedCampaign.name.lower() + "\""
+            terminal = 'cd anony-kg-modified/ && python -u generate_owner.py --owner=' + email + ' --pwd=\"' + pwd + '\" --kval=' + kval + ' --campaign=\"' + selectedCampaign.name.lower() + "\""
             subprocess.call(terminal, shell=True)
 
 
@@ -331,12 +321,12 @@ def secLev(req):
 
                 if not(v in values):
                     v.save()
-                    terminal = 'cd ../personalized-anony-kg && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
+                    terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
                     subprocess.call(terminal, shell=True)
 
                 a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
                 a_edge.save()
-                terminal = 'cd ../personalized-anony-kg && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + campaignAttrs[i].name.lower() + '\" --value=\"' + v.value.lower() + '\"'
+                terminal = 'cd anony-kg-modified/ && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + campaignAttrs[i].name.lower() + '\" --value=\"' + v.value.lower() + '\"'
                 subprocess.call(terminal, shell=True)
                 
             
@@ -545,20 +535,20 @@ def profile(req):
 
                             if not(val in Value.objects.all()):
                                 val.save()
-                                terminal = 'cd ../personalized-anony-kg && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
+                                terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
                                 subprocess.call(terminal, shell=True)
                                 attr = attributeEdge.attribute
                                 attributeEdge.delete()
                                 a = Attribute_Edge(owner=o, attribute=attr, value=val)
                                 a.save()
-                                terminal = 'cd ../personalized-anony-kg && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
+                                terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
                                 subprocess.call(terminal, shell=True)
                             else:
                                 attr = attributeEdge.attribute
                                 attributeEdge.delete()
                                 a = Attribute_Edge(owner=o, attribute=attr, value=val)
                                 a.save()
-                                terminal = 'cd ../personalized-anony-kg && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
+                                terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
                                 subprocess.call(terminal, shell=True)
 
             return redirect('/anon/homedataowner')
@@ -622,14 +612,14 @@ def userRelationships(req):
                             o2 = owner2
                     e = Relationship_Edge(owner1=o, relationship=r, owner2=o2)
                     e.save()
-                    terminal = 'cd ../personalized-anony-kg && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=' + r.name.lower() + ' --o2=' + o2.email.lower()
+                    terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=' + r.name.lower() + ' --o2=' + o2.email.lower()
                     subprocess.call(terminal, shell=True)
 
             for u in previousUsers:
                 if not(u in selectedUsers):
                     for relEdge in Relationship_Edge.objects.all():
                         if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel and relEdge.owner2.email == u:
-                            terminal = 'cd ../personalized-anony-kg && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower()
+                            terminal = 'cd anony-kg-modified/ && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower()
                             subprocess.call(terminal, shell=True)
                             relEdge.delete()
 
@@ -694,13 +684,13 @@ def homeDataProvider(req):
         if "campaign" in req.POST:
             req.session["sel-camp-prov"] = req.POST.get("campaign")
 
-            terminal = 'cd ../personalized-anony-kg && python generate_raw_kg.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\"'
+            terminal = 'cd anony-kg-modified/ && python generate_raw_kg.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\"'
             subprocess.call(terminal, shell=True)
 
-            terminal = 'cd ../personalized-anony-kg && python generate_k_values.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\"'
+            terminal = 'cd anony-kg-modified/ && python generate_k_values.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\"'
             subprocess.call(terminal, shell=True)
 
-            terminal = 'cd ../personalized-anony-kg && python generate_dist_matrix.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\" --workers=1'
+            terminal = 'cd anony-kg-modified/ && python generate_dist_matrix.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\" --workers=1'
             subprocess.call(terminal, shell=True)
 
             return redirect('/anon/campaignpage')
@@ -769,7 +759,7 @@ def createCampaign(req):
                 if a == None:
                     a = Attribute(name=attr)
                     a.save()
-                    terminal = 'cd ../personalized-anony-kg && python generate_attribute.py --attr=\"' + a.name.lower() + '\"'
+                    terminal = 'cd anony-kg-modified/ && python generate_attribute.py --attr=\"' + a.name.lower() + '\"'
                     subprocess.call(terminal, shell=True)
 
                 attributes.append(a)
@@ -791,7 +781,7 @@ def createCampaign(req):
                 if r == None:
                     r = Relationship(name=rel)
                     r.save()
-                    terminal = 'cd ../personalized-anony-kg && python generate_relationship.py --rel=\"' + r.name.lower() + '\"'
+                    terminal = 'cd anony-kg-modified/ && python generate_relationship.py --rel=\"' + r.name.lower() + '\"'
                     subprocess.call(terminal, shell=True)
 
                 relationships.append(r)
@@ -819,7 +809,7 @@ def createCampaign(req):
             scriptRels = scriptRels[:-1]
 
 
-            terminal = 'cd ../personalized-anony-kg && python generate_campaign.py --name=\"' + c.name.lower() + '\" --creator=\"' + c.creator.email + '\" --attrs=\"' + scriptAttrs + '\" --rels=\"' + scriptRels + '\"'
+            terminal = 'cd anony-kg-modified/ && python generate_campaign.py --name=\"' + c.name.lower() + '\" --creator=\"' + c.creator.email + '\" --attrs=\"' + scriptAttrs + '\" --rels=\"' + scriptRels + '\"'
             subprocess.call(terminal, shell=True)
 
 
@@ -1090,9 +1080,9 @@ def anonymize(req):
         download = req.POST.get("save-choice")
 
         if clust == "vac":
-            command_line = 'cd ../personalized-anony-kg && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+            command_line = 'cd anony-kg-modified/ && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
         else:
-            command_line = 'cd ../personalized-anony-kg && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
+            command_line = 'cd anony-kg-modified/ && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
 
         terminal = command_line
         subprocess.call(terminal, shell=True)
@@ -1125,9 +1115,9 @@ def anonymize(req):
 
 
         if clust == "vac":
-            command_line = 'cd ../personalized-anony-kg && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+            command_line = 'cd anony-kg-modified/ && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
         else:
-            command_line = 'cd ../personalized-anony-kg && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
+            command_line = 'cd anony-kg-modified/ && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
 
 
         if valid == "sr":
@@ -1140,7 +1130,7 @@ def anonymize(req):
 
         print("\n\n\n\n")
 
-        command_line = 'cd ../personalized-anony-kg && python anonymize_kg.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\"'
+        command_line = 'cd anony-kg-modified/ && python anonymize_kg.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\"'
 
         if clust == "vac":
             command_line += ' --calgo=' + clust
@@ -1157,7 +1147,7 @@ def anonymize(req):
 
         print("\n\n\n\n")
 
-        command_line = 'cd ../personalized-anony-kg && python visualize_outputs.py --data_list=anonykg_thesis --campaign=\"{}\" --refresh=y,y --src_type=graphs --exp_names={},{} --workers=1'.format(campaign.lower(), clust, valid)
+        command_line = 'cd anony-kg-modified/ && python visualize_outputs.py --data_list=anonykg_thesis --campaign=\"{}\" --refresh=y,y --src_type=graphs --exp_names={},{} --workers=1'.format(campaign.lower(), clust, valid)
 
         if clust == "vac":
             command_line += ' --calgo=' + clust
@@ -1237,7 +1227,7 @@ def anonymize(req):
 
         if download == "yes":
 
-            command_line = 'cd ../personalized-anony-kg && python generate_anon_kg_file.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+            command_line = 'cd anony-kg-modified/ && python generate_anon_kg_file.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
 
             if clust != "vac":
                 command_line += ' --calgo_args=' + clust_arg
