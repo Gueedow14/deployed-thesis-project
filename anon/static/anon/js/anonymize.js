@@ -162,3 +162,8 @@ function onClickDownloadButton() {
 }
 
 
+document.getElementById("anon-button").addEventListener('click', showLoader)
+
+function showLoader() {
+    document.getElementById("loader-div").style.display = "flex";
+}

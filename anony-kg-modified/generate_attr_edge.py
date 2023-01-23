@@ -15,7 +15,6 @@ def main(args):
     logger.info(args)
 
     dutils.generate_attribute_edge(args["owner"], args["attr"], args["value"])
-    logger.info("created attribute edge {} ---[{}]--> {}".format(args["owner"], args["attr"], args["value"]))
 
 
 if __name__ == "__main__":

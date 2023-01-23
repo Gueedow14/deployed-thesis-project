@@ -15,7 +15,7 @@ def logreg(req):
         action = data.get("button")
 
         if action == "login":
-            email = req.POST.get("email")
+            email = req.POST.get("email").lower()
             pwd = req.POST.get("pwd")
             regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
             if email != "" and pwd != "" and re.fullmatch(regex, email):
@@ -99,14 +99,18 @@ def resetPwd(req):
                     type = "provider"
 
             if type == "owner":
-                user.pwd = pwd
-                user.save()
+                for o in Owner.objects.all():
+                    if o.email == email and o.pwd != pwd:
+                        user.pwd = pwd
+                        user.save()
                 terminal = 'cd anony-kg-modified/ && python reset_owner_pwd.py --owner=' + user.email + ' --pwd=' + user.pwd + ' --kval=' + str(user.k) + ' --campaign=\"' + user.campaign.name.lower() + '\"'
                 subprocess.call(terminal, shell=True)
 
             if type == "provider":
-                user.pwd = pwd
-                user.save()
+                for p in Provider.objects.all():
+                    if p.email == email and p.pwd != pwd:                        
+                        user.pwd = pwd
+                        user.save()
                 terminal = 'cd anony-kg-modified/ && python reset_provider_pwd.py --provider=' + user.email + ' --pwd=\"' + user.pwd + '\"'
                 subprocess.call(terminal, shell=True)
 
@@ -170,7 +174,7 @@ def registration(req):
                 p = Provider(email=email.lower(), pwd=pwd)
                 p.save()
 
-                terminal = 'cd anony-kg-modified/ && python generate_provider.py --provider=' + email + ' --pwd=' + pwd
+                terminal = 'cd anony-kg-modified/ && python generate_provider.py --provider=' + email.lower() + ' --pwd=' + pwd
                 subprocess.call(terminal, shell=True)
 
 
@@ -295,7 +299,7 @@ def secLev(req):
                 if c.name == req.session["sel-camp"]:
                     selectedCampaign = c
 
-            o = Owner(email=email, pwd=pwd, k=kval, campaign=selectedCampaign)
+            o = Owner(email=email.lower(), pwd=pwd, k=kval, campaign=selectedCampaign)
             o.save()
 
             terminal = 'cd anony-kg-modified/ && python -u generate_owner.py --owner=' + email + ' --pwd=\"' + pwd + '\" --kval=' + kval + ' --campaign=\"' + selectedCampaign.name.lower() + "\""
@@ -324,8 +328,15 @@ def secLev(req):
                     terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
                     subprocess.call(terminal, shell=True)
 
-                a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
-                a_edge.save()
+                chkExists = False
+
+                for attr_edge in Attribute_Edge.objects.all():
+                    if attr_edge.owner == o and attr_edge.attribute == campaignAttrs[i] and attr_edge.value == v:
+                        chkExists = True
+
+                if chkExists == False:
+                    a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
+                    a_edge.save()
                 terminal = 'cd anony-kg-modified/ && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + campaignAttrs[i].name.lower() + '\" --value=\"' + v.value.lower() + '\"'
                 subprocess.call(terminal, shell=True)
                 
@@ -534,20 +545,41 @@ def profile(req):
                                 val = Value(value=newVal.capitalize())
 
                             if not(val in Value.objects.all()):
-                                val.save()
+
+                                chkExists = False
+                                for value in Value.objects.all():
+                                    if value.value == val.value:
+                                        chkExists = True
+                                if chkExists == False:
+                                    val.save()
+
                                 terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
                                 subprocess.call(terminal, shell=True)
                                 attr = attributeEdge.attribute
                                 attributeEdge.delete()
                                 a = Attribute_Edge(owner=o, attribute=attr, value=val)
-                                a.save()
+
+                                chkExists = False
+                                for attr_edge in Attribute_Edge.objects.all():
+                                    if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
+                                        chkExists = True
+                                if chkExists == False:
+                                    a.save()
+
                                 terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
                                 subprocess.call(terminal, shell=True)
                             else:
                                 attr = attributeEdge.attribute
                                 attributeEdge.delete()
                                 a = Attribute_Edge(owner=o, attribute=attr, value=val)
-                                a.save()
+
+                                chkExists = False
+                                for attr_edge in Attribute_Edge.objects.all():
+                                    if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
+                                        chkExists = True
+                                if chkExists == False:
+                                    a.save()
+                                    
                                 terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
                                 subprocess.call(terminal, shell=True)
 
@@ -758,7 +790,12 @@ def createCampaign(req):
                     a = None
                 if a == None:
                     a = Attribute(name=attr)
-                    a.save()
+                    chkExists = False
+                    for attribute in Attribute.objects.all():
+                        if attribute.name == a.name:
+                            chkExists = True
+                    if chkExists == False:
+                        a.save()
                     terminal = 'cd anony-kg-modified/ && python generate_attribute.py --attr=\"' + a.name.lower() + '\"'
                     subprocess.call(terminal, shell=True)
 
@@ -780,7 +817,12 @@ def createCampaign(req):
                     r = None
                 if r == None:
                     r = Relationship(name=rel)
-                    r.save()
+                    chkExists = False
+                    for relationship in Relationship.objects.all():
+                        if relationship.name == a.name:
+                            chkExists = True
+                    if chkExists == False:
+                        r.save()
                     terminal = 'cd anony-kg-modified/ && python generate_relationship.py --rel=\"' + r.name.lower() + '\"'
                     subprocess.call(terminal, shell=True)
 
@@ -792,7 +834,14 @@ def createCampaign(req):
                 campaign_name += (word.lower().capitalize() + " ")
 
             c = Campaign(name=campaign_name[:-1], creator=provider)
-            c.save()
+
+            chkExists = False
+
+            for campaign in Campaign.objects.all():
+                if campaign == c:
+                    chkExists = True
+            if chkExists == False:
+                c.save()
 
             scriptAttrs = ""
             scriptRels = ""
@@ -1217,12 +1266,24 @@ def anonymize(req):
 
                     if not graph:
                         new_graph = AnonyGraph(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer, ail=float(ail), rru=rru)
-                        new_graph.save()
+                        chkExists = False
+                        for grafo in AnonyGraph.objects.all():
+                            if grafo == new_graph:
+                                chkExists = True
+                        if chkExists == False:
+                            new_graph.save()
                     else:
                         graph[0].ail = float(ail)
                         graph[0].rru = rru
                         graph[0].last_updated = datetime.now()
-                        graph[0].save()
+
+                        chkExists = False
+                        for grafo in AnonyGraph.objects.all():
+                            if grafo == graph[0]:
+                                chkExists = True
+                                
+                        if chkExists == False:
+                            graph[0].save()
 
 
         if download == "yes":

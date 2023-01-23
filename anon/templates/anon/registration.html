@@ -77,7 +77,7 @@
 
                         <div class="input_div">
                             <div class="field_input_div_email">
-                                <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail">
+                                <input autocomplete="off" id="email-input" class="email" placeholder="E-Mail" onkeypress="return IsAlphaNumericEmail(event);" ondrop="return false;" onpaste="return false;">
                             </div>
                         </div>
 
@@ -96,7 +96,7 @@
                         <div class="input_div">
 
                             <div class="field_input_div">
-                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Insert Password" type="password" maxlength="30">
+                                <input autocomplete="off" id="pwd-input" class="pwd" placeholder="Insert Password" type="password" maxlength="25" onkeypress="return IsAlphaNumeric(event);" ondrop="return false;" onpaste="return false;">
                             </div>
 
                             <div class="pwd_icon_div">
@@ -122,7 +122,7 @@
                         <div class="input_div">
 
                             <div class="field_input_div">
-                                <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password" maxlength="30">
+                                <input autocomplete="off" id="confirm-pwd-input" class="pwd" placeholder="Confirm Password" type="password" maxlength="25" onkeypress="return IsAlphaNumeric(event);" ondrop="return false;" onpaste="return false;">
                             </div>
 
                             <div class="pwd_icon_div">

@@ -95,3 +95,18 @@ function onClickRegisterButton() {
 
 }
 
+var specialKeys = new Array();
+specialKeys.push(8);  //Backspace
+specialKeys.push(9);  //Tab
+specialKeys.push(46); //Delete
+specialKeys.push(36); //Home
+specialKeys.push(35); //End
+specialKeys.push(37); //Left
+specialKeys.push(39); //Right
+
+function IsAlphaNumeric(e) {
+    var keyCode = e.keyCode == 0 ? e.charCode : e.keyCode;
+    console.log(e.keyCode)
+    var ret = ((keyCode >= 33 && keyCode <= 43) || (keyCode >= 45 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 94) || (keyCode >= 96 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
+    return ret;
+}
