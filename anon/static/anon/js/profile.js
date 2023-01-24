@@ -50,12 +50,12 @@ doneButton.addEventListener('click', applyChanges);
 
 function applyChanges() {
 
+    document.getElementById("loader-div").style.display = "flex"
+    
     for(var i = 0 ; i<num_data ; i++) {
         var input = document.getElementById("data-" + (i+1))
         input.disabled = false;
     }
-
-    document.getElementById("loader-div").style.display = "flex"
     
 }
 

@@ -1077,7 +1077,7 @@ def downloadfile(req):
     if enforcer_args is not None:
         graph_str += ("#1.00")      #not really the best way
 
-    filepath = os.path.join(base_dir, "personalized-anony-kg", "outputs", "anonykg_thesis_-1", campaign, "graphs", graph_str, filename)
+    filepath = os.path.join(base_dir, "kg-anonymization", "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign, "graphs", graph_str, filename)
 
     filename = os.path.basename(filepath)
 
@@ -1151,7 +1151,7 @@ def anonymize(req):
 
         filename += ".txt"
 
-        filepath = os.path.join(base_dir, "personalized-anony-kg", "outputs", "anonykg_thesis_-1", campaign.lower(), "clusters", "raw", filename)
+        filepath = os.path.join(base_dir, "kg-anonymization", "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "clusters", "raw", filename)
 
 
 
@@ -1219,11 +1219,11 @@ def anonymize(req):
 
         filename = campaign.lower().replace(" ", "_") + ".csv"
 
-        filepath = os.path.join(base_dir, "personalized-anony-kg", "exp_data", "tuning_graphs", "anonykg_thesis_-1", filename)
+        filepath = os.path.join(base_dir, "kg-anonymization", "anony-kg-modified", "exp_data", "tuning_graphs", "anonykg_thesis_-1", filename)
 
         agg_filename = campaign.lower().replace(" ", "_") + "_agg.csv"
 
-        agg_filepath = os.path.join(base_dir, "personalized-anony-kg", "exp_data", "tuning_graphs", "anonykg_thesis_-1", agg_filename)
+        agg_filepath = os.path.join(base_dir, "kg-anonymization", "anony-kg-modified", "exp_data", "tuning_graphs", "anonykg_thesis_-1", agg_filename)
 
         with open(agg_filepath, 'r') as f:
             csvreader = csv.reader(f)
