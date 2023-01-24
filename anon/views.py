@@ -1225,8 +1225,6 @@ def anonymize(req):
 
         agg_filepath = os.path.join(base_dir, "personalized-anony-kg", "exp_data", "tuning_graphs", "anonykg_thesis_-1", agg_filename)
 
-        print("Path: " + agg_filepath)
-
         with open(agg_filepath, 'r') as f:
             csvreader = csv.reader(f)
 
@@ -1266,24 +1264,15 @@ def anonymize(req):
 
                     if not graph:
                         new_graph = AnonyGraph(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer, ail=float(ail), rru=rru)
-                        chkExists = False
-                        for grafo in AnonyGraph.objects.all():
-                            if grafo == new_graph:
-                                chkExists = True
-                        if chkExists == False:
-                            new_graph.save()
+                        new_graph.save()
+                        print("Anony Graph added.")
                     else:
-                        graph[0].ail = float(ail)
-                        graph[0].rru = rru
-                        graph[0].last_updated = datetime.now()
-
-                        chkExists = False
-                        for grafo in AnonyGraph.objects.all():
-                            if grafo == graph[0]:
-                                chkExists = True
-                                
-                        if chkExists == False:
+                        if graph[0].ail != float(ail) or graph[0].rru != rru:
+                            graph[0].ail = float(ail)
+                            graph[0].rru = rru
+                            graph[0].last_updated = datetime.now()
                             graph[0].save()
+                            print("Anony Graph updated.")
 
 
         if download == "yes":
