@@ -131,7 +131,7 @@ soupsieve==2.0.1
 sqlparse==0.4.3
 statsmodels==0.10.1
 stem==1.8.0
-tensorboard==2.3.0
+tensorboard==2.10.0
 tensorboard-plugin-profile==2.3.0
 tensorboard-plugin-wit==1.7.0
 tensorboardX==1.6
