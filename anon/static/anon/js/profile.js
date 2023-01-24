@@ -54,6 +54,8 @@ function applyChanges() {
         var input = document.getElementById("data-" + (i+1))
         input.disabled = false;
     }
+
+    document.getElementById("loader-div").style.display = "flex"
     
 }
 

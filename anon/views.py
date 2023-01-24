@@ -139,7 +139,7 @@ def registration(req):
     if not "accountType" in req.session:
         return redirect("/anon/error")
 
-    typeAccount = req.session["accountType"]    
+    typeAccount = req.session["accountType"]   
 
     if req.method == "POST":
 
@@ -156,7 +156,7 @@ def registration(req):
 
                 for o in Owner.objects.all():
                     if o.email.lower() == email.lower():
-                        return render(req, 'anon/registration.html', {'owner_flag': True})
+                        return render(req, 'anon/registration.html', {'owner_flag': True, 'type': typeAccount})
 
                 req.session["email-owner"] = email
                 req.session["pwd-owner"] = pwd
@@ -166,7 +166,7 @@ def registration(req):
 
                 for p in Provider.objects.all():
                     if p.email.lower() == email.lower():
-                        return render(req, 'anon/registration.html', {'provider_flag': True})
+                        return render(req, 'anon/registration.html', {'provider_flag': True, 'type': typeAccount})
 
                 email = req.POST.get("email-input")
                 pwd = req.POST.get("pwd-input")
@@ -184,15 +184,15 @@ def registration(req):
                     
 
         elif pwd == confirm and not(re.fullmatch(regex, email)):
-            return render(req, 'anon/registration.html', {'email_flag': True})
+            return render(req, 'anon/registration.html', {'email_flag': True, 'type': typeAccount})
         elif pwd != confirm and re.fullmatch(regex, email):
-            return render(req, 'anon/registration.html', {'pwd_flag': True})
+            return render(req, 'anon/registration.html', {'pwd_flag': True, 'type': typeAccount})
         else:
-            return render(req, 'anon/registration.html', {'both_flag': True})
+            return render(req, 'anon/registration.html', {'both_flag': True, 'type': typeAccount})
     
     
 
-    return render(req, 'anon/registration.html')
+    return render(req, 'anon/registration.html', {'type': typeAccount})
 
 
 

@@ -39,6 +39,7 @@ function clickSubmitRelButton() {
         selectedUsers += (usersSelected[i] + "|");
     console.log(selectedUsers)
     document.getElementById("selected-users").setAttribute("value", selectedUsers)
+    document.getElementById("loader-div").style.display = "flex"
 }
 
 

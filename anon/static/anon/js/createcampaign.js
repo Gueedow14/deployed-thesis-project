@@ -398,6 +398,8 @@ function createCampaign() {
         alert("A campaign requires data in order to be created!");
         return;
     }
+
+    document.getElementById("loader-div").style.display = "flex"
 }
 
 function isValidName(str) {
@@ -423,3 +425,5 @@ function IsAlphaNumeric(e) {
     var ret = ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90) || keyCode == 32 || (keyCode >= 97 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
     return ret;
 }
+
+

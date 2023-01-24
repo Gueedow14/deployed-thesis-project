@@ -153,9 +153,25 @@
                 </div>
                 
             </div>
-            
+
+            {% if type == 1 %}
+                <div id="loader-div" class="loader_div">
+                    <div class="loader"></div>
+                    <h2 style="color: white; font-size: 70px;">Creating the Data Provider...</h2>
+                </div>
+            {% endif %}
 
         </div>
+
+        {% if type == 1 %}
+            <script>
+                document.getElementById("register-button").addEventListener('click', showLoader)
+
+                function showLoader() {
+                    document.getElementById("loader-div").style.display = "flex"
+                }
+            </script>
+        {% endif %}
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         
