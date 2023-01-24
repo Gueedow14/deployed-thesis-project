@@ -75,5 +75,5 @@ window.onclick = function(event) {
 document.getElementById("window-confirm-button").addEventListener('click', onClickConfirm)
 
 function onClickConfirm() {
-  document.getElementById("loader-id").style.display = "flex"
+  document.getElementById("loader-div").style.display = "flex"
 }
