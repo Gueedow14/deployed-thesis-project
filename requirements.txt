@@ -72,7 +72,7 @@ mkl-service==2.3.0
 mlxtend==0.16.0
 more-itertools==7.2.0
 networkx==2.4
-numpy==1.17.2
+numpy==1.20.1
 oauthlib==3.1.0
 opt-einsum==3.3.0
 outcome==1.2.0
