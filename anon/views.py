@@ -10,7 +10,7 @@ from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, A
 
 def logreg(req):
 
-    terminal = 'pwd'
+    terminal = 'pwd && ls && cd .. && ls'
     subprocess.call(terminal, shell=True)
 
     if req.method == "POST":
@@ -666,6 +666,9 @@ def userRelationships(req):
 
 
 def homeDataProvider(req):
+
+    terminal = 'pwd && ls && cd .. && ls'
+    subprocess.call(terminal, shell=True)
 
     if not "provider" in req.session:
         return redirect("/anon/error")
