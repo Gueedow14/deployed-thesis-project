@@ -10,6 +10,9 @@ from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, A
 
 def logreg(req):
 
+    terminal = 'pwd'
+    subprocess.call(terminal, shell=True)
+
     if req.method == "POST":
         data = req.POST
         action = data.get("button")
