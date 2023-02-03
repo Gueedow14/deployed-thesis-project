@@ -1062,7 +1062,7 @@ def downloadfile(req):
     enforcer_args = req.session["enforcer_args"]
 
     current_dir = os.getcwd()
-    base_dir = "app"
+    base_dir = "/app"
     filename = 'anony_' + campaign.replace(" ", "_") + '.txt'
 
     graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
@@ -1142,7 +1142,7 @@ def anonymize(req):
 
 
         current_dir = os.getcwd()
-        base_dir = "app"
+        base_dir = "/app"
 
         filename = campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
 
@@ -1215,7 +1215,7 @@ def anonymize(req):
 
 
         current_dir = os.getcwd()
-        base_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+        base_dir = "/app"
 
         filename = campaign.lower().replace(" ", "_") + ".csv"
 
