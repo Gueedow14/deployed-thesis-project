@@ -774,6 +774,9 @@ def createCampaign(req):
                 if c.name.lower() == name.lower():
                     return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True })
             
+            if len(attrsInput) > 5:
+                return render(req, 'anon/createcampaign.html', { 'name_existing_flag': False })
+            
             for attr in attrsInput:
                 if ' ' in attr:
                     words = attr.split(' ')
