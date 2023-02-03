@@ -1260,6 +1260,11 @@ def anonymize(req):
 
                     rru = float(rem_ent)/float(raw_ent)
 
+                    rru_values = rru.split(".")
+                    rru_values[1] = rru_values[1][:4]
+
+                    rru = rru_values[0] + "." + rru_values[1]
+
                     graph = AnonyGraph.objects.filter(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer)
 
                     if not graph:

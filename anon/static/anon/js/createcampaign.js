@@ -1,5 +1,6 @@
 var dataList = document.getElementById("list");
 var dataNum = dataList.getElementsByTagName("li").length;
+var attrNum = 0;
 
 
 $( document ).ready( 
@@ -118,6 +119,8 @@ function addAttribute() {
     dataNum++;
     attrNameDiv.style.display = "none";
     attrName.value = "";
+
+    attrNum++;
 }
 
 
@@ -244,6 +247,8 @@ function removeAttr() {
         noDataDiv.style.display = "block";
         dataList.style.display = "none";
     }
+
+    attrNum--;
 }
 
 
@@ -396,6 +401,11 @@ function createCampaign() {
 
     if(dataNum == 0) {
         alert("A campaign requires data in order to be created!");
+        return;
+    }
+
+    if(attrNum > 5) {
+        alert("A campaign can have 5 or less Attributes.");
         return;
     }
 
