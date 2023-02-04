@@ -850,10 +850,12 @@ def createCampaign(req):
             scriptRels = ""
 
             for a in attributes:
+                a.save()
                 c.attributes.add(a)
                 scriptAttrs += (a.name.lower() + "|")
 
             for r in relationships:
+                r.save()
                 c.relationships.add(r)
                 scriptRels += (r.name.lower() + "|")
 
