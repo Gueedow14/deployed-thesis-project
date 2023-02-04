@@ -1263,7 +1263,7 @@ def anonymize(req):
 
                     ail = ail_values[0] + "." + ail_values[1]
 
-                    rru = float(rem_ent)/float(raw_ent)
+                    rru = str(float(rem_ent)/float(raw_ent))
 
                     rru_values = rru.split(".")
                     rru_values[1] = rru_values[1][:4]
@@ -1273,13 +1273,13 @@ def anonymize(req):
                     graph = AnonyGraph.objects.filter(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer)
 
                     if not graph:
-                        new_graph = AnonyGraph(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer, ail=float(ail), rru=rru)
+                        new_graph = AnonyGraph(campaign=selectedCampaign, calgo=calgo, enforcer=enforcer, ail=float(ail), rru=float(rru))
                         new_graph.save()
                         print("Anony Graph added.")
                     else:
-                        if graph[0].ail != float(ail) or graph[0].rru != rru:
+                        if graph[0].ail != float(ail) or graph[0].rru != float(rru):
                             graph[0].ail = float(ail)
-                            graph[0].rru = rru
+                            graph[0].rru = float(rru)
                             graph[0].last_updated = datetime.now()
                             graph[0].save()
                             print("Anony Graph updated.")
