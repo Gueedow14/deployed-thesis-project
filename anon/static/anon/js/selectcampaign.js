@@ -44,3 +44,9 @@ function onClickConfirmButton() {
         selectedCampaign = null;
     }
 }
+
+document.getElementById("button-confirm-choice").addEventListener('click', onClickConfirm)
+
+function onClickConfirm() {
+  document.getElementById("loader-div").style.display = "flex"
+}

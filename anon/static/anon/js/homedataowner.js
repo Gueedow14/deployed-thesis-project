@@ -32,7 +32,7 @@ var progress = setInterval( () =>
       } else {
         progressValue.setAttribute('style', 'white-space: pre;');
         if(!chkNoKVal)
-          progressValue.innerHTML = "There are no Anonymized Graphs for your campaign.\nSo your security level cannot be determined yet.";
+          progressValue.innerHTML = "There are no Anonymized\r\nGraphs for your campaign.\r\nSo your security level can't\r\nbe determined yet.";
         else
           progressValue.innerHTML = "You need to determine a\r\n k value for a campaign.\r\nSo your security level can't\r\n be determined yet.";
         progressCircle.style.background = `conic-gradient(#d3d3d3 ${100 * 3.6}deg, #ededed 0deg)`;
