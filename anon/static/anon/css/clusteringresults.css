@@ -131,12 +131,6 @@ body{
 
 
 
-.cluster_owners {
-
-}
-
-
-
 .cluster_owner {
     font-size: 25px;
 }
@@ -184,6 +178,60 @@ body{
 100% { transform: rotate(360deg); }
 }
 
+
+
+
+
+.no_data_div {
+    height: -webkit-fill-available;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
+
+
+.p_div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no_data {
+    padding: 30px;
+    border: 3px solid #004d41;
+    border-radius: 10px;
+    background: linear-gradient(#00806c, #00b398);
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.no_data_button_div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+.no_data_button {
+    width: 300px;
+    color: white;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
+    border-radius: 10px;
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
 
 
 

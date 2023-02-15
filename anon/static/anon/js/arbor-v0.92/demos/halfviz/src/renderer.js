@@ -20,6 +20,10 @@
         ctx.fillStyle = "white";
         ctx.fillRect (0,0, canvas.width, canvas.height);
 
+
+        
+        
+
         particleSystem.eachEdge (function (edge, pt1, pt2)
         {
             ctx.strokeStyle = "rgba(0,0,0, .333)";
@@ -35,10 +39,20 @@
 
         });
 
+
+
+
+
+
+
+
+
+
         particleSystem.eachNode (function (node, pt)
         {
             
             var w = ctx.measureText(""+node.name).width + 30;
+            //var w = 5
             ctx.fillStyle = node.data.color;
             gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:ctx.fillStyle})
             ctx.fillStyle = "black";

@@ -83,13 +83,19 @@
 
                 {% else %}
 
-                    <div id="no-data-div" class="p_div">
-                        <p id="no-data-p" class="no_data">Error in Clustering: Minimum cluster size must be greater than 1.</p>
+                    <div class="no_data_div">
+                        
+                        <div id="no-data-div" class="p_div">
+                            <p id="no-data-p" class="no_data">Error in Clustering: Minimum cluster size must be greater than 1.</p>
+                        </div>
+    
+                        <div class="no_data_button_div">
+                            <button id="button" type="submit" name="regen" class="no_data_button">Regenerate Clusters</button>
+                        </div>
+
                     </div>
 
-                    <div class="button_div">
-                        <button id="button" type="submit" name="regen" class="button_profile">Regenerate Clusters</button>
-                    </div>
+                    
 
                 {% endif %}
 

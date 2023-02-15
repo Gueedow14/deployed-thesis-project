@@ -95,6 +95,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
         <script src="{% static 'anon/js/arbor-v0.92/lib/arbor.js' %}"></script>
+        <script src="{% static 'anon/js/arbor-v0.92/lib/arbor-tween.js' %}"></script>
         <script src="{% static 'anon/js/arbor-v0.92/demos/_/graphics.js' %}"></script>
         <script src="{% static 'anon/js/arbor-v0.92/demos/halfviz/src/renderer.js' %}"></script>
 
@@ -208,8 +209,8 @@
             
 
             
-            var sys = arbor.ParticleSystem(1000, 400, 1);
-            sys.parameters({gravity:true});
+            var sys = arbor.ParticleSystem();
+            sys.parameters({ repulsion: 500, stiffness: 100, friction: .99, gravity: false })
             sys.renderer = Renderer("#viewport");
 
             var data = {
@@ -234,7 +235,7 @@
                             {% for attr_edge in attrEdges %}
                                 {% if attr_edge.owner == owner %}
                                     "{{ attr_edge.value.value }}": {
-                                        length: .8,
+                                        length: .5,
                                         name: "{{ attr_edge.attribute.name }}"
                                     },
                                 {% endif %}
@@ -242,7 +243,7 @@
                             {% for rel_edge in relEdges %}
                                 {% if rel_edge.owner1 == owner %}
                                     "{{ rel_edge.owner2.email }}": {
-                                        length: .8,
+                                        length: .5,
                                         name: "{{ rel_edge.relationship.name }}"
                                     },
                                 {% endif %}
