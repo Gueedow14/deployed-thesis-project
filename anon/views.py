@@ -3,7 +3,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 import numpy as np
 import re, os, mimetypes, subprocess, csv, statistics
-from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph
+from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph, OwnerCampaign
 
 # cd anony-kg-modified/
 
@@ -19,17 +19,15 @@ def logreg(req):
             pwd = req.POST.get("pwd")
             regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
             if email != "" and pwd != "" and re.fullmatch(regex, email):
-                owners = Owner.objects.all()
-                providers = Provider.objects.all()
 
                 #check in owners
-                for o in owners:
+                for o in Owner.objects.all():
                     if o.email == email and o.pwd == pwd:
-                        req.session["owner"] = email;
+                        req.session["owner"] = email.lower();
                         return redirect('/anon/homedataowner')
 
                 #check in providers
-                for p in providers:
+                for p in Provider.objects.all():
                     if p.email == email and p.pwd == pwd:
                         req.session["provider"] = email;
                         return redirect('/anon/homedataprovider')
@@ -103,7 +101,7 @@ def resetPwd(req):
                     if o.email == email and o.pwd != pwd:
                         user.pwd = pwd
                         user.save()
-                terminal = 'cd anony-kg-modified/ && python reset_owner_pwd.py --owner=' + user.email + ' --pwd=' + user.pwd + ' --kval=' + str(user.k) + ' --campaign=\"' + user.campaign.name.lower() + '\"'
+                terminal = 'cd anony-kg-modified/ && python reset_owner_pwd.py --owner=' + user.email + ' --pwd=\"' + user.pwd + '\"'
                 subprocess.call(terminal, shell=True)
 
             if type == "provider":
@@ -157,9 +155,15 @@ def registration(req):
                 for o in Owner.objects.all():
                     if o.email.lower() == email.lower():
                         return render(req, 'anon/registration.html', {'owner_flag': True, 'type': typeAccount})
+                    
+                o = Owner(email=email.lower(), pwd=pwd)
+                o.save()
 
-                req.session["email-owner"] = email
-                req.session["pwd-owner"] = pwd
+                terminal = 'cd anony-kg-modified/ && python -u generate_owner.py --owner=' + email.lower() + ' --pwd=\"' + pwd + '\"'
+                subprocess.call(terminal, shell=True)
+
+                req.session["owner"] = email.lower()
+                req.session["origin"] = "registration"
                 return redirect('/anon/selectcampaign')
 
             if typeAccount == 1:
@@ -168,13 +172,10 @@ def registration(req):
                     if p.email.lower() == email.lower():
                         return render(req, 'anon/registration.html', {'provider_flag': True, 'type': typeAccount})
 
-                email = req.POST.get("email-input")
-                pwd = req.POST.get("pwd-input")
-
                 p = Provider(email=email.lower(), pwd=pwd)
                 p.save()
 
-                terminal = 'cd anony-kg-modified/ && python generate_provider.py --provider=' + email.lower() + ' --pwd=' + pwd
+                terminal = 'cd anony-kg-modified/ && python generate_provider.py --provider=' + email.lower() + ' --pwd=\"' + pwd + '\"'
                 subprocess.call(terminal, shell=True)
 
 
@@ -200,83 +201,234 @@ def registration(req):
 
 def selectCampaign(req):
 
-    if not "email-owner" in req.session or not "pwd-owner" in req.session:
+    if not "origin" in req.session or not "owner" in req.session:
         return redirect("/anon/error")
 
-    campaigns = Campaign.objects.all()
+    if req.session["origin"] == "registration" or req.session["origin"] == "homepage":
 
-    campaignAttrs = []
+        for o in Owner.objects.all():
+            if o.email == req.session["owner"]:
+                owner = o
 
-    for campaign in campaigns:
-        campaign_str = ""
-        campaign_attrs = campaign.attributes.all()
+        campaigns = [] 
+        owner_campaigns = []
 
-        for attr in campaign_attrs:
-            campaign_str += (attr.name + " , ")
+        for oc in OwnerCampaign.objects.all():
+            chkOC = False
+            if oc.owner == owner:
+                chkOC = True
+            if chkOC == True:
+                owner_campaigns.append(oc.campaign)
 
-        if campaign_attrs:
-            campaign_str = campaign_str[:-3]
-        else:
-            campaign_str = None
 
-        campaignAttrs.append(campaign_str)
+        for c in Campaign.objects.all():
+            if not c in owner_campaigns:
+                campaigns.append(c)
 
-    campaignRels = []
+        campaigns = set(campaigns)
+          
+        chkAllCampaignsAttended = False
+        if not campaigns:
+            chkAllCampaignsAttended = True
 
-    for campaign in campaigns:
-        campaign_str = ""
+        campaignAttrs = []
 
-        for rel in campaign.relationships.all():
-            campaign_str += (rel.name + " , ")
+        for campaign in campaigns:
+            campaign_str = ""
+            campaign_attrs = campaign.attributes.all()
 
-        if campaign.relationships.all():
-            campaign_str = campaign_str[:-3]
-        else:
-            campaign_str = None
+            for attr in campaign_attrs:
+                campaign_str += (attr.name + " , ")
 
-        campaignRels.append(campaign_str)
+            if campaign_attrs:
+                campaign_str = campaign_str[:-3]
+            else:
+                campaign_str = None
 
-    campaign_data = zip(campaigns, campaignAttrs, campaignRels)
-    
-    if req.method == "POST":
-        campaign = req.POST.get('selected-campaign')
-        if campaign != "":
-            req.session["sel-camp"] = campaign
-            return redirect('/anon/campaigndata')
+            campaignAttrs.append(campaign_str)
 
-    campaigns = Campaign.objects.all()
+        campaignRels = []
 
-    return render(req, 'anon/selectcampaign.html', {'campaigns': campaign_data})
+        for campaign in campaigns:
+            campaign_str = ""
+
+            for rel in campaign.relationships.all():
+                campaign_str += (rel.name + " , ")
+
+            if campaign.relationships.all():
+                campaign_str = campaign_str[:-3]
+            else:
+                campaign_str = None
+
+            campaignRels.append(campaign_str)
+
+        campaign_data = zip(campaigns, campaignAttrs, campaignRels)
+        
+        if req.method == "POST":
+            if "no-campaigns-button" in req.POST:
+                req.session["owner"] = owner.email
+                return redirect('/anon/homedataowner')
+            else:
+                campaign = req.POST.get('selected-campaign')
+                if campaign != "":
+
+                    for c in Campaign.objects.all():
+                        if c.name == campaign:
+                            selectedCampaign = c
+
+                    oc = OwnerCampaign(owner=owner, k= None, campaign= selectedCampaign)
+                    oc.save()
+
+                    req.session["sel-camp"] = campaign
+                    return redirect('/anon/campaigndata')
+
+        return render(req, 'anon/selectcampaign.html', {'campaigns': campaign_data, 'chkCampaignsAttended': chkAllCampaignsAttended})
+
+    else:
+        return redirect("/anon/error")
 
 
 
 
 def campaignData(req):
 
-    if not "email-owner" in req.session or not "sel-camp" in req.session or not "pwd-owner" in req.session:
+    if not "origin" in req.session or not "owner" in req.session or not "sel-camp" in req.session:
         return redirect("/anon/error")
-    
-    if req.method == "POST":
 
-        attributes = req.POST.getlist("data")
+    if req.session["origin"] == "registration" or req.session["origin"] == "homepage":
 
-        chkEmptyFields = False
+        for c in Campaign.objects.all():
+            if c.name == req.session["sel-camp"]:
+                selectedCampaign = c
+        
+        if req.method == "POST":
 
-        for attr in attributes:
-            if attr == '':
-                chkEmptyFields = True
+            for owner in Owner.objects.all():
+                if owner.email == req.session["owner"]:
+                    o = owner
 
-        if not(chkEmptyFields):
-            req.session["attrs"] = attributes
-            return redirect('/anon/seclev')
+            attributes = req.POST.getlist("data")
 
-    campaigns = Campaign.objects.all()
+            chkEmptyFields = False
 
-    for c in campaigns:
+            for attr in attributes:
+                if attr == '':
+                    chkEmptyFields = True
+
+            if not(chkEmptyFields):
+
+                values = Value.objects.all()
+
+                campaignAttrs = selectedCampaign.attributes.all()
+
+                for i in range(len(attributes)):
+
+                    if ' ' in attributes[i]:
+                        words = attributes[i].split(' ')
+                        modifiedStr = ""
+                        for w in words:
+                            modifiedStr += w.capitalize() + " "
+                        v = Value(value=modifiedStr[:-1])
+                    else:
+                        v = Value(value=attributes[i].capitalize())
+
+                    if not(v in values):
+                        v.save()
+                        terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
+                        subprocess.call(terminal, shell=True)
+
+                    a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v, campaign=selectedCampaign)
+                    a_edge.save()
+                    terminal = 'cd anony-kg-modified/ && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + campaignAttrs[i].name.lower() + '\" --value=\"' + v.value.lower() + '\"' + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
+                    subprocess.call(terminal, shell=True)
+                    
+                if not selectedCampaign.relationships.exists():
+                    return redirect('/anon/seclev')
+                else:
+                    return redirect('/anon/campaignrelationships')
+            
+        return render(req, 'anon/campaigndata.html', { 'attributes': selectedCampaign.attributes.all() })
+
+
+
+def campaignRelationships(req):
+
+    for c in Campaign.objects.all():
         if c.name == req.session["sel-camp"]:
             selectedCampaign = c
-        
-    return render(req, 'anon/campaigndata.html', { 'attributes': selectedCampaign.attributes.all() })
+
+    no_owners = True
+
+    for o in Owner.objects.all():
+        if o.email == req.session["owner"]:
+            owner = o
+        else:
+            no_owners = False
+
+    owners_rels = []
+    previous_rels = ""
+
+    for rel in selectedCampaign.relationships.all():
+        tmp = []
+        for owner_rel in Relationship_Edge.objects.all():
+            if owner_rel.owner1 == owner and owner_rel.relationship == rel:
+                tmp.append(owner_rel.owner2.email)
+                previous_rels += owner_rel.owner2.email + ","
+        if previous_rels[:-1] == ',':
+            previous_rels = previous_rels[:-1]
+        previous_rels += "|"
+        owners_rels.append(tmp)
+    previous_rels = previous_rels[:-1]
+
+    previous_owner_relationships = zip(selectedCampaign.relationships.all(), owners_rels)
+
+    if req.method == "POST":
+
+        if "owners-present-button" in req.POST:
+            if previous_rels == req.POST.get("selectedUsers"):
+                return redirect('/anon/seclev')
+            else:
+                campaignRels = req.POST.get("campaignRels").split('|')
+
+                old_relationships = previous_rels.split('|')
+                new_relationships = req.POST.get("selectedUsers").split('|')
+
+                relationships = zip(old_relationships, new_relationships, campaignRels)
+
+
+                for old_relationship, new_relationship, relationship in relationships:
+                    old_users = old_relationship.split(",")
+                    new_users = new_relationship.split(",")
+
+                    for new_user in new_users:
+                        if not new_user in old_users:
+                            for rel in Relationship.objects.all():
+                                if rel.name == relationship:
+                                    r = rel
+                            for owner2 in Owner.objects.all():
+                                if owner2.email == new_user:
+                                    o2 = owner2
+
+                            e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign=selectedCampaign)
+                            e.save()
+
+                            terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
+                            subprocess.call(terminal, shell=True)
+
+                    for old_user in old_users:
+                        if not old_user in new_users:
+                            for relEdge in Relationship_Edge.objects.all():
+                                if relEdge.owner1.email == o.email and relEdge.relationship.name == relationship and relEdge.owner2.email == old_user and relEdge.campaign == selectedCampaign:
+                                    
+                                    terminal = 'cd anony-kg-modified/ && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower()
+                                    subprocess.call(terminal, shell=True)
+
+                                    relEdge.delete()
+
+        return redirect('/anon/seclev')
+
+    return render(req, 'anon/campaignrelationships.html', {'prev_rels': previous_owner_relationships, 'no_owners': no_owners, 'owners': Owner.objects.all(), 'owner': owner, 'previous_rels_str': previous_rels})
+
 
 
 
@@ -284,66 +436,40 @@ def campaignData(req):
 
 def secLev(req):
 
-    if not "email-owner" in req.session or not "sel-camp" in req.session or not "pwd-owner" in req.session or not "attrs" in req.session:
+    if not "owner" in req.session or not "sel-camp" in req.session:
         return redirect("/anon/error")
 
     if req.method == "POST":
 
         if req.POST.get("button") == "confirm":
 
-            email = req.session["email-owner"]
-            pwd = req.session["pwd-owner"]
             kval = req.POST.get("kval")
+
+            for o in Owner.objects.all():
+                if o.email == req.session["owner"]:
+                    owner = o             
 
             for c in Campaign.objects.all():
                 if c.name == req.session["sel-camp"]:
                     selectedCampaign = c
 
-            o = Owner(email=email.lower(), pwd=pwd, k=kval, campaign=selectedCampaign)
-            o.save()
+            for ownerCamp in OwnerCampaign.objects.all():
+                if ownerCamp.owner == owner and ownerCamp.campaign == selectedCampaign:
+                    oc = ownerCamp
 
-            terminal = 'cd anony-kg-modified/ && python -u generate_owner.py --owner=' + email + ' --pwd=\"' + pwd + '\" --kval=' + kval + ' --campaign=\"' + selectedCampaign.name.lower() + "\""
+            oc.k = kval
+            oc.save()
+
+            terminal = 'cd anony-kg-modified/ && python -u generate_campaign_owner.py --owner=' + owner.email.lower() + ' --kval=\"' + kval + '\" --campaign=\"' + selectedCampaign.name.lower() + '\"'
             subprocess.call(terminal, shell=True)
 
+            req.session["owner"] = owner.email
 
-            attributes = req.session["attrs"]
-
-            values = Value.objects.all()
-
-            campaignAttrs = selectedCampaign.attributes.all()
-
-            for i in range(len(attributes)):
-
-                if ' ' in attributes[i]:
-                    words = attributes[i].split(' ')
-                    modifiedStr = ""
-                    for w in words:
-                        modifiedStr += w.capitalize() + " "
-                    v = Value(value=modifiedStr[:-1])
-                else:
-                    v = Value(value=attributes[i].capitalize())
-
-                if not(v in values):
-                    v.save()
-                    terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + attributes[i].lower() + '\"'
-                    subprocess.call(terminal, shell=True)
-
-                chkExists = False
-
-                for attr_edge in Attribute_Edge.objects.all():
-                    if attr_edge.owner == o and attr_edge.attribute == campaignAttrs[i] and attr_edge.value == v:
-                        chkExists = True
-
-                if chkExists == False:
-                    a_edge = Attribute_Edge(owner=o, attribute=campaignAttrs[i], value=v)
-                    a_edge.save()
-                terminal = 'cd anony-kg-modified/ && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + campaignAttrs[i].name.lower() + '\" --value=\"' + v.value.lower() + '\"'
-                subprocess.call(terminal, shell=True)
-                
-            
-            req.session["owner"] = o.email
-
-            return redirect('/anon/homedataowner')
+            if "origin" in req.session:
+                return redirect('/anon/usercampaign')
+            else:
+                del req.session["sel-camp"]
+                return redirect('/anon/homedataowner')
 
     return render(req, 'anon/seclev.html')
 
@@ -366,6 +492,10 @@ def homeDataOwner(req):
         if "profile" in req.POST:
             req.session["owner"] = o.email
             return redirect('/anon/profile')
+        if "campaigns" in req.POST:
+            req.session["origin"] = "homepage"
+            req.session["owner"] = o.email
+            return redirect('/anon/selectcampaign')
         if "logout" in req.POST:
             if "owner" in req.session:
                 del req.session["owner"]
@@ -373,88 +503,120 @@ def homeDataOwner(req):
                 del req.session["attrs"]
             if "pwd-owner" in req.session:
                 del req.session["pwd-owner"]
-            if "email-owner" in req.session:
-                del req.session["email-owner"]
             if "sel-camp" in req.session:
                 del req.session["sel-camp"]
             return redirect('/anon/logreg')
-
+        
+    owner_campaigns = []
     campaign_anony_graphs = []
 
+    for oc in OwnerCampaign.objects.all():
+        if oc.owner == o:
+            owner_campaigns.append(oc.campaign)
+
     for anony_graph in AnonyGraph.objects.all():
-        if anony_graph.campaign == o.campaign:
+        if anony_graph.campaign in owner_campaigns:
             campaign_anony_graphs.append(anony_graph)
 
     if campaign_anony_graphs:
 
-        ails = []
-        rrus = []
+        sec_percentages = []
 
-        for anony_graph in campaign_anony_graphs:
-            ails.append(anony_graph.ail)
-            rrus.append(anony_graph.rru)
+        for campaign in owner_campaigns:
 
-        mean_ail = statistics.mean(ails)
-        mean_rru = statistics.mean(rrus)
-        k_val = o.k
+            oc = OwnerCampaign.objects.get(campaign=campaign, owner=o)
 
-        low = 0
-        mid = 0
-        high = 0
+            if oc.k:
 
-        if mean_ail < 0.4:
-            high += 1
-        elif mean_ail >= 0.8:
-            low += 1
+                ails = []
+                rrus = []
+
+                for anony_graph in campaign_anony_graphs:
+                    if anony_graph.campaign == campaign:
+                        ails.append(anony_graph.ail)
+                        rrus.append(anony_graph.rru)
+
+                if ails:
+
+                    mean_ail = statistics.mean(ails)
+                    mean_rru = statistics.mean(rrus)
+                    k_val = oc.k
+
+                    low = 0
+                    mid = 0
+                    high = 0
+
+                    if mean_ail < 0.4:
+                        high += 1
+                    elif mean_ail >= 0.8:
+                        low += 1
+                    else:
+                        mid += 1
+
+                    if mean_rru < 0.4:
+                        high += 1
+                    elif mean_rru >= 0.8:
+                        low += 1
+                    else:
+                        mid += 1
+
+                    if k_val < 3:
+                        low += 1
+                    elif k_val >= 6:
+                        high += 1
+                    else:
+                        mid += 1
+
+                    sec_value = [low, mid, high]
+
+                    sec_perc = 0
+                    
+                    if sec_value == [3,0,0]:
+                        sec_perc = 10
+                    elif sec_value == [2,1,0]: 
+                        sec_perc = 20
+                    elif sec_value == [2,0,1]: 
+                        sec_perc = 30
+                    elif sec_value == [1,2,0]:
+                        sec_perc = 40
+                    elif sec_value == [1,1,1]: 
+                        sec_perc = 50
+                    elif sec_value == [0,3,0]: 
+                        sec_perc = 60
+                    elif sec_value == [0,2,1]: 
+                        sec_perc = 70
+                    elif sec_value == [1,0,2]: 
+                        sec_perc = 80
+                    elif sec_value == [0,1,2]: 
+                        sec_perc = 90
+                    elif sec_value == [0,0,3]: 
+                        sec_perc = 100
+
+                    sec_percentages.append(sec_perc)
+
+        if sec_percentages:
+            sec_perc = statistics.mean(sec_percentages)
         else:
-            mid += 1
-
-        if mean_rru < 0.4:
-            high += 1
-        elif mean_rru >= 0.8:
-            low += 1
-        else:
-            mid += 1
-
-        if k_val < 3:
-            low += 1
-        elif k_val >= 6:
-            high += 1
-        else:
-            mid += 1
-
-        sec_value = [low, mid, high]
-
-        sec_perc = 0
-        
-        if sec_value == [3,0,0]:
-            sec_perc = 10
-        elif sec_value == [2,1,0]: 
-            sec_perc = 20
-        elif sec_value == [2,0,1]: 
-            sec_perc = 30
-        elif sec_value == [1,2,0]:
-            sec_perc = 40
-        elif sec_value == [1,1,1]: 
-            sec_perc = 50
-        elif sec_value == [0,3,0]: 
-            sec_perc = 60
-        elif sec_value == [0,2,1]: 
-            sec_perc = 70
-        elif sec_value == [1,0,2]: 
-            sec_perc = 80
-        elif sec_value == [0,1,2]: 
-            sec_perc = 90
-        elif sec_value == [0,0,3]: 
-            sec_perc = 100
+            sec_perc = 0
     
     else:
         sec_perc = 0
 
-        return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': True })
-            
+        return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': True, 'missing_kval': False, 'missing_campaign': False })
 
-    return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False })
+    chk_no_oc = True
+    
+    for oc in OwnerCampaign.objects.all():
+        if oc.owner == o:
+            chk_no_oc = False
+            if oc.k == None:
+                return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False, 'missing_kval': True, 'missing_campaign': False })
+
+    if chk_no_oc:
+        return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False, 'missing_kval': False, 'missing_campaign': True })
+
+
+    return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False, 'missing_kval': False, 'missing_campaign': False })
 
 
 
@@ -464,15 +626,64 @@ def profile(req):
     if not "owner" in req.session:
         return redirect("/anon/error")
 
-    owners = Owner.objects.all()
-
-    for owner in owners:
+    for owner in Owner.objects.all():
         if owner.email == req.session["owner"]:
             o = owner
 
-    attrEdges = []
-    allAttributes = []
+    owner_campaigns = []
+    owner_kvals = []
+
+    for oc in OwnerCampaign.objects.all():
+        if oc.owner == o:
+            owner_campaigns.append(oc.campaign)
+            owner_kvals.append(oc.k)
+
+    owner_data = zip(owner_campaigns, owner_kvals)
     
+    if req.method == "POST":
+
+        if "done" in req.POST:
+            return redirect('/anon/homedataowner')
+
+        if "campaign" in req.POST:
+            req.session["sel-camp"] = req.POST.get("campaign")
+            return redirect('/anon/usercampaign')
+        
+        if "yes" in req.POST:
+            req.session["email-reset"] = o.email
+            req.session["originalpage"] = "profile"
+            del req.session["owner"]
+            return redirect('/anon/resetpwd')
+
+    return render(req, 'anon/profile.html', { 'owner': o, 'owner_campaigns': owner_data })
+
+
+
+
+def userCampaign(req):
+
+    if not "owner" in req.session or not "sel-camp" in req.session:
+        return redirect("/anon/error")
+
+    for owner in Owner.objects.all():
+        if owner.email == req.session["owner"]:
+            o = owner
+
+    for campaign in Campaign.objects.all():
+        if campaign.name == req.session["sel-camp"]:
+            c = campaign
+
+    for oc in OwnerCampaign.objects.all():
+        if oc.owner == o and oc.campaign == c:
+            selectedOC = oc
+
+    attrNames = []
+    attrValues = []
+
+    allAttributes = []
+
+    attrEdges = []
+
     for attr in Attribute.objects.all():
         allAttributes.append(attr.name)
 
@@ -480,28 +691,26 @@ def profile(req):
 
     for attr in allAttributes:
         for attrEdge in Attribute_Edge.objects.all():
-            if attrEdge.owner.email == o.email and attrEdge.attribute.name == attr:
+            if attrEdge.owner.email == o.email and attrEdge.attribute.name == attr and attrEdge.campaign == c:
                 attrEdges.append(attrEdge)
 
-    rels = o.campaign.relationships.all()
+    for attr in c.attributes.all().order_by("name"):
+        attrNames.append(attr.name)
+        try:
+            value = Attribute_Edge.objects.get(owner=o, attribute=attr, campaign=c)
+        except Attribute_Edge.DoesNotExist:
+            value = None
+        attrValues.append(value)
 
-    userRelsTmp = []
-    inputRelsTmp = []
 
-    for rel in rels:
-        rel = []
-        inputRel = ""
-        for relEdge in Relationship_Edge.objects.all():
-            if str(relEdge.owner1) == o.email:
-                rel.append(str(relEdge.owner2))
-                inputRel += relEdge.owner2.email + "|"
-        userRelsTmp.append(rel)
-        inputRelsTmp.append(inputRel)
+    attrData = zip(attrNames, attrValues)
 
-    userRels = zip(rels, userRelsTmp)
-    inputRels = zip(rels, inputRelsTmp)
-    
+    rels = selectedOC.campaign.relationships.all()
+
     if req.method == "POST":
+
+        if "kval" in req.POST:
+            return redirect('/anon/seclev')
 
         if "rels" in req.POST:
             req.session["currentRel"] = req.POST.get("rels")
@@ -518,80 +727,131 @@ def profile(req):
 
             previousAttrs = []
 
-            for a in attrEdges:
-                if a.attribute in modifiedAttrs:
-                    previousAttrs.append(a.value.value)
+            if attrEdges:
+                for a in attrEdges:
+                    if a.attribute in modifiedAttrs:
+                        previousAttrs.append(a.value.value)
+            else:
+                for a in c.attributes.all().order_by("name"):
+                    previousAttrs.append(None)
 
             campAttrs = []
 
             for attr in allAttributes:
                 a = Attribute(name=attr)
-                if a in o.campaign.attributes.all() and a in modifiedAttrs:
+                if a in selectedOC.campaign.attributes.all() and a in modifiedAttrs:
                     campAttrs.append(a)
 
             modifications = zip(campAttrs, previousAttrs, newAttrs)
 
             for attr, prev, newVal in modifications:
                 if prev != newVal and newVal != '':
-                    for attributeEdge in attrEdges:
-                        if attributeEdge.attribute == attr:
-                            if ' ' in newVal:
-                                words = newVal.split(' ')
-                                modifiedStr = ""
-                                for w in words:
-                                    modifiedStr += w.capitalize() + " "
-                                val = Value(value=modifiedStr[:-1])
-                            else:
-                                val = Value(value=newVal.capitalize())
 
-                            if not(val in Value.objects.all()):
+                    if attrEdges:
 
-                                chkExists = False
-                                for value in Value.objects.all():
-                                    if value.value == val.value:
-                                        chkExists = True
-                                if chkExists == False:
-                                    val.save()
+                        for attributeEdge in attrEdges:
+                            if attributeEdge.attribute == attr:
+                                if ' ' in newVal:
+                                    words = newVal.split(' ')
+                                    modifiedStr = ""
+                                    for w in words:
+                                        modifiedStr += w.capitalize() + " "
+                                    val = Value(value=modifiedStr[:-1])
+                                else:
+                                    val = Value(value=newVal.capitalize())
 
-                                terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
-                                subprocess.call(terminal, shell=True)
-                                attr = attributeEdge.attribute
-                                attributeEdge.delete()
-                                a = Attribute_Edge(owner=o, attribute=attr, value=val)
+                                if not(val in Value.objects.all()):
 
-                                chkExists = False
-                                for attr_edge in Attribute_Edge.objects.all():
-                                    if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
-                                        chkExists = True
-                                if chkExists == False:
-                                    a.save()
+                                    chkExists = False
+                                    for value in Value.objects.all():
+                                        if value.value == val.value:
+                                            chkExists = True
+                                    if chkExists == False:
+                                        val.save()
 
-                                terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
-                                subprocess.call(terminal, shell=True)
-                            else:
-                                attr = attributeEdge.attribute
-                                attributeEdge.delete()
-                                a = Attribute_Edge(owner=o, attribute=attr, value=val)
+                                    terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
+                                    subprocess.call(terminal, shell=True)
+                                    attr = attributeEdge.attribute
+                                    attributeEdge.delete()
+                                    a = Attribute_Edge(owner=o, attribute=attr, value=val, campaign= selectedOC.campaign)
 
-                                chkExists = False
-                                for attr_edge in Attribute_Edge.objects.all():
-                                    if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
-                                        chkExists = True
-                                if chkExists == False:
-                                    a.save()
-                                    
-                                terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=' + attr.name.lower() + ' --value=' + val.value.lower()
-                                subprocess.call(terminal, shell=True)
+                                    chkExists = False
+                                    for attr_edge in Attribute_Edge.objects.all():
+                                        if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
+                                            chkExists = True
+                                    if chkExists == False:
+                                        a.save()
 
-            return redirect('/anon/homedataowner')
-        
-        if "yes" in req.POST:
-            req.session["email-reset"] = o.email
-            req.session["originalpage"] = "profile"
-            del req.session["owner"]
-            return redirect('/anon/resetpwd')
+                                    terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + attr.name.lower() + '\" --value=\"' + val.value.lower() + '\" --campaign=\"' + selectedOC.campaign.name.lower() + '\"'
+                                    subprocess.call(terminal, shell=True)
+                                else:
+                                    attr = attributeEdge.attribute
+                                    attributeEdge.delete()
+                                    a = Attribute_Edge(owner=o, attribute=attr, value=val, campaign= selectedOC.campaign)
 
-    return render(req, 'anon/profile.html', { 'owner': o, 'attrs': attrEdges, 'owners': owners, 'userRelationships': userRels, 'inputRels': inputRels })
+                                    chkExists = False
+                                    for attr_edge in Attribute_Edge.objects.all():
+                                        if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
+                                            chkExists = True
+                                    if chkExists == False:
+                                        a.save()
+                                        
+                                    terminal = 'cd anony-kg-modified/ && python -u modify_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + attr.name.lower() + '\" --value=\"' + val.value.lower() + '\" --campaign=\"' + selectedOC.campaign.name.lower() + '\"'
+                                    subprocess.call(terminal, shell=True)
+                    
+                    else:
+                            
+                        if ' ' in newVal:
+                            words = newVal.split(' ')
+                            modifiedStr = ""
+                            for w in words:
+                                modifiedStr += w.capitalize() + " "
+                            val = Value(value=modifiedStr[:-1])
+                        else:
+                            val = Value(value=newVal.capitalize())
+
+                        if not(val in Value.objects.all()):
+
+                            chkExists = False
+                            for value in Value.objects.all():
+                                if value.value == val.value:
+                                    chkExists = True
+                            if chkExists == False:
+                                val.save()
+
+                            terminal = 'cd anony-kg-modified/ && python -u generate_value.py --val=\"' + val.value.lower() + '\"'
+                            subprocess.call(terminal, shell=True)
+                            
+                            a = Attribute_Edge(owner=o, attribute=attr, value=val, campaign= selectedOC.campaign)
+
+                            chkExists = False
+                            for attr_edge in Attribute_Edge.objects.all():
+                                if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
+                                    chkExists = True
+                            if chkExists == False:
+                                a.save()
+
+                            terminal = 'cd anony-kg-modified/ && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + attr.name.lower() + '\" --value=\"' + val.value.lower() + '\" --campaign=\"' + selectedOC.campaign.name.lower() + '\"'
+                            subprocess.call(terminal, shell=True)
+                        else:
+                            a = Attribute_Edge(owner=o, attribute=attr, value=val, campaign= selectedOC.campaign)
+
+                            chkExists = False
+                            for attr_edge in Attribute_Edge.objects.all():
+                                if attr_edge.owner == a.owner and attr_edge.attribute == a.attribute and attr_edge.value == a.value:
+                                    chkExists = True
+                            if chkExists == False:
+                                a.save()
+                                
+                            terminal = 'cd anony-kg-modified/ && python -u generate_attr_edge.py --owner=' + o.email.lower() + ' --attr=\"' + attr.name.lower() + '\" --value=\"' + val.value.lower() + '\" --campaign=\"' + selectedOC.campaign.name.lower() + '\"'
+                            subprocess.call(terminal, shell=True)
+
+
+            del req.session["sel-camp"]
+            return redirect('/anon/profile')
+
+
+    return render(req, 'anon/usercampaign.html', { 'oc': selectedOC, 'campaign': c, 'attrs_campaign': c.attributes.all().order_by("name"),'attrs_data': attrData, 'rels': rels })
 
 
 
@@ -600,14 +860,16 @@ def userRelationships(req):
 
     if not "currentRel" in req.session:
         return redirect("/anon/error")
+    
+    for campaign in Campaign.objects.all():
+        if campaign.name == req.session["sel-camp"]:
+            c = campaign
 
     currentRel = req.session["currentRel"]
 
-    owners = Owner.objects.all()
-
     other_owners = []
 
-    for owner in owners:
+    for owner in Owner.objects.all():
         if owner.email == req.session["owner"]:
             o = owner
         else:
@@ -630,7 +892,7 @@ def userRelationships(req):
     if req.method == "POST":
         if inputRels == req.POST.get("selectedUsers"):
             del req.session['currentRel']
-            return redirect('/anon/profile')
+            return redirect('/anon/usercampaign')
         else:
             previousUsers = inputRels.split('|')
             selectedUsers = req.POST.get("selectedUsers").split('|')
@@ -639,26 +901,26 @@ def userRelationships(req):
                     for rel in Relationship.objects.all():
                         if rel.name == currentRel:
                             r = rel
-                    for owner2 in owners:
+                    for owner2 in Owner.objects.all():
                         if owner2.email == u:
                             o2 = owner2
-                    e = Relationship_Edge(owner1=o, relationship=r, owner2=o2)
+                    e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign= c)
                     e.save()
-                    terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=' + r.name.lower() + ' --o2=' + o2.email.lower()
+                    terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=' + r.name.lower() + ' --o2=' + o2.email.lower() + ' --campaign=\"' + c.name.lower() + '\"'
                     subprocess.call(terminal, shell=True)
 
             for u in previousUsers:
                 if not(u in selectedUsers):
                     for relEdge in Relationship_Edge.objects.all():
                         if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel and relEdge.owner2.email == u:
-                            terminal = 'cd anony-kg-modified/ && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower()
+                            terminal = 'cd anony-kg-modified/ && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower() + ' --campaign=\"' + c.name.lower() + '\"'
                             subprocess.call(terminal, shell=True)
                             relEdge.delete()
 
-            return redirect('/anon/profile')
+            return redirect('/anon/usercampaign')
 
 
-    return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': owners, 'currentRel': currentRel, 'inputRels': inputRels, 'no_owners': no_owners })
+    return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': other_owners, 'currentRel': currentRel, 'inputRels': inputRels, 'no_owners': no_owners })
 
 
 
@@ -887,14 +1149,14 @@ def campaignPage(req):
 
     campaignOwners = []
 
-    for owner in Owner.objects.all():
-        if owner.campaign == campaign:
-            campaignOwners.append(owner)
+    for oc in OwnerCampaign.objects.all():
+        if oc.campaign == campaign:
+            campaignOwners.append(oc.owner)
 
     ownerValues = []    # lenght is Num of Values
 
     for attrEdge in Attribute_Edge.objects.all():
-        if attrEdge.owner in campaignOwners:
+        if attrEdge.owner in campaignOwners and attrEdge.campaign == campaign:
             ownerValues.append(attrEdge.value)
 
     ownerValues = list(set(ownerValues))
@@ -902,7 +1164,7 @@ def campaignPage(req):
     otherEntitiesInvolved = []
 
     for relEdge in Relationship_Edge.objects.all():
-        if relEdge.owner1 in campaignOwners and relEdge.owner2 not in campaignOwners:
+        if relEdge.owner1 in campaignOwners and relEdge.owner2 not in campaignOwners and relEdge.campaign == campaign:
             otherEntitiesInvolved.append(relEdge.owner2)
 
     otherEntitiesInvolved = list(set(otherEntitiesInvolved))
@@ -920,13 +1182,13 @@ def campaignPage(req):
     campaignRelEdges = []
 
     for relEdge in Relationship_Edge.objects.all():
-        if relEdge.owner1 in campaignOwners:
+        if relEdge.campaign == campaign:
             campaignRelEdges.append(relEdge)
 
     campaignAttrEdges = []
 
     for attrEdge in Attribute_Edge.objects.all():
-        if attrEdge.owner in campaignOwners:
+        if attrEdge.campaign == campaign:
             campaignAttrEdges.append(attrEdge)
 
     totalEdges = len(campaignAttrEdges) + len(campaignRelEdges)
@@ -934,16 +1196,18 @@ def campaignPage(req):
 
     if req.method == "POST":
 
+        if "home" in req.POST:
+            del req.session["sel-camp-prov"]
+            return redirect('/anon/homedataprovider')
+
         if "compare" in req.POST:
-            print("compare")
             return redirect('/anon/comparehome')
 
         if "anonymize" in req.POST:
-            
-            return redirect('/anon/anonymize')
+            return redirect('/anon/clusteringpage')
 
 
-    return render(req, 'anon/campaignpage.html', { 'campaign': campaign, 'numEntities': numEntities, 'numValues': len(ownerValues), 'numNodes': numNodes, 'numRelations': numRelations, 'numRelationships': numRelationships, 'numAttributes': numAttributes, 'numEdges': totalEdges, 'numAttrEdges': len(campaignAttrEdges), 'numRelEdges': len(campaignRelEdges) })
+    return render(req, 'anon/campaignpage.html', { 'campaign': campaign, 'numEntities': numEntities, 'numValues': len(ownerValues), 'numNodes': numNodes, 'numRelations': numRelations, 'numRelationships': numRelationships, 'numAttributes': numAttributes, 'numEdges': totalEdges, 'numAttrEdges': len(campaignAttrEdges), 'numRelEdges': len(campaignRelEdges), 'allOwners': campaignOwners + otherEntitiesInvolved, 'allValues': ownerValues, 'attrEdges': campaignAttrEdges, 'relEdges': campaignRelEdges })
 
 
 
@@ -1066,9 +1330,9 @@ def downloadfile(req):
     enforcer = req.session["enforcer"]
     enforcer_args = req.session["enforcer_args"]
 
-    current_dir = os.getcwd()
-    base_dir = "/app"
-    filename = 'anony_' + campaign.replace(" ", "_") + '.txt'
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    filename = 'anony_' + campaign.replace(" ", "_") + '.ttl'
 
     graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
 
@@ -1104,7 +1368,7 @@ def downloadfile(req):
     return render(req, 'anon/download_page.html', {"path": filepath})
 
 
-def anonymize(req):
+def clusteringpage(req):
 
     if not "sel-camp-prov" in req.session:
         return redirect("/anon/error")
@@ -1113,25 +1377,14 @@ def anonymize(req):
 
     if req.method == "POST":
 
-        if "home" in req.POST:
-            del req.session["sel-camp-prov"]
-            return redirect('/anon/homedataprovider')
-
         clust = req.POST.get("clust-alg")
         clust_arg = None
+
+        print(clust)
 
         if clust[0] != "v":
             clust_arg = clust.split("-")[1]
             clust = clust.split("-")[0]
-
-        valid = req.POST.get("valid-alg")
-
-        if valid == "sr":
-            valid_arg = None
-        else:
-            valid_arg = "1.00"
-
-        download = req.POST.get("save-choice")
 
         if clust == "vac":
             command_line = 'cd anony-kg-modified/ && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
@@ -1141,31 +1394,135 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        print("\n\n\n\n")
+        req.session["clust"] = clust
+        req.session["clust-arg"] = clust_arg
+
+        return redirect('/anon/clusteringresults')
+
+    return render(req, 'anon/clusteringpage.html')
+
+
+
+def clusteringresults(req):
+
+
+    if not "sel-camp-prov" in req.session and not "clust" in req.session and not "clust-arg" in req.session:
+        return redirect("/anon/error")
+
+    campaign = req.session["sel-camp-prov"]
+    clust = req.session["clust"]
+    clust_arg = req.session["clust-arg"]
+
+    if clust == "km":
+        clust_str = "k-Medoids"
+    else:
+        clust_str = clust.upper()
+
+    if clust_arg != None:
+        clust_str += ("#" + clust_arg.capitalize())
+
+
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+
+    filename = campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
+
+    if clust_arg is not None:
+        filename += ("#" + clust_arg)
+
+    filename += ".txt"
+
+    clusters_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "clusters", "raw", filename)
+
+    if not os.path.exists(clusters_filepath):
+        print("File " + str(clusters_filepath) + " non esiste")
+        return render(req, 'anon/clusteringresults.html', {'clusters': None})
+    
+    filename = "entities.idx"
+    
+    owners_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "raw", filename)
+
+    if not os.path.exists(owners_filepath):
+        print("File " + str(owners_filepath) + " non esiste")
+        return render(req, 'anon/clusteringresults.html', {'clusters': None})
+
+    filename = campaign.replace(" ", "_").lower() + ".txt"
+
+    kvals_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "k_values", filename)
+
+    if not os.path.exists(kvals_filepath):
+        print("File " + str(kvals_filepath) + " non esiste")
+        return render(req, 'anon/clusteringresults.html', {'clusters': None})
+
+
+    kvals = {}
+
+    with open(kvals_filepath, "r") as f:
+        for row in f.readlines():
+            row_values = row[:-1].split(",")
+            kvals[row_values[0]] = row_values[1]
+
+    owners = []
+
+    with open(owners_filepath, "r") as f:
+        for row in f.readlines():
+            row_values = row.split(",")
+            owners.append(row_values[0] + "|" + row_values[1][:-1])
+
+    clusters = []
+
+    with open(clusters_filepath, "r") as f:
+        for row in f.readlines():
+            cluster = []
+            cluster_kval = []
+            for cluster_owner in row[:-1].split(","):
+                for owner in owners:
+                    owner_values = owner.split("|")
+                    if owner_values[1] == cluster_owner:
+                        cluster.append(owner_values[0])
+                        cluster_kval.append(kvals[owner_values[1]])
+            print(cluster)
+            print(cluster_kval)
+            cluster_values = zip(cluster, cluster_kval)
+            clusters.append(cluster_values)
+
+
+    if req.method == "POST":
+
+        if "proceed" in req.POST:
+            return redirect('/anon/anonymize')
+        
+        if "regen" in req.POST:
+            del req.session["clust"]
+            del req.session["clust-arg"]
+            return redirect('/anon/clusteringpage')
+
+    return render(req, 'anon/clusteringresults.html', {'clusters': clusters, 'clust_str': clust_str})
 
 
 
 
-        current_dir = os.getcwd()
-        base_dir = "/app"
 
-        filename = campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
+def anonymize(req):
 
-        if clust_arg is not None:
-            filename += ("#" + clust_arg)
+    if not "sel-camp-prov" in req.session and not "clust" in req.session and not "clust-arg" in req.session:
+        return redirect("/anon/error")
+    
+    clust = req.session["clust"]
+    clust_arg = req.session["clust-arg"]
 
-        filename += ".txt"
+    campaign = req.session["sel-camp-prov"]
 
-        filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "clusters", "raw", filename)
+    if req.method == "POST":
 
+        valid = req.POST.get("valid-alg")
 
+        if valid == "sr":
+            valid_arg = None
+        else:
+            valid_arg = "1.00"
 
-        if not os.path.isfile(filepath):
-            print("\n\n\n")
-            print("Non esiste file: " + filepath)
-            print("\n\n\n")
-            return render(req, 'anon/anonymize.html', { "clusterError": True })
-
+        download = req.POST.get("save-choice")
 
 
         if clust == "vac":
@@ -1182,8 +1539,6 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        print("\n\n\n\n")
-
         command_line = 'cd anony-kg-modified/ && python anonymize_kg.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\"'
 
         if clust == "vac":
@@ -1198,8 +1553,6 @@ def anonymize(req):
 
         terminal = command_line
         subprocess.call(terminal, shell=True)
-
-        print("\n\n\n\n")
 
         command_line = 'cd anony-kg-modified/ && python visualize_outputs.py --data_list=anonykg_thesis --campaign=\"{}\" --refresh=y,y --src_type=graphs --exp_names={},{} --workers=1'.format(campaign.lower(), clust, valid)
 
@@ -1216,11 +1569,10 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        print("\n\n\n\n")
+        #base_dir = "/app"
+        base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
 
-        current_dir = os.getcwd()
-        base_dir = "/app"
 
         filename = campaign.lower().replace(" ", "_") + ".csv"
 

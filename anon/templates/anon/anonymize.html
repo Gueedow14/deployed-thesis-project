@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title id="campaign-name-title">Anonymize</title>
+        <title id="campaign-name-title">Graph Anonymization</title>
         <link rel="stylesheet" href="{% static 'anon/css/anonymize.css' %}">        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
@@ -20,157 +20,41 @@
         
         <div class="section">
 
-
-
             <div class="title">
-                <h1>Anonymize</h1>
+                <h1>Graph Anonymization</h1>
             </div>
 
 
             <div id="container" class="container">
 
-                {% if clusterError == True %}
-
-                    <div style="padding: 10px 20px;">
-                        <div class="error_flag">
-                            <p style="font-size: 25px; line-height: 10px; font-weight: bold; color: white;">Error in Clustering: Minimum cluster size must be greater than 1.</p>
-                            <form method="post">
-                                {% csrf_token %}
-                                <div>
-                                    <button id="exit-button" type="submit" name="home" class="exit_button">Go Back Home<i class="bi bi-box-arrow-right" style="margin-left: 10px; font-size: 20px;"></i></button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                {% endif %}
-
-
                 <div class="text_div">
-
-                    <p>Select Clustering Algorithm:</p>
-
-                </div>
-
-
-                <div class="clustering_buttons_div">
-
-                    <div>
-                        <button id="vac-button" class="button">VAC</button>
-                    </div>
-
-                    <div>
-
-                        <div>
-                            <button id="hdbscan-button" class="button">HDBSCAN</button>
-                        </div>
-
-                        <div style="display: flex; justify-content: center;">
-
-                            <div id="hdbscan-options" class="radio_container">
-
-                                <label class="radio_option">
-                                    <input id="hdbscan-min" class="radio_alg" type="radio" name="clustering"/>
-                                    <span class="checkmark"></span>
-                                    <span>Min</span>
-                                </label>
-        
-                                <label class="radio_option">
-                                    <input id="hdbscan-mean" class="radio_alg" type="radio" name="clustering"/>
-                                    <span class="checkmark"></span>
-                                    <span>Mean</span>
-                                </label>
-        
-                                <label class="radio_option">
-                                    <input id="hdbscan-max" class="radio_alg" type="radio" name="clustering"/>
-                                    <span class="checkmark"></span>
-                                    <span>Max</span>
-                                </label>
-                                
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div>
-
-                        <div>
-                            <button id="km-button" class="button">k-Medoids</button>
-                        </div>
-    
-
-                        <div style="display: flex; justify-content: center;">
-
-                            <div id="km-options" class="radio_container">
-                                <label class="radio_option">
-                                    <input id="km-min" class="radio_alg" type="radio" name="clustering"/>
-                                    <span class="checkmark"></span>
-                                    <span>Min</span>
-                                </label>
-        
-                                <label class="radio_option">
-                                    <input id="km-mean" class="radio_alg" type="radio" name="clustering"/>
-                                    <span class="checkmark"></span>
-                                    <span>Mean</span>
-                                </label>
-        
-                                <label class="radio_option">
-                                    <input id="km-max" class="radio_alg" type="radio" name="clustering"/>
-                                    <span class="checkmark"></span>
-                                    <span>Max</span>
-                                </label>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                
-
-
-
-                <div class="text_div">
-
                     <p>Select Validation Algorithm:</p>
-
                 </div>
                 
 
+                <div id="validation-buttons-div" class="button_divs">
 
-
-                <div id="validation-buttons-div" class="validation_buttons_div">
-
-                    <div>
+                    <div class="button_div">
                         <button id="sr-button" class="disabled_button">Invalid Removal</button>
                     </div>
 
-                    <div>
+                    <div class="button_div">
                         <button id="ms-button" class="disabled_button">MS-Algorithm</button>
                     </div>
 
                 </div>
 
-
-
-
                 <div class="text_div">
-
                     <p>Would you like to download the anonymized graph?</p>
-
                 </div>
-                
 
+                <div id="save-choice-div" class="button_divs">
 
-                <div id="save-choice-div" class="save_choice_div">
-
-                    <div>
+                    <div class="button_div">
                         <button id="yes-button" class="disabled_button">Yes</button>
                     </div>
 
-                    <div>
+                    <div class="button_div">
                         <button id="no-button" class="disabled_button">No</button>
                     </div>
 
@@ -180,8 +64,6 @@
                 <form id="anonymize-button-container" class="anonymize_button_div" method="post">
 
                     {% csrf_token %}
-
-                    <input id="selected-clust" type="hidden" name="clust-alg" value="">
 
                     <input id="selected-valid" type="hidden" name="valid-alg" value="">
 

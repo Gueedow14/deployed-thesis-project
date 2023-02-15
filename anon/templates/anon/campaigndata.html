@@ -31,37 +31,65 @@
 
             <div class="container">
 
+                {% if attributes %}
 
-                <div class="text_container">
-                    <p>Fill the fields with your data:</p>
-                </div>
+                    <div class="text_container">
+                        <p>Fill the fields with your data:</p>
+                    </div>
+
+                {% endif %}
 
                 <form method="post">
 
                     {% csrf_token %}
 
-                    <div class="data_div" id="data-div">
+                    {% if attributes %}
 
-                        {% for attr in attributes %}
-                            <div class="data_container">
-                                <div class="data_label">
-                                    <label>{{ attr }}:</label>
+                        <div class="data_div" id="data-div">
+
+                            {% for attr in attributes %}
+
+                                <div class="data_container">
+                                    <div class="data_label">
+                                        <label>{{ attr }}:</label>
+                                    </div>
+                                    <div class="data_input">
+                                        <input id="data-{{ forloop.counter }}" autocomplete="off" name="data" class="campaign_input">
+                                    </div>
                                 </div>
-                                <div class="data_input">
-                                    <input id="data-{{ forloop.counter }}" autocomplete="off" name="data" class="campaign_input">
-                                </div>
-                            </div>
-                        {% endfor %}
 
-                    </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="button_div">
+                            <button id="proceed-button" type="submit" name="button" class="button">Proceed</button>
+                        </div>
+
+                    {% else %}
+
+                        <div class="no_owners_div">
+                            <p>There are no attributes for this campaign.</p>
+                        </div>
+
+                        <div id="no-data-div" class="p_div">
+                            <p id="no-data-p" class="no_data">No Attributes to fill.</p>
+                        </div>
+
+                        <div class="button_div">
+                            <button id="button" name="no-campaigns-button" type="submit" class="button">Proceed</button>
+                        </div>
 
 
-                    <div class="button_div">
-                        <button id="proceed-button" type="submit" name="button" class="button">Proceed</button>
-                    </div>
+                    {% endif %}
 
                 </form>
 
+            </div>
+
+            <div id="loader-div" class="loader_div">
+                <div class="loader"></div>
+                <h2 style="color: white; font-size: 70px;">Creating the Attribute Edges...</h2>
             </div>
 
         </div>

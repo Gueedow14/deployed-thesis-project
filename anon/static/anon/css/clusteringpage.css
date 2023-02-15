@@ -1,0 +1,249 @@
+body{
+    background-color: #d9d9d9;
+    font-family: 'Lato', sans-serif;
+}
+
+.section{
+    border: 3px solid #004d41;
+    border-radius: 10px;
+    width: 1000px;
+    margin: 200px auto;
+    height: 550px;
+    position: relative;
+    background: white;
+
+    box-shadow: 5px 5px 10px grey;
+}
+
+.title {
+    background: linear-gradient(#004d41, #009982);
+    color: white;
+    padding: 5px;
+    font-size: 25px;
+    line-height: 10px;
+    text-align: center;
+}
+
+.container {
+    padding: 20px;
+    height: 79%;
+}
+
+
+
+
+
+
+.anonymize_button_div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .5s all ease-in-out;
+}
+
+
+.clustering_buttons_div {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 60px;
+}
+
+.text_div {
+    text-align: center;
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 10px;
+}
+
+
+
+.radio_container {
+    width: fit-content;
+}
+
+.radio_option {
+    display: block;
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    width: fit-content;
+}
+
+.radio_alg {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0%;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+}
+
+.radio_option:hover .radio_alg ~ .checkmark {
+    background-color: #ddd;
+}
+
+.radio_option .radio_alg:checked ~ .checkmark {
+    background-color: #00806c;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.radio_option .radio_alg:checked ~ .checkmark:after {
+    display: block;
+}
+
+.radio_option .checkmark:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+
+
+
+
+
+
+
+
+
+.button {
+    margin: 10px 30px;
+    width: 250px;
+    color: white;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
+    border-radius: 10px;
+    font-size: 25px;
+    line-height: 20px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.button:hover {
+    background: linear-gradient(#00806c, #00ccad);
+    transform: scale(1.1);
+}
+
+.proceed_button {
+    margin: 10px 30px;
+    width: 300px;
+    color: white;
+    background: linear-gradient(#00806c, #00b398);
+    border: 3px solid #00806c;
+    border-radius: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.proceed_button:hover {
+    background: linear-gradient(#00806c, #00ccad);
+    transform: scale(1.1);
+}
+
+.selected_button {
+    margin: 10px 30px;
+    width: 250px;
+    color: white;
+    background: linear-gradient(#004d41, #00806c);
+    border: 3px solid #004d41;
+    border-radius: 10px;
+    font-size: 25px;
+    line-height: 20px;
+    font-weight: bold;
+    padding: 10px;
+    transition: .3s all ease-in-out;
+}
+
+.selected_button:hover {
+    background: linear-gradient(#004d41, #009982);
+    transform: scale(1.1);
+}
+
+
+.exit_button {
+    height: 40px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    background: transparent;
+    border: none;
+    transition: .3s all ease-in-out;
+    text-decoration: underline;
+}
+
+.exit_button:hover {
+    transform: scale(1.1);
+}
+
+
+.error_flag {
+    border: 1px solid #004d41;
+    border-radius: 10px;
+    padding: 0 50px;
+    text-align: center; 
+    background: linear-gradient(#004d41, #009982); 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+}
+
+
+.loader_div {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    transition: all 1s ease-in-out;
+    flex-direction: column;
+}
+
+.loader {
+    border: 50px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 50px solid #00806c;
+    width: 500px;
+    height: 500px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

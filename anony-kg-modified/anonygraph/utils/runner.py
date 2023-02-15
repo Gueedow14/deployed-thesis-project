@@ -106,8 +106,12 @@ def add_log_argument(parser):
 def add_owner_argument(parser):
     parser.add_argument("--owner", type=str, required=True)
     parser.add_argument("--pwd", type=str, required=True)
-    parser.add_argument("--kval", type=int, required=True)
-    parser.add_argument("--campaign", type=str, required=True)
+
+def add_owner_email_argument(parser):
+    parser.add_argument("--owner", type=str, required=True)
+
+def add_owner_kval_argument(parser):
+    parser.add_argument("--kval", type=str, required=True)
 
 def add_provider_argument(parser):
     parser.add_argument("--provider", type=str, required=True)
@@ -141,8 +145,6 @@ def add_rel_edge_argument(parser):
 def add_reset_pwd_owner_argument(parser):
     parser.add_argument("--owner", type=str, required=True)
     parser.add_argument("--pwd", type=str, required=True)
-    parser.add_argument("--kval", type=int, required=True)
-    parser.add_argument("--campaign", type=str, required=True)
 
 def add_reset_pwd_provider_argument(parser):
     parser.add_argument("--provider", type=str, required=True)

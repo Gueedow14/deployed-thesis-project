@@ -41,7 +41,7 @@ def get_campaign_k_values(data_name, graph, campaign, args):
     kvals = []
 
     for ownerId in ownersId: 
-        kvals.append(dutils.get_kval_from_id(ownerId))
+        kvals.append(dutils.get_kval_from_id(ownerId, campaignId))
         owners.append(dutils.get_owner_from_id(ownerId))
 
     kgOwnerIds = []

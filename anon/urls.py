@@ -17,6 +17,11 @@ urlpatterns = [
     path('anonymize', views.anonymize, name="anonymize"),
     path('resetpwd', views.resetPwd, name="resetPwd"),
     path('userrelationships', views.userRelationships, name="userRelationships"),
+    path('campaignrelationships', views.campaignRelationships, name="campaignRelationships"),
+    path('usercampaign', views.userCampaign, name="userCampaign"),
+    path('clusteringpage', views.clusteringpage, name="clusteringPage"),
+    path('clusteringresults', views.clusteringresults, name="clusteringResults"),
+
     
     path('download', views.downloadfile),
     path('error', views.errorpage)

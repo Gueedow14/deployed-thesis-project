@@ -14,7 +14,7 @@ def add_arguments(parser):
 def main(args):
     logger.info(args)
 
-    dutils.reset_pwd_owner(args["owner"], args["pwd"], args["kval"], args["campaign"])
+    dutils.reset_pwd_owner(args["owner"], args["pwd"])
     logger.info("resetted pwd for owner {}".format(args["owner"]))
 
 

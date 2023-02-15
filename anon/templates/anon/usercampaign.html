@@ -1,0 +1,167 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">{{ campaign.name }}</title>
+        <link rel="stylesheet" href="{% static 'anon/css/usercampaign.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body id="body">
+        
+        <div class="section">
+
+            <div class="title">
+                <h1>{{ campaign.name }}</h1>
+            </div>
+
+            <form class="container" method="post">
+
+                {% csrf_token %}
+
+                <div class="data_container">
+                    <div class="data_label">
+                        <label>K-Value:</label>
+                    </div>
+                    <div>
+                        {% if oc.k == None %}
+
+                            <label style="font-size: 25px; font-weight: bold; color: #edd202;"><i class="bi bi-exclamation-triangle"></i></label>
+                            <button id="button" type="submit" name="kval" class="button_profile">Add a K-Value</button>
+
+                        {% else %}
+
+                            <input autocomplete="off" id="email-input" class="email" value="{{ oc.k }}" disabled>
+
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if attrs_campaign %}
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Attributes:</label>
+                        </div>
+                    </div>
+
+                    <div id="data-div" class="inside_container">
+                        {% for name, value in attrs_data %}
+                            <div class="data_container">
+                                <div class="data_label" style="text-decoration: none;">
+                                    {% if value %}
+                                        <label>{{ name }}:</label>
+                                    {% else %}
+                                        <span style="color: #edd202; margin-right: 10px;"><i class="bi bi-exclamation-triangle"></i></span><label>{{ name }}:</label>
+                                    {% endif %}
+
+                                </div>
+                                <div>
+                                    <input id="attr-{{ name }}" type="hidden" name="attribute" value="{{ name }}" disabled>
+                                    {% if value %}
+                                        <input id="input-{{ name }}" autocomplete="off" name="data" class="campaign_input" value="{{ value.value }}" disabled>
+                                    {% else %}
+                                        <input id="input-{{ name }}" autocomplete="off" name="data" class="campaign_input" value="" disabled>
+                                    {% endif %}
+                                </div>
+                                <div id="button-{{ name }}" class="change_icon_div_attr">
+                                    <i class="change_icon bi bi-pencil"></i>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                
+                {% else %}
+
+                    <div class="no_data_div">
+                        <p>This campaign doesn't have attributes.</p>
+                    </div>
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">No Attributes to fill.</p>
+                    </div>
+
+                {% endif %}
+                
+
+                {% if rels %}
+
+                    <div class="rel_text_div">
+                        <p>Click on the button near the relationship name to get redirected to the Relationship screen.</p>
+                    </div>
+
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Relationships:</label>
+                        </div>
+                    </div>
+
+
+                    <div id="data-div" class="inside_container">
+                        {% for rel in rels %}
+                            <div class="data_container">
+                                <div class="data_label" style="text-decoration: none;">
+                                    <label>{{ rel.name }}:</label>
+                                </div>
+                                <div>
+                                    <input id="input-{{ rel.name }}" type="hidden" name="data" disabled>
+                                </div>
+                                
+                                <div id="button-{{ rel.name }}" class="change_icon_div_rel">
+                                    <button class="relButton" type="submit" value="{{ rel.name }}" name="rels">
+                                        <i class="change_icon bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                                
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                {% else %}
+
+                    <div class="no_data_div">
+                        <p>This campaign doesn't have relationships.</p>
+                    </div>
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">No Relationships to fill.</p>
+                    </div>
+
+                {% endif %}
+
+    
+                <div class="button_div">
+                    <button id="button" type="submit" name="done" class="button_profile">Go back to Profile</button>
+                </div>
+
+            </form>    
+
+            
+            <div id="loader-div" class="loader_div">
+                <div class="loader"></div>
+                <h2 style="color: white; font-size: 70px;">Applying the modifications...</h2>
+            </div>
+
+        </div>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/usercampaign.js' %}"></script>
+
+    </body>
+
+</html>

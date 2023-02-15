@@ -19,8 +19,8 @@ class AnonyThGraph(StaticGraph):
 
         owners = data.get_owners_from_campaign_id(campaignId)
 
-        attrEdges = data.load_all_attr_edges()
-        relEdges = data.load_all_rel_edges()
+        attrEdges = data.load_all_attr_edges(campaignId)
+        relEdges = data.load_all_rel_edges(campaignId)
 
         for owner in owners:
             for attrEdge in attrEdges:

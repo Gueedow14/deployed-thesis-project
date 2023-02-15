@@ -57,6 +57,15 @@
 
                     <form method="post" class="buttons_div">
                         {% csrf_token %}
+                        <button id="home-button" type="submit" name="home" class="button">Return Home</button>
+                    </form>
+
+                    <div class="buttons_div">
+                        <button id="kg-button" type="submit" name="show" class="button">Show KG</button>
+                    </div>
+
+                    <form method="post" class="buttons_div">
+                        {% csrf_token %}
                         <button id="anon-button" type="submit" name="anonymize" class="button">Anonymize</button>
                     </form>
 
@@ -69,7 +78,29 @@
         </div>
 
 
-        <script>
+
+        <div id="kg-window" class="kg_window">
+            <div class="content_kg_window animate">
+
+
+                <span id="close-button" class="close"><i class="bi bi-x-circle-fill"></i></span>
+                <canvas id="viewport" width="1300" height="900" style="display: flex; overflow: scroll;"></canvas>
+
+            </div>
+        </div>
+
+
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+        <script src="{% static 'anon/js/arbor-v0.92/lib/arbor.js' %}"></script>
+        <script src="{% static 'anon/js/arbor-v0.92/demos/_/graphics.js' %}"></script>
+        <script src="{% static 'anon/js/arbor-v0.92/demos/halfviz/src/renderer.js' %}"></script>
+
+
+
+        <script type="text/javascript">
 
             var xValuesNodes = ["Entities", "Values"];
             var yValuesNodes = [parseInt("{{ numEntities }}"), parseInt("{{ numValues }}")];
@@ -173,13 +204,78 @@
             }
             });
 
+
+            
+
+            
+            var sys = arbor.ParticleSystem(1000, 400, 1);
+            sys.parameters({gravity:true});
+            sys.renderer = Renderer("#viewport");
+
+            var data = {
+
+                nodes:{
+
+                    {% for owner in allOwners %}
+                        "{{ owner.email }}": { 'color': 'red', 'shape':'dot', 'label': '{{ owner.email }}' },
+                    {% endfor %}
+
+                    {% for value in allValues %}
+                        "{{ value.value }}": { 'color': 'blue', 'shape':'dot', 'label': '{{ value.value }}' },
+                    {% endfor %}
+
+                },
+
+                edges:{
+
+                    {% for owner in allOwners %}
+
+                        "{{ owner.email }}": {
+                            {% for attr_edge in attrEdges %}
+                                {% if attr_edge.owner == owner %}
+                                    "{{ attr_edge.value.value }}": {
+                                        length: .8,
+                                        name: "{{ attr_edge.attribute.name }}"
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                            {% for rel_edge in relEdges %}
+                                {% if rel_edge.owner1 == owner %}
+                                    "{{ rel_edge.owner2.email }}": {
+                                        length: .8,
+                                        name: "{{ rel_edge.relationship.name }}"
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                        },
+
+                    {% endfor %}
+                }
+
+            };
+            
+            sys.graft(data);
+            
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         </script>
-
-
-
-
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
         
         <script src="{% static 'anon/js/campaignpage.js' %}"></script>
 

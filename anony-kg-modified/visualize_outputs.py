@@ -599,7 +599,7 @@ def generate_campaign_gen_settings_latex_table(dfs, y_name, campaign):
 
         new_dfs.append(new_df)
 
-    logger.info(df[["max_dist", "calgo_str", "enforcer", y_name]])
+    #logger.info(df[["max_dist", "calgo_str", "enforcer", y_name]])
 
     with open(path, 'w') as f:
         # write header

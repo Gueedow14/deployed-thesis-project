@@ -35,11 +35,26 @@ class Campaign(models.Model):
 class Owner(models.Model):
     email = models.EmailField(primary_key=True)
     pwd = models.CharField(max_length=30)
-    k = models.IntegerField()
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return self.email
+    
+class OwnerCampaign(models.Model):
+    owner_campaign_id = models.AutoField(primary_key=True)
+    owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
+    k = models.IntegerField(null=True)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return self.owner.email + " attends campaign " + self.campaign.name + " with k-val: " + str(self.k)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['owner', 'campaign'], name='unique_campaign_owner_combination'
+            )
+        ]
+
 
 class Value(models.Model):
     value = models.CharField(max_length=300, primary_key=True)
@@ -53,6 +68,7 @@ class Attribute_Edge(models.Model):
     owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
     value = models.ForeignKey(Value, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, default='error')
 
     def __str__(self) -> str:
         return self.owner.email + " ---[" + self.attribute.name + "]-->" + self.value.value
@@ -62,6 +78,7 @@ class Relationship_Edge(models.Model):
     owner1 = models.ForeignKey(Owner, on_delete=models.CASCADE, related_name='owner1')
     relationship = models.ForeignKey(Relationship, on_delete=models.CASCADE)
     owner2 = models.ForeignKey(Owner, on_delete=models.CASCADE, related_name='owner2')
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, default='error')
 
     def __str__(self) -> str:
         return self.owner1.email + " ---[" + self.relationship.name + "]-->" + self.owner2.email

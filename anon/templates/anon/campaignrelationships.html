@@ -1,0 +1,227 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">Campaign Relationships</title>
+        <link rel="stylesheet" href="{% static 'anon/css/campaignrelationships.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body id="body">
+        
+        <div class="section">
+
+            <div class="title">
+                <h1>Campaign Relationships</h1>
+            </div>
+
+            <form class="container" method="post">
+
+                {% csrf_token %}
+
+                {% if no_owners == False %}
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <label style="font-size: 33px; font-weight: bold;"><span style="text-decoration: underline;">Click on the relationship name</span> to make the users appear and then choose the users you want to form a relationship with.</label>
+                    </div>
+
+                    {% for rel, owner_rels in prev_rels %}
+
+                        <div id="{{ rel.name }}-name-div" class="relationship_name">
+                            <div style="font-weight: bold;">
+                                <label style="text-decoration: underline;">{{ rel.name }}</label>
+                            </div>
+                            <div style="position: absolute; right: 0; margin-right: 5px;">
+                                <span><i id="{{ rel.name }}-icon" class="bi bi-caret-down"></i></span>
+                            </div>
+                        </div>
+
+                        <div id="{{ rel.name }}-users-div" class="inside_container">
+
+                            <ul id="list" class="list">
+                                {% for o in owners %}
+                                    {% if o.email != owner.email %}
+    
+                                        <li class="owner">
+    
+                                            {% if o.email in owner_rels %}
+    
+                                                <div>
+                                                    <span name="selected-{{ rel.name }}">
+                                                        {{ o.email }}
+                                                    </span>
+                                                </div>
+    
+                                                <div>
+                                                    <span class="selected">
+                                                        <i class="icona bi bi-check"></i>
+                                                    </span>
+                                                    <span>
+                                                        <i class="icona bi bi-x"></i>
+                                                    </span>
+                                                </div>
+    
+                                            {% else %}
+    
+                                                <div>
+                                                    <span name="deselected-{{ rel.name }}">{{ o.email }}</span>
+                                                </div>
+    
+                                                <div>
+                                                    <span>
+                                                        <i class="icona bi bi-check"></i>
+                                                    </span>
+                                                    <span class="deselected">
+                                                        <i class="icona bi bi-x"></i>
+                                                    </span>
+                                                </div>
+    
+                                            {% endif %}
+                                            
+                                        </li>
+                                        
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+    
+                        </div>
+
+                    {% endfor %}
+
+                    <input type="hidden" id="campaign-rels" name="campaignRels" value="">
+                    <input type="hidden" id="selected-users" name="selectedUsers" value="">
+        
+                    <div class="button_div">
+                        <button id="button" name="owners-present-button" type="submit" class="button">Done</button>
+                    </div>
+
+                {% else %}
+
+                    <div class="no_owners_div">
+                        <p>There are no other owners in the database.<br>So, for now, you can't have relationships with anyone.</p>
+                    </div>
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">No other Data Owners.</p>
+                    </div>
+
+                    <div class="button_div">
+                        <button id="button" name="no-owners-button" type="submit" class="button">Go to K-Val Screen</button>
+                    </div>
+
+                {% endif %}
+
+
+            </form>   
+            
+            {% if no_owners == False %}
+            
+                <div id="loader-div" class="loader_div">
+                    <div class="loader"></div>
+                    <h2 style="color: white; font-size: 70px;">Applying Relationships...</h2>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if no_owners == False %}
+            <script>
+                var relButtons = document.getElementsByClassName("icona");
+
+                for(var i = 0 ; i < relButtons.length ; i++) {
+                    relButtons[i].addEventListener('click', clickRelButton);
+                }
+
+                function clickRelButton() {
+                    var tmp = this.parentElement.parentElement.parentElement.children[0].children[0].getAttribute("name")
+
+                    if(tmp[0] == 's')
+                        rel = tmp.slice(9,tmp.length);
+                    else
+                        rel = tmp.slice(11,tmp.length);
+
+                    if(this.classList.contains("bi-check") && !this.parentElement.classList.contains("selected")) {
+                        this.parentElement.classList.add("selected");
+                        this.parentElement.parentElement.children[1].classList.remove("deselected");
+                        this.parentElement.parentElement.parentElement.children[0].children[0].setAttribute("name","selected-"+rel);
+                    } else if(this.classList.contains("bi-x") && !this.parentElement.classList.contains("deselected")) {
+                        this.parentElement.classList.add("deselected");
+                        this.parentElement.parentElement.children[0].classList.remove("selected");
+                        this.parentElement.parentElement.parentElement.children[0].children[0].setAttribute("name","deselected-"+rel);
+                    }
+                }
+
+                var submitRelButton = document.getElementsByName("owners-present-button")[0];
+
+                submitRelButton.addEventListener('click', clickSubmitRelButton);
+
+                function clickSubmitRelButton() {
+
+                    var campaignRelsInput = document.getElementById("campaign-rels");
+                    var relationships = document.getElementsByClassName("relationship_name")
+
+                    for(var i = 0 ; i < relationships.length ; i++)
+                        campaignRelsInput.value += (relationships[i].id.substring(0, relationships[i].id.length - 9) + "|" )
+
+                    campaignRelsInput.value = campaignRelsInput.value.substring(0, campaignRelsInput.value.length - 1)
+
+                    for(var i = 0 ; i < relationships.length ; i++) {
+                        rel = relationships[i].id.substring(0, relationships[i].id.length - 9)
+                        var usersSelectedElements = document.getElementsByName("selected-" + rel);
+                        var usersSelected = []
+                        for(var i = 0 ; i < usersSelectedElements.length ; i++)
+                            usersSelected[i] = usersSelectedElements[i].innerHTML.replace(/^\s+|\s+$/g, '');
+                        var selectedUsers = "";
+                        for(var i = 0 ; i < usersSelected.length ; i++)
+                            selectedUsers += (usersSelected[i] + ",");
+                        selectedUsers = selectedUsers.substring(0, selectedUsers.length - 1)
+                        selectedUsers += "|"
+                    }
+                    selectedUsers = selectedUsers.substring(0, selectedUsers.length - 1)
+                    document.getElementById("selected-users").setAttribute("value", selectedUsers)
+                    document.getElementById("loader-div").style.display = "flex"
+                }
+
+                var relNameDivs = document.getElementsByClassName("relationship_name")
+
+                for(var i = 0 ; i < relNameDivs.length ; i++)
+                    relNameDivs[i].addEventListener('click', slideDownRel);
+
+                function slideDownRel() {
+                    var relationship = (this.id).substring(0, (this.id).length - 9);
+                    var rel_icon = document.getElementById(relationship + "-icon")
+                    if(rel_icon.classList.contains("bi-caret-down")) {
+                        $("#" + relationship + "-users-div").slideDown(300);
+                        rel_icon.classList.remove("bi-caret-down")
+                        rel_icon.classList.add("bi-caret-up")
+                    } else {
+                        $("#" + relationship + "-users-div").slideUp(300);
+                        rel_icon.classList.remove("bi-caret-up")
+                        rel_icon.classList.add("bi-caret-down")
+                    }
+
+                    console.log(relationship)
+                }
+            </script>
+        {% endif %}
+ 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/campaignrelationships.js' %}"></script>
+
+    </body>
+
+</html>

@@ -13,7 +13,7 @@ def add_arguments(parser):
 
 def main(args):
     logger.info(args)
-    dutils.generate_owner(args["owner"], args["pwd"], args["kval"], args["campaign"])
+    dutils.generate_owner(args["owner"], args["pwd"])
 
 
 if __name__ == "__main__":

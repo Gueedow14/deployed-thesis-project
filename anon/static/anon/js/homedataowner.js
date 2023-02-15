@@ -30,7 +30,11 @@ var progress = setInterval( () =>
           progressCircle.style.background = 'conic-gradient(green ${progressStartValue * 3.6}deg, #ededed 0deg)';
         }
       } else {
-        progressValue.innerHTML = "There are no Anonymized Graphs for your campaign.\nSo your security level cannot be determined yet.";
+        progressValue.setAttribute('style', 'white-space: pre;');
+        if(!chkNoKVal)
+          progressValue.innerHTML = "There are no Anonymized Graphs for your campaign.\nSo your security level cannot be determined yet.";
+        else
+          progressValue.innerHTML = "You need to determine a\r\n k value for a campaign.\r\nSo your security level can't\r\n be determined yet.";
         progressCircle.style.background = `conic-gradient(#d3d3d3 ${100 * 3.6}deg, #ededed 0deg)`;
       }
 
@@ -47,13 +51,28 @@ speed );
 var profileButton = document.getElementById('profile-button');
 var profileText = document.getElementById('profile-text');
 
-profileButton.addEventListener('mouseover', overButton);
-profileButton.addEventListener('mouseleave', leaveButton);
+profileButton.addEventListener('mouseover', overProfileButton);
+profileButton.addEventListener('mouseleave', leaveProfileButton);
 
-function overButton() {
+function overProfileButton() {
   profileText.style.display = "block";
 }
 
-function leaveButton() {
+function leaveProfileButton() {
   profileText.style.display = "none";
+}
+
+
+var campaignsButton = document.getElementById('campaigns-button');
+var campaignsText = document.getElementById('campaigns-text');
+
+campaignsButton.addEventListener('mouseover', overCampaignsButton);
+campaignsButton.addEventListener('mouseleave', leaveCampaignsButton);
+
+function overCampaignsButton() {
+  campaignsText.style.display = "block";
+}
+
+function leaveCampaignsButton() {
+  campaignsText.style.display = "none";
 }

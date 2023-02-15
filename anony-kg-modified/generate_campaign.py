@@ -15,8 +15,11 @@ def main(args):
     logger.info(args)
 
     dutils.generate_campaign(args["name"], args["creator"])
-    dutils.generate_campaign_attrs(args["name"], args["attrs"].split("|"))
-    dutils.generate_campaign_rels(args["name"], args["rels"].split("|"))
+    if args["attrs"] != "":
+        dutils.generate_campaign_attrs(args["name"], args["attrs"].split("|"))
+    if args["rels"] != "":
+        dutils.generate_campaign_rels(args["name"], args["rels"].split("|"))
+    dutils.generate_campaign_owners(args["name"])
 
 
 if __name__ == "__main__":

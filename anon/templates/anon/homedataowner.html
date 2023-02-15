@@ -9,7 +9,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Home</title>
         <link rel="stylesheet" href="{% static 'anon/css/homedataowner.css' %}">        
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,31 +41,98 @@
 
 
             <div class="container">
-               
-                <div class="button_div">
+
+                {% if missing_campaign == True %}
+                    <div class="error_div">
+                        <p><i class="bi bi-exclamation-triangle"></i> <span style="text-decoration: underline;">You need to attend a campaign!</span></p>
+                    </div>
+                {% elif missing_kval == True %}
+                    <div class="error_div">
+                        <p><i class="bi bi-exclamation-triangle"></i> <span style="text-decoration: underline;">You need to choose a k-value for a campaign you attend!</span></p>
+                    </div>
+                {% endif %}
+
+                <div class="circle_divs">
+
+                    <div class="button_div">
  
-                    <div id="profile-text" class="button_text">Profile</div>
+                        {% if missing_kval == False and missing_campaign == False %}
+                            <div id="profile-text" class="button_text" style="top: 20%;">Profile</div>
+                        {% elif missing_kval == False and missing_campaign == True %}
+                            <div id="profile-text" class="button_text" style="top: 25%;">Profile</div>
+                        {% else %}
+                            <div id="profile-text" class="button_error_text" style="top: 25%;">Profile</div>
+                        {% endif %}
+    
+                        <form method="post">
+                            {% csrf_token %}
 
-                    <form method="post">
-                        {% csrf_token %}
-                        <button name="profile" type="submit" name="profile" id="profile-button" class="profile_button animate">
-                            <span>
-                                <i class="bi bi-person-fill"></i>
-                            </span>
-                        </button>
-                    </form>
-                    
-                    
-                </div>
+                            {% if missing_kval == False %}
 
-                <div class="circle_div">
+                                <button name="profile" type="submit" name="profile" id="profile-button" class="profile_button animate">
+                                    <i class="bi bi-person-fill"></i>
+                                </button>
 
-                    <div id="progress" class="progress_bar_div">
-                        <span id="progress-value" class="progress_value"></span>
+                            {% else %}
+
+                                <button name="profile" type="submit" name="profile" id="profile-button" class="profile_error_button animate">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="currentColor" class="bi bi-person-fill-exclamation" viewBox="0 0 16 16">
+                                        <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z"/>
+                                        <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm-3.5-2a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 1 0V11a.5.5 0 0 0-.5-.5Zm0 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z"/>
+                                    </svg>
+                                </button>
+                            
+                            {% endif %}
+
+
+                        </form>
+                        
+                    </div>
+    
+                    <div class="circle_div">
+    
+                        <div id="progress" class="progress_bar_div">
+                            <span id="progress-value" class="progress_value"></span>
+                        </div>
+    
+                    </div>
+    
+                    <div class="button_div">
+                        
+                        {% if missing_campaign == False and missing_kval == False %}
+                            <div id="campaigns-text" class="button_text" style="top: 20%;"">Select Campaigns</div>
+                        {% elif missing_campaign == False and missing_kval == True %}
+                            <div id="campaigns-text" class="button_text" style="top: 25%;"">Select Campaigns</div>
+                        {% else %}
+                            <div id="campaigns-text" class="button_error_text" style="top: 25%;"">Select Campaigns</div>
+                        {% endif %}
+    
+                        <form method="post">
+                            {% csrf_token %}
+
+                            {% if missing_campaign == False %}
+
+                                <button name="campaigns" type="submit" name="campaigns" id="campaigns-button" class="profile_button animate">
+                                    <span>
+                                        <i class="bi bi-clipboard-fill"></i>
+                                    </span>
+                                </button>
+
+                            {% else %}
+
+                                <button name="campaigns" type="submit" name="campaigns" id="campaigns-button" class="profile_error_button animate">
+                                    <span>
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </span>
+                                </button>
+                            
+                            {% endif %}
+
+                        </form>
+                        
                     </div>
 
                 </div>
-
 
             </div>
 
@@ -79,6 +146,8 @@
             if(progressEndValue == 0) {
                 chkNoAnonyGraphs = true
             }
+            
+            chkNoKVal = {{ missing_kval|yesno:"true,false" }};
 
         </script>
 

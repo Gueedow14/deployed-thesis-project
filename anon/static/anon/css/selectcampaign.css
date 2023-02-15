@@ -268,6 +268,35 @@ body{
 
 
 
+.no_owners_div {
+    text-align: center;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+
+.p_div {
+    line-height: 270px;
+    height: 370px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no_data {
+    padding: 30px;
+    border: 3px solid #004d41;
+    border-radius: 10px;
+    background: linear-gradient(#00806c, #00b398);
+    color: white;
+    font-size: 70px;
+    font-weight: bold;
+    line-height: 1.5;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
 
 
 

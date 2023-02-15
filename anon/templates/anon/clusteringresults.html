@@ -1,0 +1,110 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">Clustering Results</title>
+        <link rel="stylesheet" href="{% static 'anon/css/clusteringresults.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body id="body">
+        
+        <div class="section">
+
+            <div class="title">
+                <h1>Clustering Results</h1>
+            </div>
+
+            <form class="container" method="post">
+
+                {% csrf_token %}
+
+                {% if clusters %}
+
+                    <div class="data_container">
+                        <div>
+                            <label class="data_label">Applied Clustering Algorithm:</label><span style="font-size: 28px;"> {{ clust_str }}</span>
+                        </div>
+                    </div>
+
+                    <div class="data_container">
+                        <div class="data_label">
+                            <label>Generated Clusters:</label>
+                        </div>
+                    </div>
+
+
+                    <div id="data-div" class="inside_container">
+
+                        {% for cluster in clusters %}
+
+                            <div class="data_container">
+                                <div class="data_label" style="line-height: 5px;">
+                                    <label>Cluster {{ forloop.counter }}: </label>
+                                </div>
+                            </div>
+
+                            <ul class="cluster_owners">
+
+                                {% for owner, kval in cluster %}
+                                    <li class="cluster_owner">
+                                        <label><span style="font-weight: bold;">{{ owner }}</span> with k-Value <span style="font-weight: bold;">{{ kval }}</span></label>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="button_divs">
+    
+                        <div class="button_div">
+                            <button id="button" type="submit" name="regen" class="button">Regenerate Clusters</button>
+                        </div>
+
+                        <div class="button_div">
+                            <button id="button" type="submit" name="proceed" class="button">Proceed</button>
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">Error in Clustering: Minimum cluster size must be greater than 1.</p>
+                    </div>
+
+                    <div class="button_div">
+                        <button id="button" type="submit" name="regen" class="button_profile">Regenerate Clusters</button>
+                    </div>
+
+                {% endif %}
+
+
+            </form>
+
+        </div>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <!--
+        <script src="{% static 'anon/js/campaignresults.js' %}"></script>
+        -->
+
+    </body>
+
+</html>

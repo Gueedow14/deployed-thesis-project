@@ -13,9 +13,13 @@ function checkFilledInput() {
 
 
 
-
-
 function onClickProceed() {
     if(!checkFilledInput())
         alert("Fill every field before proceeding!");
+}
+
+proceedButton.addEventListener('click', onClickConfirm)
+
+function onClickConfirm() {
+  document.getElementById("loader-div").style.display = "flex"
 }

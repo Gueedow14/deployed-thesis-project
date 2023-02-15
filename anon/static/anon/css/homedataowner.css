@@ -55,8 +55,27 @@ body{
 
 .container {
     display: flex;
+    flex-direction: column;
     height: 93%;
 }
+
+
+.error_div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    height: 80px;
+    color: #eed900;
+    font-weight: bold;
+}
+
+.circle_divs {
+    display: flex; 
+    flex-direction: row; 
+    height: -webkit-fill-available;
+}
+
 
 
 
@@ -64,21 +83,24 @@ body{
 
 
 .button_div {
-    width: 44%;
+    width: 30%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .profile_button {
-    height: 350px;
-    width: 350px;
+    height: 300px;
+    width: 300px;
     font-size: 150px;
     border-radius: 50%;
     border: none;
     background: transparent;
     box-shadow: 10px 10px 40px grey;
     transition: .3s all ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .profile_button:hover {
@@ -87,9 +109,27 @@ body{
     color: white;
 }
 
+.profile_error_button {
+    height: 300px;
+    width: 300px;
+    font-size: 150px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    box-shadow: 10px 10px 40px grey;
+    transition: .3s all ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile_error_button:hover {
+    background: linear-gradient(#eed900, #fff04d);
+    transform: scale(1.05);
+}
+
 .button_text {
     position: absolute;
-    top: 15%;
     font-size: 40px;
     font-weight: bold;
     background: linear-gradient(#004d41, #009982);
@@ -112,22 +152,46 @@ body{
     border-top: 15px solid #009982;
 }
 
+.button_error_text {
+    position: absolute;
+    top: 25%;
+    font-size: 40px;
+    font-weight: bold;
+    background: linear-gradient(#eed900, #fff04d);
+    border-radius: 10px;
+    padding: 10px 15px;
+    display: none;
+}
+
+.button_error_text::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 15px solid #fff04d;
+}
 
 
 
 
 
 .circle_div {
-    width: 56%;
+    width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .progress_bar_div {
     background: conic-gradient(red 90deg, white 0deg);
     border-radius: 50%;
-    width: 500px;
-    height: 500px;
-    margin-top: 80px;
-    margin-left: 130px;
+    width: 400px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -141,8 +205,8 @@ body{
 .progress_bar_div::before {
     content: "";
     position: absolute;
-    height: 400px;
-    width: 400px;
+    height: 300px;
+    width: 300px;
     background: white;
     border-radius: 50%;
 }
@@ -168,7 +232,6 @@ body{
     width: 300px;
     font-weight: bold;
     text-align: center;
-    padding: 130px 0;
 }
 
 

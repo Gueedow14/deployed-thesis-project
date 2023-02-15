@@ -1,0 +1,147 @@
+{% load static %}
+
+<!DOCTYPE html> 
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title id="campaign-name-title">Clustering Page</title>
+        <link rel="stylesheet" href="{% static 'anon/css/clusteringpage.css' %}">        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+        
+        <div class="section">
+
+
+
+            <div class="title">
+                <h1>Clustering Page</h1>
+            </div>
+
+
+            <div id="container" class="container">
+
+                <div class="text_div">
+
+                    <p>Select the Clustering Algorithm:</p>
+
+                </div>
+
+
+                <div class="clustering_buttons_div">
+
+                    <div>
+                        <button id="vac-button" class="button">VAC</button>
+                    </div>
+
+                    <div>
+
+                        <div>
+                            <button id="hdbscan-button" class="button">HDBSCAN</button>
+                        </div>
+
+                        <div style="display: flex; justify-content: center;">
+
+                            <div id="hdbscan-options" class="radio_container">
+
+                                <label class="radio_option">
+                                    <input id="hdbscan-min" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Min</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="hdbscan-mean" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Mean</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="hdbscan-max" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Max</span>
+                                </label>
+                                
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <div>
+                            <button id="km-button" class="button">k-Medoids</button>
+                        </div>
+    
+
+                        <div style="display: flex; justify-content: center;">
+
+                            <div id="km-options" class="radio_container">
+                                <label class="radio_option">
+                                    <input id="km-min" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Min</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="km-mean" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Mean</span>
+                                </label>
+        
+                                <label class="radio_option">
+                                    <input id="km-max" class="radio_alg" type="radio" name="clustering"/>
+                                    <span class="checkmark"></span>
+                                    <span>Max</span>
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <form id="anonymize-button-container" class="anonymize_button_div" method="post">
+
+                    {% csrf_token %}
+
+                    <input id="selected-clust" type="hidden" name="clust-alg" value="">
+
+                    <button id="anon-button" type="submit" name="generate" class="proceed_button">Proceed with Clustering</button>
+
+                </form>
+
+
+            </div>
+
+
+            <div id="loader-div" class="loader_div">
+                <div class="loader"></div>
+                <h2 style="color: white; font-size: 70px;">Generating clusters...</h2>
+            </div>
+
+
+        </div>
+
+
+
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        
+        <script src="{% static 'anon/js/clusteringpage.js' %}"></script>
+
+    </body>
+
+</html>

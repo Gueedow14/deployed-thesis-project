@@ -2,6 +2,9 @@ import os
 from anonygraph import algorithms
 import logging
 import numpy as np
+from rdflib import Graph, Literal, BNode, URIRef
+
+import pprint
 
 import anonygraph.data as data
 import anonygraph.utils.path as putils
@@ -82,7 +85,7 @@ def get_owner_id(owner):
     with open(owners_file, 'r') as fp:
         for row in fp.readlines():
             if row.split(",")[0] == owner:
-                return row.split(",")[4][:-1]
+                return row.split(",")[2][:-1]
 
 def get_provider_id(provider):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
@@ -95,7 +98,7 @@ def get_provider_id(provider):
 
 
 
-def generate_owner(email, pwd, k, campaign):
+def generate_owner(email, pwd):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     owners_file = os.path.join(raw_dir, "owners.idx")
     num_lines = countLines(owners_file)
@@ -110,7 +113,7 @@ def generate_owner(email, pwd, k, campaign):
 
     if chkExist == False:
         f = open(owners_file, "a")
-        new_owner = email + "," + pwd + "," + str(k) + "," + get_campaign_id(campaign) + "," + str(num_lines) + "\n"
+        new_owner = email + "," + pwd + "," + str(num_lines) + "\n"
         f.write(new_owner)
         f.close()
         logger.info("created owner {}".format(email))
@@ -223,8 +226,43 @@ def generate_campaign_rels(campaign, rels):
     for rel in rels:
         new_campaign += get_rel_id(rel + "_rel") + ","
     new_campaign = new_campaign[:-1]
+    f.write(new_campaign + "\n")
+    f.close()
+
+def generate_campaign_owners(campaign):
+    raw_dir = putils.get_raw_data_path("anonykg_thesis")
+    campaign_owners_file = os.path.join(raw_dir, "campaign_owners.idx")
+
+    f = open(campaign_owners_file, "a")
+    new_campaign = get_campaign_id(campaign) + ":\n"
     f.write(new_campaign)
     f.close()
+    logger.info("Created campaign {} in file {}".format(campaign, campaign_owners_file))
+
+def add_campaign_owner(campaign, owner, kval):
+    raw_dir = putils.get_raw_data_path("anonykg_thesis")
+    campaign_owners_file = os.path.join(raw_dir, "campaign_owners.idx")
+
+    with open(campaign_owners_file, "r") as f:
+        lines = f.readlines()    
+    with open(campaign_owners_file, "w") as f:
+        pass
+    with open(campaign_owners_file, "a") as f:
+            for line in lines:
+                row_values = line.split(":")
+                if row_values[0] == get_campaign_id(campaign):
+                    if row_values[1] == "\n":
+                        line = line[:-1]
+                        f.write(line + get_owner_id(owner) + "|" + str(kval) + "\n")
+                    else:
+                        line = line[:-1]
+                        f.write(line + "," + get_owner_id(owner) + "|" + str(kval) + "\n")
+                else:
+                    f.write(line)
+    f.close()
+    logger.info("Added owner {} to campaign {} in file {}".format(owner, campaign, campaign_owners_file))
+
+
 
 def generate_value(value):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
@@ -297,7 +335,7 @@ def generate_attribute(attr):
         logger.info("attribute {} already exists".format(attr))
 
 
-def generate_relationship_edge(owner1, rel, owner2):
+def generate_relationship_edge(owner1, rel, owner2, campaign):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     rels_file = os.path.join(raw_dir, "rels.edges")
 
@@ -311,7 +349,7 @@ def generate_relationship_edge(owner1, rel, owner2):
 
     if chkExist == False:
         f = open(rels_file, "a")
-        new_value = get_owner_id(owner1)  + "," + get_rel_id(rel + "_rel")  + "," + get_owner_id(owner2) + "\n"
+        new_value = get_owner_id(owner1)  + "," + get_rel_id(rel + "_rel")  + "," + get_owner_id(owner2) + "," + get_campaign_id(campaign) + "\n"
         f.write(new_value)
         f.close()
         logger.info("created relationship edge {} ---[{}]--> {}".format(owner1, rel, owner2))
@@ -319,7 +357,7 @@ def generate_relationship_edge(owner1, rel, owner2):
         logger.info("relationship edge {} ---[{}]--> {} already exists".format(owner1, rel, owner2))
     
 
-def generate_attribute_edge(owner, attr, value):
+def generate_attribute_edge(owner, attr, value, campaign):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     attrs_file = os.path.join(raw_dir, "attrs.edges")
 
@@ -333,7 +371,7 @@ def generate_attribute_edge(owner, attr, value):
 
     if chkExist == False:
         f = open(attrs_file, "a")
-        new_value = get_owner_id(owner)  + "," + get_attr_id(attr + "_attr")  + "," + get_value_id(value) + "\n"
+        new_value = get_owner_id(owner)  + "," + get_attr_id(attr + "_attr")  + "," + get_value_id(value) + "," + get_campaign_id(campaign) + "\n"
         f.write(new_value)
         f.close()
         logger.info("created attribute edge {} ---[{}]--> {}".format(owner, attr, value))
@@ -342,7 +380,7 @@ def generate_attribute_edge(owner, attr, value):
 
 
 
-def reset_pwd_owner(email, pwd, k, campaign):
+def reset_pwd_owner(email, pwd):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     owners_file = os.path.join(raw_dir, "owners.idx")
     tmp_file = os.path.join(raw_dir, "tmp.idx")
@@ -351,7 +389,7 @@ def reset_pwd_owner(email, pwd, k, campaign):
         with open(tmp_file, "w") as f_output:
             for count, row in enumerate(f_input.readlines()):
                 if row.split(",")[0] == email:
-                    new_data = email + "," + pwd + "," + str(k) + "," + get_campaign_id(campaign) + "," + str(count+1) + "\n"
+                    new_data = email + "," + pwd + "," + str(count+1) + "\n"
                     row = new_data
                 f_output.write(row)
 
@@ -375,7 +413,7 @@ def reset_pwd_provider(email, pwd):
 
 
 
-def modify_attribute_edge(owner, attr, value):
+def modify_attribute_edge(owner, attr, value, campaign):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     attrs_file = os.path.join(raw_dir, "attrs.edges")
     tmp_file = os.path.join(raw_dir, "tmp.idx")
@@ -383,8 +421,9 @@ def modify_attribute_edge(owner, attr, value):
     with open(attrs_file, "r") as f_input:
         with open(tmp_file, "w") as f_output:
             for row in f_input.readlines():
-                if row.split(",")[0] == get_owner_id(owner) and row.split(",")[1] == get_attr_id(attr + "_attr"):
-                    new_data = get_owner_id(owner) + "," + get_attr_id(attr + "_attr") + "," + get_value_id(value) + "\n"
+                row_values = row.split(",")
+                if row_values[0] == get_owner_id(owner) and row_values[1] == get_attr_id(attr + "_attr") and row_values[3][:-1] == get_campaign_id(campaign):
+                    new_data = get_owner_id(owner) + "," + get_attr_id(attr + "_attr") + "," + get_value_id(value) + "," + get_campaign_id(campaign) + "\n"
                     row = new_data
                 f_output.write(row)
 
@@ -421,7 +460,7 @@ def delete_rel_edge(o1, rel, o2):
 
 
 
-def load_all_attr_edges():
+def load_all_attr_edges(campaignId):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     attrs_file = os.path.join(raw_dir, "attrs.edges")
 
@@ -429,7 +468,9 @@ def load_all_attr_edges():
 
     with open(attrs_file, "r") as f:
         for row in f.readlines():
-            attrEdges.append(row.strip("\n"))
+            row_values = row.split(",")
+            if row_values[3][:-1] == campaignId:
+                attrEdges.append(row_values[0] + "," + row_values[1] + "," + row_values[2])
 
     f.close()
 
@@ -437,7 +478,7 @@ def load_all_attr_edges():
 
 
 
-def load_all_rel_edges():
+def load_all_rel_edges(campaignId):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     rels_file = os.path.join(raw_dir, "rels.edges")
 
@@ -445,7 +486,9 @@ def load_all_rel_edges():
 
     with open(rels_file, "r") as f:
         for row in f.readlines():
-            relEdges.append(row.strip("\n"))
+            row_values = row.split(",")
+            if row_values[3][:-1] == campaignId:
+                relEdges.append(row_values[0] + "," + row_values[1] + "," + row_values[2])
 
     f.close()
 
@@ -476,18 +519,21 @@ def get_owner_from_id(ownerId):
     with open(owners_file, "r") as f:
         for row in f.readlines():
             rowData = row.split(",")
-            if rowData[4].strip("\n") == ownerId:
+            if rowData[2].strip("\n") == ownerId:
                 return rowData[0]
 
-def get_kval_from_id(ownerId):
+def get_kval_from_id(ownerId, campaignId):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
-    owners_file = os.path.join(raw_dir, "owners.idx")
+    campaign_owners_file = os.path.join(raw_dir, "campaign_owners.idx")
 
-    with open(owners_file, "r") as f:
+    with open(campaign_owners_file, "r") as f:
         for row in f.readlines():
-            rowData = row.split(",")
-            if rowData[4].strip("\n") == ownerId:
-                return rowData[2]
+            rowData = row.split(":")
+            if rowData[0] == campaignId:
+                for campaign_user in rowData[1][:-1].split(","):
+                    userData = campaign_user.split("|")
+                    if userData[0] == ownerId:
+                        return userData[1].strip("\n")
 
 def get_attribute_from_id(attrId):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
@@ -526,15 +572,18 @@ def get_value_from_id(valueId):
 
 def get_owners_from_campaign_id(campaignId):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
-    owners_file = os.path.join(raw_dir, "owners.idx")
+    owners_file = os.path.join(raw_dir, "campaign_owners.idx")
 
     owners = []
 
     with open(owners_file, "r") as f:
         for row in f.readlines():
-            rowData = row.split(",")
-            if rowData[3] == campaignId:
-                owners.append(rowData[4].strip("\n"))
+            row_values = row.split(":")
+            if row_values[0] == campaignId:
+                for campaign_owner in row_values[1][:-1].split(","):
+                    owners.append(campaign_owner.split("|")[0])
+    
+    logger.info("Campaign owners: " + str(owners))
 
     return owners
 
@@ -554,13 +603,13 @@ def get_owner_id_from_kg(data_name, campaign, sample, owner):
 def get_max_kval_in_campaign(campaign):
     kvals = load_all_kvals(campaign)
 
-    return max(kvals)
+    return max(kvals, default=0)
 
 
 def get_min_kval_in_campaign(campaign):
     kvals = load_all_kvals(campaign)
 
-    return min(kvals)
+    return min(kvals, default=0)
 
 
 
@@ -647,65 +696,112 @@ def generate_anon_kg_file(attrEdges, relEdges, args):
     attr_path = putils.get_campaign_anony_graph_file_path(args["data"], args["sample"], args["campaign"], "attrs.idx")
     rel_path = putils.get_campaign_anony_graph_file_path(args["data"], args["sample"], args["campaign"], "rels.idx")
 
+
+    g = Graph()
+
+    #base_uri_entities = "http://example.org/people/"
+    #base_uri_attrs = "http://example.org/attributes/"
+    #base_uri_rels = "http://example.org/relationships/"
+
+
     entities = {}
 
     with open(ent_path, "r") as f:
         for row in f.readlines():
             entity = row.strip("\n").split(",")
-            entities[entity[1]] = entity[0]
+            #entities[entity[1]] = entity[0]
+            
+            #entities[entity[1]] = BNode()
+
+            #entities[entity[1]] = URIRef(base_uri_entities + entity[0])
+
+            entities[entity[1]] = URIRef(entity[0])
+
 
     values = {}
 
     with open(val_path, "r") as f:
         for row in f.readlines():
             value = row.strip("\n").split(",")
-            values[value[1]] = value[0]
+            #values[value[1]] = value[0]
+            values[value[1]] = Literal(value[0])
+
 
     attrs = {}
 
     with open(attr_path, "r") as f:
         for row in f.readlines():
             attr = row.strip("\n").split(",")
-            attrs[attr[1]] = attr[0]
+            #attrs[attr[1]] = attr[0]
+            
+            #attrs[attr[1]] = BNode()
+
+            #attrs[attr[1]] = URIRef(base_uri_attrs + attr[0][:-5])
+
+            attrs[attr[1]] = URIRef(attr[0][:-5])
+
 
     rels = {}
 
     with open(rel_path, "r") as f:
         for row in f.readlines():
             rel = row.strip("\n").split(",")
-            rels[rel[1]] = rel[0]
+            #rels[rel[1]] = rel[0]
+            
+            #rels[rel[1]] = BNode()
+
+            #rels[rel[1]] = URIRef(base_uri_rels + rel[0][:-4])
+
+            rels[rel[1]] = URIRef(rel[0][:-4])
 
     
-    newEdges = []
+    #newEdges = []
 
     for attrEdge in attrEdges:
         edgeVals = attrEdge.strip("\n").split(",")
 
         attrEdgeOwner = entities[edgeVals[0]]
-        attrEdgeAttribute = attrs[edgeVals[1]][:-5]
+        #attrEdgeAttribute = attrs[edgeVals[1]][:-5]
+        attrEdgeAttribute = attrs[edgeVals[1]]
         attrEdgeValue = values[edgeVals[2]]
 
-        newEdges.append(attrEdgeOwner + " ---[" + attrEdgeAttribute + "]--> " + attrEdgeValue)
+        #newEdges.append(attrEdgeOwner + " ---[" + attrEdgeAttribute + "]--> " + attrEdgeValue)
+        g.add((attrEdgeOwner, attrEdgeAttribute, attrEdgeValue))
+
     
     for relEdge in relEdges:
         edgeVals = relEdge.strip("\n").split(",")
 
         relEdgeOwner1 = entities[edgeVals[0]]
-        relEdgeRelationship = rels[edgeVals[1]][:-4]
+        #relEdgeRelationship = rels[edgeVals[1]][:-4]
+        relEdgeRelationship = rels[edgeVals[1]]
         relEdgeOwner2 = entities[edgeVals[2]]
 
-        newEdges.append(relEdgeOwner1 + " ---[" + relEdgeRelationship + "]--> " + relEdgeOwner2)
+        #newEdges.append(relEdgeOwner1 + " ---[" + relEdgeRelationship + "]--> " + relEdgeOwner2)
+        g.add((relEdgeOwner1, relEdgeRelationship, relEdgeOwner2))
+
+    
+
+
 
     newFilePath = putils.get_campaign_anony_graph_path(args["data"], args["sample"], args["campaign"], args["info_loss"], args["handler"], args["calgo"], args["enforcer"], args)
 
-    new_file = os.path.join(newFilePath, "anony_" + args["campaign"].replace(" ", "_") + ".txt")
+    new_file = os.path.join(newFilePath, "anony_" + args["campaign"].replace(" ", "_") + ".ttl")
 
     with open(new_file,'w') as f:
         pass
 
-    with open(new_file, "a") as f:
-        for row in newEdges:
-            f.write(row + "\n")
+    #with open(new_file, "a") as f:
+        #for row in newEdges:
+            #f.write(row + "\n")
+    
+    g.serialize(destination=new_file)
+
+    #g.parse(new_file)
+
+
+    #for stmt in g:
+        #pprint.pprint(stmt)
 
 
 
