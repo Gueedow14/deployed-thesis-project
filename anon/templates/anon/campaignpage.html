@@ -24,6 +24,27 @@
 
             <div class="title">
                 <h1 class="title_text">{{ campaign.name }}</h1>
+                
+                <div class="title_menu">
+
+                    <div id="menu-button" class="menu_button_div">
+                        <span class="menu_button"><i class="bi bi-list"></i></span>
+                    </div>
+
+                </div>
+
+                <div id="menu-options" class="title_menu_options">
+
+                    <div class="menu_option">
+                        <label><span style="text-decoration: underline;">Logged User:</span> {{ logged }}</label>
+                    </div>
+
+                    <div id="logout-button" class="menu_option">
+                        <label>Logout</label>
+                    </div>
+
+                </div>
+
             </div>
 
 
@@ -76,6 +97,30 @@
 
  
         </div>
+
+        <div id="window-logout" class="window_logout">
+            <div class="content_window_logout animate">
+                
+                <span id="button-close" class="close"><i class="bi bi-x-circle-fill"></i></span>
+
+                <div>
+                    <div>
+                        <h2 class="window_logout_text">Are you sure you want to Logout?</h2>
+                    </div>
+                    
+                    <div class="button_logout_div">
+                        <form method="post">
+                            {% csrf_token %}
+                            <button id="confirm-logout" type="submit" name="logout" class="button_logout">Yes</button>
+                        </form>
+                        <button id="cancel-logout" type="submit" name="no" class="button_logout">Cancel</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
 
 
 

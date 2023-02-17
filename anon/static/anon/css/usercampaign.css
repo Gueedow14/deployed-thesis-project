@@ -20,12 +20,82 @@ body{
     color: white;
     padding: 5px;
     font-size: 25px;
-    line-height: 15px;
-    height: 10%;
+    line-height: 20px;
+    text-align: center;
+
+    position: relative;
+
     display: flex;
-    align-items: center;
+    flex-direction: row;
     justify-content: center;
+    align-items: center;
 }
+
+
+
+.title_menu {
+    position: absolute;
+    right: 20px;
+    color: white;
+    text-align: right;
+}
+
+.menu_button_div {
+    border: 3px solid white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: .3s all ease-in-out;
+}
+
+.menu_button_div:hover {
+    transform: scale(1.1);
+}
+
+.menu_button {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+
+
+.title_menu_options {
+    display: none;
+
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    color: white;
+    text-align: right;
+
+    border: 2px solid #004d41;
+    border-radius: 5px;
+}
+
+.menu_option {
+    height: 35px;
+    padding: 5px;
+    background-color: rgba(0, 179, 152, .7);
+    opacity: 1;
+    font-weight: bold;
+
+    transition: .3s all ease-in-out;
+}
+
+.menu_option:hover {
+    font-size: 27px;
+}
+
+
+
+
+
+
 
 
 
