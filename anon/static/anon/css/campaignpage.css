@@ -131,6 +131,7 @@ body{
     position: relative;
     display: flex;
     align-items: center;
+    flex-direction: column;
     margin: auto;
 }
 
@@ -149,17 +150,31 @@ body{
     to {transform: scale(1)}
 }
 
+.kg_title_div {
+    width: 100%;
+    position: relative;
+
+    background: linear-gradient(#004d41, #009982);
+    color: white;
+    padding: 20px;
+
+    font-size: 35px;
+    font-weight: bold;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+}
+
 .close {
     position: absolute;
     right: 10px;
-    top: 7px;
-    color: #009982;
-    font-size: 35px;
-    font-weight: bold;
-  }
+}
   
 .close:hover, .close:focus {
-    color: #00806c;
+    transform: scale(1.1);
     cursor: pointer;
 }
 

@@ -139,6 +139,10 @@
         </div>
 
         <script>
+
+            chk = {{ missing_campaign|yesno:"true,false" }};
+
+
             progressEndValue = {{ sec_perc }};
 
             chkNoAnonyGraphs = false

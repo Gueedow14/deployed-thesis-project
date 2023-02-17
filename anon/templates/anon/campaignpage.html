@@ -82,9 +82,12 @@
         <div id="kg-window" class="kg_window">
             <div class="content_kg_window animate">
 
-
-                <span id="close-button" class="close"><i class="bi bi-x-circle-fill"></i></span>
-                <canvas id="viewport" width="1300" height="900" style="display: flex; overflow: scroll;"></canvas>
+                <div class="kg_title_div">
+                    <label class="kg_title">You can drag the nodes around as you please.</label>
+                    <span id="close-button" class="close"><i class="bi bi-x-circle-fill"></i></span>
+                </div>
+                
+                <canvas id="viewport" width="1300" height="800" style="display: flex; overflow: scroll;"></canvas>
 
             </div>
         </div>
@@ -210,7 +213,7 @@
 
             
             var sys = arbor.ParticleSystem();
-            sys.parameters({ repulsion: 500, stiffness: 100, friction: .99, gravity: false })
+            sys.parameters({ repulsion: 100, stiffness: 100, friction: .99, gravity: false })
             sys.renderer = Renderer("#viewport");
 
             var data = {

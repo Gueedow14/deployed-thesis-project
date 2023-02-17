@@ -103,12 +103,17 @@
                         {% csrf_token %}
                         <input id="pwd-hidden" type="hidden" name="pwd">
                         <input id="confirm-hidden" type="hidden" name="confirm">
-                        <button id="register-button" class="button">Register</button>
+                        <button id="reset-button" class="button">Reset</button>
                     </form>
                 </div>
                 
             </div>
 
+        </div>
+
+        <div id="loader-div" class="loader_div">
+            <div class="loader"></div>
+            <h2 style="color: white; font-size: 70px;">Resetting the Password...</h2>
         </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>

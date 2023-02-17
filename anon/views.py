@@ -265,6 +265,14 @@ def selectCampaign(req):
         campaign_data = zip(campaigns, campaignAttrs, campaignRels)
         
         if req.method == "POST":
+            
+            if "yes" in req.POST:
+
+                for key in list(req.session.keys()):
+                    del req.session[key]
+
+                return redirect('/anon/logreg')
+
             if "no-campaigns-button" in req.POST:
                 req.session["owner"] = owner.email
                 return redirect('/anon/homedataowner')
@@ -282,7 +290,7 @@ def selectCampaign(req):
                     req.session["sel-camp"] = campaign
                     return redirect('/anon/campaigndata')
 
-        return render(req, 'anon/selectcampaign.html', {'campaigns': campaign_data, 'chkCampaignsAttended': chkAllCampaignsAttended})
+        return render(req, 'anon/selectcampaign.html', {'campaigns': campaign_data, 'chkCampaignsAttended': chkAllCampaignsAttended, 'logged': req.session["owner"]})
 
     else:
         return redirect("/anon/error")
@@ -520,6 +528,8 @@ def homeDataOwner(req):
         if anony_graph.campaign in owner_campaigns:
             campaign_anony_graphs.append(anony_graph)
 
+
+
     if campaign_anony_graphs:
 
         sec_percentages = []
@@ -604,7 +614,19 @@ def homeDataOwner(req):
     else:
         sec_perc = 0
 
+        chk_no_oc = True
+    
+        for oc in OwnerCampaign.objects.all():
+            if oc.owner == o:
+                chk_no_oc = False
+                if oc.k == None:
+                    return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False, 'missing_kval': True, 'missing_campaign': False })
+
+        if chk_no_oc:
+            return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False, 'missing_kval': False, 'missing_campaign': True })
+
         return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': True, 'missing_kval': False, 'missing_campaign': False })
+
 
     chk_no_oc = True
     
@@ -616,6 +638,7 @@ def homeDataOwner(req):
 
     if chk_no_oc:
         return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False, 'missing_kval': False, 'missing_campaign': True })
+
 
 
     return render(req, 'anon/homedataowner.html', { 'owner': o, 'sec_perc': sec_perc, 'no_anony_graphs_flag': False, 'missing_kval': False, 'missing_campaign': False })

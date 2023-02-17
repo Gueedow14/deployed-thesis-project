@@ -110,3 +110,10 @@ function IsAlphaNumeric(e) {
     var ret = ((keyCode >= 33 && keyCode <= 43) || (keyCode >= 45 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 94) || (keyCode >= 96 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
     return ret;
 }
+
+
+document.getElementById("reset-button").addEventListener('click', onClickConfirm)
+
+function onClickConfirm() {
+  document.getElementById("loader-div").style.display = "flex"
+}
