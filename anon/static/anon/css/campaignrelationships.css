@@ -13,6 +13,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -94,12 +97,15 @@ body{
 
 
 
-
+.container_no_owners {
+    padding: 20px 50px 0;
+    flex: 1 1 auto;
+}
 
 
 .container {
     padding: 20px 50px 0;
-    height: 90%;
+    flex: 1 1 auto;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -410,7 +416,7 @@ body{
 
 .p_div {
     line-height: 270px;
-    height: 400px;
+    height: 370px;
     display: flex;
     align-items: center;
     justify-content: center;

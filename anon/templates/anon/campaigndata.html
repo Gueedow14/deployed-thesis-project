@@ -98,7 +98,7 @@
                         </div>
 
                         <div class="button_div">
-                            <button id="button" name="no-campaigns-button" type="submit" class="button">Proceed</button>
+                            <button id="proceed-button" name="no-campaigns-button" type="submit" class="button">Proceed</button>
                         </div>
 
 
@@ -110,7 +110,11 @@
 
             <div id="loader-div" class="loader_div">
                 <div class="loader"></div>
-                <h2 style="color: white; font-size: 70px;">Creating the Attribute Edges...</h2>
+                {% if attributes %}
+                    <h2 style="color: white; font-size: 70px;">Creating the Attribute Edges...</h2>
+                {% else %}
+                    <h2 style="color: white; font-size: 70px;">Proceeding...</h2>
+                {% endif %}
             </div>
 
         </div>

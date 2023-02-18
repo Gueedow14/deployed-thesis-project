@@ -2,7 +2,7 @@ var password = document.getElementById('pwd-input');
 var confirmPassword = document.getElementById('confirm-pwd-input');
 var iconPwd = document.getElementById('pwd-icon-eye');
 var iconConfirmPwd = document.getElementById('confirm-pwd-icon-eye');
-var registerButton = document.getElementById('register-button');
+var registerButton = document.getElementById('reset-button');
 
 var chkIcon = true;
 var chkConfirmIcon = true;
@@ -86,7 +86,7 @@ function chkPwds(pwd, conf) {
     return false
 }
  
-document.getElementById("register-button").addEventListener('click', onClickRegisterButton);
+document.getElementById("reset-button").addEventListener('click', onClickRegisterButton);
 
 function onClickRegisterButton() {
 

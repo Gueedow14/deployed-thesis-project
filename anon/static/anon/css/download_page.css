@@ -14,6 +14,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -103,7 +106,7 @@ body{
     align-content: center;
     align-items: center;
     justify-content: center;
-    height: 510px;
+    flex: 1 1 auto;
 }
 
 .container_form {

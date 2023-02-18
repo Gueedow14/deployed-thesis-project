@@ -13,6 +13,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -103,6 +106,7 @@ body{
 
 .container {
     text-align: center;
+    flex: 1 1 auto;
 }
 
 
@@ -111,7 +115,7 @@ body{
 
 .buttons_div_container {
     display: flex;
-    margin-top: 30px;
+    margin-top: 50px;
 }
 
 .buttons_div {

@@ -13,6 +13,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -102,8 +105,8 @@ body{
 
 
 .container {
-    padding: 20px 50px 0;
-    height: 75%;
+    padding: 0 50px 0;
+    flex: 1 1 auto;
 }
 
 
@@ -111,7 +114,7 @@ body{
 
 .inside_container {
     padding: 10px 50px;
-    height: 55%;
+    height: 300px;
     border: 3px solid #00806c;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -146,7 +149,7 @@ body{
     display: flex;
     align-items: center;
     width: 100%;
-    margin: 30px 0;
+    margin: 25px 0;
 }
 
 .data_label {

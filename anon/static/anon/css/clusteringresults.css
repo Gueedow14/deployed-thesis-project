@@ -13,6 +13,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -103,7 +106,7 @@ body{
 
 .container {
     padding: 20px 50px 0;
-    height: 90%;
+    flex: 1 1 auto;
 }
 
 
@@ -303,7 +306,9 @@ body{
     transition: .3s all ease-in-out;
 }
 
-
+.no_data_button:hover {
+    transform: scale(1.1);
+}
 
 
 

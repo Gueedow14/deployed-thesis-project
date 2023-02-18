@@ -71,7 +71,7 @@ class Attribute_Edge(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, default='error')
 
     def __str__(self) -> str:
-        return self.owner.email + " ---[" + self.attribute.name + "]-->" + self.value.value
+        return self.owner.email + " ---[" + self.attribute.name + "]--> " + self.value.value + " for campaign: " + self.campaign.name
 
 class Relationship_Edge(models.Model):
     rel_edge_id = models.AutoField(primary_key=True)
@@ -81,7 +81,7 @@ class Relationship_Edge(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, default='error')
 
     def __str__(self) -> str:
-        return self.owner1.email + " ---[" + self.relationship.name + "]-->" + self.owner2.email
+        return self.owner1.email + " ---[" + self.relationship.name + "]--> " + self.owner2.email + " for campaign: " + self.campaign.name
 
 
 class AnonyGraph(models.Model):

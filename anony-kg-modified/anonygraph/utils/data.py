@@ -344,7 +344,7 @@ def generate_relationship_edge(owner1, rel, owner2, campaign):
     with open(rels_file, "r") as f:
         for row in f.readlines():
             row_values = row.split(",")
-            if row_values[0] == get_owner_id(owner1) and row_values[1] == get_rel_id(rel + "_rel") and row_values[2].strip('\n') == get_owner_id(owner2):
+            if row_values[0] == get_owner_id(owner1) and row_values[1] == get_rel_id(rel + "_rel") and row_values[2] == get_owner_id(owner2) and row_values[3].strip('\n') == get_campaign_id(campaign):
                 chkExist = True
 
     if chkExist == False:
@@ -352,9 +352,9 @@ def generate_relationship_edge(owner1, rel, owner2, campaign):
         new_value = get_owner_id(owner1)  + "," + get_rel_id(rel + "_rel")  + "," + get_owner_id(owner2) + "," + get_campaign_id(campaign) + "\n"
         f.write(new_value)
         f.close()
-        logger.info("created relationship edge {} ---[{}]--> {}".format(owner1, rel, owner2))
+        logger.info("created relationship edge {} ---[{}]--> {} for campaign {}".format(owner1, rel, owner2, campaign))
     else:
-        logger.info("relationship edge {} ---[{}]--> {} already exists".format(owner1, rel, owner2))
+        logger.info("relationship edge {} ---[{}]--> {} already exists for campaign {}".format(owner1, rel, owner2, campaign))
     
 
 def generate_attribute_edge(owner, attr, value, campaign):

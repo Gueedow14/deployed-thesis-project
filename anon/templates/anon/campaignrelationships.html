@@ -47,7 +47,15 @@
 
             </div>
 
+            {% if no_owners == False %}
+
             <form class="container" method="post">
+
+            {% else%}
+
+            <form class="container_no_owners" method="post">
+
+            {% endif %}
 
                 {% csrf_token %}
 
@@ -59,63 +67,67 @@
 
                     {% for rel, owner_rels in prev_rels %}
 
-                        <div id="{{ rel.name }}-name-div" class="relationship_name" style="margin-bottom: 20px;">
-                            <div style="font-weight: bold;">
-                                <label style="text-decoration: underline;">{{ rel.name }}</label>
-                            </div>
-                            <div style="position: absolute; right: 0; margin-right: 5px;">
-                                <span><i id="{{ rel.name }}-icon" class="bi bi-caret-down"></i></span>
-                            </div>
-                        </div>
+                        <div style="margin-bottom: 20px;">
 
-                        <div id="{{ rel.name }}-users-div" class="inside_container">
-
-                            <ul id="list" class="list">
-                                {% for o in owners %}
-                                    {% if o.email != owner.email %}
+                            <div id="{{ rel.name }}-name-div" class="relationship_name">
+                                <div style="font-weight: bold;">
+                                    <label style="text-decoration: underline;">{{ rel.name }}</label>
+                                </div>
+                                <div style="position: absolute; right: 0; margin-right: 5px;">
+                                    <span><i id="{{ rel.name }}-icon" class="bi bi-caret-down"></i></span>
+                                </div>
+                            </div>
     
-                                        <li class="owner">
+                            <div id="{{ rel.name }}-users-div" class="inside_container">
     
-                                            {% if o.email in owner_rels %}
-    
-                                                <div>
-                                                    <span name="selected-{{ rel.name }}">
-                                                        {{ o.email }}
-                                                    </span>
-                                                </div>
-    
-                                                <div>
-                                                    <span class="selected">
-                                                        <i class="icona bi bi-check"></i>
-                                                    </span>
-                                                    <span>
-                                                        <i class="icona bi bi-x"></i>
-                                                    </span>
-                                                </div>
-    
-                                            {% else %}
-    
-                                                <div>
-                                                    <span name="deselected-{{ rel.name }}">{{ o.email }}</span>
-                                                </div>
-    
-                                                <div>
-                                                    <span>
-                                                        <i class="icona bi bi-check"></i>
-                                                    </span>
-                                                    <span class="deselected">
-                                                        <i class="icona bi bi-x"></i>
-                                                    </span>
-                                                </div>
-    
-                                            {% endif %}
+                                <ul id="list" class="list">
+                                    {% for o in owners %}
+                                        {% if o.email != owner.email %}
+        
+                                            <li class="owner">
+        
+                                                {% if o.email in owner_rels %}
+        
+                                                    <div>
+                                                        <span name="selected-{{ rel.name }}">
+                                                            {{ o.email }}
+                                                        </span>
+                                                    </div>
+        
+                                                    <div>
+                                                        <span class="selected">
+                                                            <i class="icona bi bi-check"></i>
+                                                        </span>
+                                                        <span>
+                                                            <i class="icona bi bi-x"></i>
+                                                        </span>
+                                                    </div>
+        
+                                                {% else %}
+        
+                                                    <div>
+                                                        <span name="deselected-{{ rel.name }}">{{ o.email }}</span>
+                                                    </div>
+        
+                                                    <div>
+                                                        <span>
+                                                            <i class="icona bi bi-check"></i>
+                                                        </span>
+                                                        <span class="deselected">
+                                                            <i class="icona bi bi-x"></i>
+                                                        </span>
+                                                    </div>
+        
+                                                {% endif %}
+                                                
+                                            </li>
                                             
-                                        </li>
-                                        
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-    
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+        
+                            </div>
+
                         </div>
 
                     {% endfor %}

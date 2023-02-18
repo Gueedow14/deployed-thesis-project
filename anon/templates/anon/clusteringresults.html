@@ -47,7 +47,13 @@
 
             </div>
 
+            
+            {% if clusters %}
             <form class="container" method="post">
+            {% else %}
+            <form class="container" method="post" style="display: flex; align-items: center; justify-content: center;">
+            {% endif %}
+
 
                 {% csrf_token %}
 
@@ -152,7 +158,7 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         
-        <script src="{% static 'anon/js/campaignresults.js' %}"></script>
+        <script src="{% static 'anon/js/clusteringresults.js' %}"></script>
         
 
     </body>

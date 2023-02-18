@@ -138,6 +138,8 @@ def resetPwd(req):
 
     if origin == "profile":
         return render(req, 'anon/resetpwd.html', {'logged': email})
+    
+    return render(req, 'anon/resetpwd.html')
 
 
 
@@ -418,45 +420,29 @@ def campaignRelationships(req):
             return redirect('/anon/logreg')
 
         if "owners-present-button" in req.POST:
-            if previous_rels == req.POST.get("selectedUsers"):
-                return redirect('/anon/seclev')
-            else:
-                campaignRels = req.POST.get("campaignRels").split('|')
+                
+            campaignRels = req.POST.get("campaignRels").split('|')
 
-                old_relationships = previous_rels.split('|')
-                new_relationships = req.POST.get("selectedUsers").split('|')
+            new_relationships = req.POST.get("selectedUsers").split('|')
 
-                relationships = zip(old_relationships, new_relationships, campaignRels)
+            relationships = zip(new_relationships, campaignRels)
 
+            for new_relationship, relationship in relationships:
+                new_users = new_relationship.split(",")
 
-                for old_relationship, new_relationship, relationship in relationships:
-                    old_users = old_relationship.split(",")
-                    new_users = new_relationship.split(",")
+                for new_user in new_users:
+                        for rel in Relationship.objects.all():
+                            if rel.name == relationship:
+                                r = rel
+                        for owner2 in Owner.objects.all():
+                            if owner2.email == new_user:
+                                o2 = owner2
 
-                    for new_user in new_users:
-                        if not new_user in old_users:
-                            for rel in Relationship.objects.all():
-                                if rel.name == relationship:
-                                    r = rel
-                            for owner2 in Owner.objects.all():
-                                if owner2.email == new_user:
-                                    o2 = owner2
+                        e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign=selectedCampaign)
+                        e.save()
 
-                            e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign=selectedCampaign)
-                            e.save()
-
-                            terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
-                            subprocess.call(terminal, shell=True)
-
-                    for old_user in old_users:
-                        if not old_user in new_users:
-                            for relEdge in Relationship_Edge.objects.all():
-                                if relEdge.owner1.email == o.email and relEdge.relationship.name == relationship and relEdge.owner2.email == old_user and relEdge.campaign == selectedCampaign:
-                                    
-                                    terminal = 'cd anony-kg-modified/ && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower()
-                                    subprocess.call(terminal, shell=True)
-
-                                    relEdge.delete()
+                        terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
+                        subprocess.call(terminal, shell=True)
 
         return redirect('/anon/seclev')
 
@@ -957,7 +943,7 @@ def userRelationships(req):
     inputRels = ""
 
     for relEdge in Relationship_Edge.objects.all():
-        if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel:
+        if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel and relEdge.campaign == c:
             userRels.append(relEdge.owner2.email)
             inputRels += relEdge.owner2.email + "|"
 
@@ -971,34 +957,36 @@ def userRelationships(req):
             return redirect('/anon/logreg')
 
 
-        if inputRels == req.POST.get("selectedUsers"):
-            del req.session['currentRel']
-            return redirect('/anon/usercampaign')
-        else:
-            previousUsers = inputRels.split('|')
-            selectedUsers = req.POST.get("selectedUsers").split('|')
-            for u in selectedUsers:
-                if not(u in previousUsers):
-                    for rel in Relationship.objects.all():
-                        if rel.name == currentRel:
-                            r = rel
-                    for owner2 in Owner.objects.all():
-                        if owner2.email == u:
-                            o2 = owner2
-                    e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign= c)
-                    e.save()
-                    terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=' + r.name.lower() + ' --o2=' + o2.email.lower() + ' --campaign=\"' + c.name.lower() + '\"'
-                    subprocess.call(terminal, shell=True)
+        previousUsers = inputRels.split('|')
+        selectedUsers = req.POST.get("selectedUsers").split('|')
 
-            for u in previousUsers:
-                if not(u in selectedUsers):
-                    for relEdge in Relationship_Edge.objects.all():
-                        if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel and relEdge.owner2.email == u:
-                            terminal = 'cd anony-kg-modified/ && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=' + relEdge.relationship.name.lower() + ' --o2=' + relEdge.owner2.email.lower() + ' --campaign=\"' + c.name.lower() + '\"'
-                            subprocess.call(terminal, shell=True)
-                            relEdge.delete()
+        for u in selectedUsers:
+            if not(u in previousUsers):
+                for rel in Relationship.objects.all():
+                    if rel.name == currentRel:
+                        r = rel
+                for owner2 in Owner.objects.all():
+                    if owner2.email == u:
+                        o2 = owner2
 
-            return redirect('/anon/usercampaign')
+                e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign= c)
+                e.save()
+
+                terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + c.name.lower() + '\"'
+                subprocess.call(terminal, shell=True)
+
+        for u in previousUsers:
+            if not(u in selectedUsers):
+                for relEdge in Relationship_Edge.objects.all():
+                    if relEdge.owner1.email == o.email and relEdge.relationship.name == currentRel and relEdge.owner2.email == u:
+                        
+                        terminal = 'cd anony-kg-modified/ && python -u delete_rel_edge.py --o1=' + relEdge.owner1.email.lower() + ' --rel=\"' + relEdge.relationship.name.lower() + '\" --o2=' + relEdge.owner2.email.lower() + ' --campaign=\"' + c.name.lower() + '\"'
+                        subprocess.call(terminal, shell=True)
+
+                        relEdge.delete()
+
+        del req.session['currentRel']
+        return redirect('/anon/usercampaign')
 
 
     return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': other_owners, 'currentRel': currentRel, 'inputRels': inputRels, 'no_owners': no_owners, 'logged': req.session["owner"] })
@@ -1532,6 +1520,23 @@ def clusteringresults(req):
 
     if not "sel-camp-prov" in req.session and not "clust" in req.session and not "clust-arg" in req.session and not "provider" in req.session:
         return redirect("/anon/error")
+    
+    if req.method == "POST":
+
+        if "logout" in req.POST:
+
+            for key in list(req.session.keys()):
+                del req.session[key]
+
+            return redirect('/anon/logreg')
+
+        if "proceed" in req.POST:
+            return redirect('/anon/anonymize')
+        
+        if "regen" in req.POST:
+            del req.session["clust"]
+            del req.session["clust-arg"]
+            return redirect('/anon/clusteringpage')
 
     campaign = req.session["sel-camp-prov"]
     clust = req.session["clust"]
@@ -1609,24 +1614,6 @@ def clusteringresults(req):
             print(cluster_kval)
             cluster_values = zip(cluster, cluster_kval)
             clusters.append(cluster_values)
-
-
-    if req.method == "POST":
-
-        if "logout" in req.POST:
-
-            for key in list(req.session.keys()):
-                del req.session[key]
-
-            return redirect('/anon/logreg')
-
-        if "proceed" in req.POST:
-            return redirect('/anon/anonymize')
-        
-        if "regen" in req.POST:
-            del req.session["clust"]
-            del req.session["clust-arg"]
-            return redirect('/anon/clusteringpage')
 
     return render(req, 'anon/clusteringresults.html', {'clusters': clusters, 'clust_str': clust_str, 'logged': req.session["provider"]})
 

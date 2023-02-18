@@ -13,6 +13,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -94,6 +97,11 @@ body{
 
 
 
+.container {
+    flex: 1 1 auto;
+}
+
+
 
 
 
@@ -106,7 +114,7 @@ body{
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin: 30px auto;
+    margin: 0px auto;
 }
 
 .button {

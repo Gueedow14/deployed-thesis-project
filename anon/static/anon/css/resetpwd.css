@@ -13,6 +13,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -91,6 +94,10 @@ body{
     font-size: 27px;
 }
 
+
+.container {
+    flex: 1 1 auto;
+}
 
 
 
@@ -207,7 +214,6 @@ hr {
 
 .button_div {
     text-align: center;
-    margin-top: 20px;
 }
 
 

@@ -11,6 +11,11 @@ body{
     height: 730px;
     position: relative;
     background: white;
+
+    box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -96,7 +101,7 @@ body{
 
 
 .container {
-    height: 420px;
+    flex: 1 1 auto;
 }
 
 .container h3 {

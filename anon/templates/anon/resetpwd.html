@@ -133,7 +133,11 @@
 
 
                 <hr>
-                <div class="button_div">
+                {% if pwd_error_flag %}
+                <div class="button_div" style="margin-top: 25px;">
+                {% else %}
+                <div class="button_div" style="margin-top: 40px;">
+                {% endif %}
                     <form method="post">
                         {% csrf_token %}
                         <input id="pwd-hidden" type="hidden" name="pwd">
@@ -153,7 +157,11 @@
 
                 <div>
                     <div>
-                        <h2 class="window_logout_text">Are you sure you want to Logout?</h2>
+                        {% if logged %}
+                            <h2 class="window_logout_text">Are you sure you want to Logout?</h2>
+                        {% else %}
+                            <h2 class="window_logout_text">Are you sure you want to exit?</h2>
+                        {% endif %}
                     </div>
                     
                     <div class="button_logout_div">

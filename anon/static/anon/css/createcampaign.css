@@ -13,6 +13,9 @@ body{
     background: white;
 
     box-shadow: 5px 5px 10px grey;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .title {
@@ -98,8 +101,8 @@ body{
 
 
 .container {
-    height: 585px;
-    padding: 50px;
+    flex: 1 1 auto;
+    padding: 40px;
 }
 
 
@@ -387,15 +390,6 @@ body{
 
 
 
-
-
-
-*, *::before, *::after {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
 .button_logout_div {
     height: 20%;
     display: flex;
@@ -484,4 +478,16 @@ body{
 .close:hover, .close:focus {
     color: #006657;
     cursor: pointer;
+}
+
+
+
+
+
+
+
+*, *::before, *::after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }

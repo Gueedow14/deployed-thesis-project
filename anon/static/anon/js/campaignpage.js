@@ -29,8 +29,8 @@ function onClickLogout() {
   document.getElementById("window-logout").style.display = "flex"
 }
 
-document.getElementById("button-close").addEventListener('click', onClickClose)
+document.getElementById("button-close-logout").addEventListener('click', onClickCloseLogout)
 
-function onClickClose() {
+function onClickCloseLogout() {
   document.getElementById("window-logout").style.display = "none"
 }
