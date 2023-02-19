@@ -195,7 +195,7 @@ def generate_campaign_attrs(campaign, attrs):
     for attr in attrs:
         new_campaign += get_attr_id(attr + "_attr") + ","
     new_campaign = new_campaign[:-1]
-    f.write(new_campaign)
+    f.write(new_campaign + "\n")
     f.close()
 
 def generate_campaign_rels(campaign, rels):

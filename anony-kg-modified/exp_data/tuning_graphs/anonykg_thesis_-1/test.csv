@@ -1,2 +1,0 @@
-data,sample,max_k,min_k,info_loss,alpha_adm,alpha_dm,info_loss_args,info_loss_args_str,handler_str,calgo,calgo_str,enforcer,enforcer_str,enforcer_args,adm,dm,am,num_fake_edges,radm,num_raw_entities,num_anonymized_entities,num_raw_edges,num_anonymized_edges,anonymized_anonymity,anonymized_attribute_anonymity,anonymized_degree_anonymity,removed_entities,num_removed_edges,num_anonymized_fake_entities
-anonykg_thesis,-1,4,2,adm,0.5,0.5,"[0.5, 0.5]","0.50,0.50",n,vac,vac,sr,sr,,0.42708333333333326,0.1875,0.6666666666666666,11,0.42708333333333326,4,4,9,19,1,4,1,0,1,0
