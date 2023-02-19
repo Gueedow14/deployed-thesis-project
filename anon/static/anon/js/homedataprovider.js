@@ -6,3 +6,9 @@ for(var i = 0 ; i < campaigns.length ; i++)
 function showLoader() {
   document.getElementById("loader-div").style.display = "flex"
 }
+
+document.getElementById("reload-page").addEventListener('click', reloadPage);
+
+function reloadPage() {
+    document.location.reload();
+}

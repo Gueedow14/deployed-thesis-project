@@ -109,3 +109,9 @@ function IsAlphaNumericEmail(e) {
     var ret = ((keyCode >= 33 && keyCode <= 43) || (keyCode >= 45 && keyCode <= 122) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode));
     return ret;
 }
+
+document.getElementById("reload-page").addEventListener('click', reloadPage);
+
+function reloadPage() {
+    document.location.reload();
+}

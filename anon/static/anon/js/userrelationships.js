@@ -68,3 +68,8 @@ function onClickClose() {
   document.getElementById("window-logout").style.display = "none"
 }
 
+document.getElementById("reload-page").addEventListener('click', reloadPage);
+
+function reloadPage() {
+    document.location.reload();
+}
