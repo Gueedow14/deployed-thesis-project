@@ -425,24 +425,26 @@ def campaignRelationships(req):
 
             new_relationships = req.POST.get("selectedUsers").split('|')
 
-            relationships = zip(new_relationships, campaignRels)
+            if req.POST.get("selectedUsers") != '':
 
-            for new_relationship, relationship in relationships:
-                new_users = new_relationship.split(",")
+                relationships = zip(new_relationships, campaignRels)
 
-                for new_user in new_users:
-                        for rel in Relationship.objects.all():
-                            if rel.name == relationship:
-                                r = rel
-                        for owner2 in Owner.objects.all():
-                            if owner2.email == new_user:
-                                o2 = owner2
+                for new_relationship, relationship in relationships:
+                    new_users = new_relationship.split(",")
 
-                        e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign=selectedCampaign)
-                        e.save()
+                    for new_user in new_users:
+                            for rel in Relationship.objects.all():
+                                if rel.name == relationship:
+                                    r = rel
+                            for owner2 in Owner.objects.all():
+                                if owner2.email == new_user:
+                                    o2 = owner2
 
-                        terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
-                        subprocess.call(terminal, shell=True)
+                            e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign=selectedCampaign)
+                            e.save()
+
+                            terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
+                            subprocess.call(terminal, shell=True)
 
         return redirect('/anon/seclev')
 

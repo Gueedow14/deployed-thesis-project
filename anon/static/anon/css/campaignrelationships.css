@@ -147,7 +147,7 @@ body{
 .inside_container {
     display: none;
     padding: 10px 50px;
-    height: 60%;
+    height: 400px;
     border: 3px solid #00806c;
     border-top: none;
     overflow-y: scroll;
