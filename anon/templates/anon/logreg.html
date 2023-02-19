@@ -180,6 +180,9 @@
                         <div>
                             <form method="post">
                                 {% csrf_token %}
+                                <div id="error-label" style="margin-bottom: 10px;">
+                                    <label style="color: red; font-weight: bold;">* The e-mail address you entered it's either invalid or not in the database. *</label>
+                                </div>
                                 <input autocomplete="off" id="email-forgot" name="email-reset" value="{{ emailreset }}" class="email_forgot_pwd" placeholder="E-Mail" />
                                 <br>
                                 <button id="button-forgot-pwd" type="submit" name="resetpwd" class="button_forgot_pwd">Send</button>

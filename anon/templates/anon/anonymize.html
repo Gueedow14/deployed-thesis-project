@@ -45,8 +45,22 @@
 
             </div>
 
-
+            {% if error_flag == True %}
+            <div id="container" class="container" style="overflow-x: hidden; overflow-y: scroll;">
+            {% else %}
             <div id="container" class="container">
+            {% endif %}
+
+                {% if error_flag == True %}
+
+                    <div style="padding: 20px">
+                        <form class="error_flag" method="post">
+                            {% csrf_token %}
+                            <p style="font-size: 27px; font-weight: bold; color: white;">An <span style="color: red;">error</span> occurred during anonymization.<br>You can try again with different settings or <button type="submit" name="home" class="return_home">Return Home</button>.</p>
+                        </form>
+                    </div>
+
+                {% endif %}
 
                 <div class="text_div">
                     <p>Select Validation Algorithm:</p>

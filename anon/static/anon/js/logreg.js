@@ -94,6 +94,9 @@ function onClickForgot() {
 function onClickIconForgot() {
     document.getElementById('id-window-forgot').style.display = 'none';
     document.getElementById('email-forgot').value = '';
+
+    if(document.getElementById("error-label") != null)
+        document.getElementById("error-label").style.display = "none";
 }
 
 function onClickLoginMenu() {

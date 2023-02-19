@@ -1430,8 +1430,8 @@ def downloadfile(req):
     enforcer = req.session["enforcer"]
     enforcer_args = req.session["enforcer_args"]
 
-    base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
     filename = 'anony_' + campaign.replace(" ", "_") + '.ttl'
 
     graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
@@ -1553,8 +1553,8 @@ def clusteringresults(req):
         clust_str += ("#" + clust_arg.capitalize())
 
 
-    base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
     filename = campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
 
@@ -1635,6 +1635,12 @@ def anonymize(req):
 
     if req.method == "POST":
 
+        if "home" in req.POST:
+            del req.session['sel-camp-prov']
+            del req.session['clust']
+            del req.session['clust-arg']
+            return redirect('/anon/homedataprovider')
+
         if "logout" in req.POST:
 
             for key in list(req.session.keys()):
@@ -1696,8 +1702,8 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        base_dir = "/app"
-        #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+        #base_dir = "/app"
+        base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
 
 
@@ -1708,6 +1714,9 @@ def anonymize(req):
         agg_filename = campaign.lower().replace(" ", "_") + "_agg.csv"
 
         agg_filepath = os.path.join(base_dir, "anony-kg-modified", "exp_data", "tuning_graphs", "anonykg_thesis_-1", agg_filename)
+
+        if not os.path.exists(agg_filepath):
+            return render(req, 'anon/anonymize.html', {'logged': req.session["provider"], 'error_flag': True})
 
         with open(agg_filepath, 'r') as f:
             csvreader = csv.reader(f)
@@ -1795,7 +1804,7 @@ def anonymize(req):
 
         return redirect('/anon/homedataprovider')
 
-    return render(req, 'anon/anonymize.html', {'logged': req.session["provider"]})
+    return render(req, 'anon/anonymize.html', {'logged': req.session["provider"], 'error_flag': False})
 
 
 def errorpage(req):
