@@ -420,6 +420,11 @@ def campaignRelationships(req):
             return redirect('/anon/logreg')
 
         if "owners-present-button" in req.POST:
+
+            print("\n\n\n")
+            print(req.POST.get("campaignRels").split('|'))
+            print(req.POST.get("selectedUsers").split('|'))
+            print("\n\n\n")
                 
             campaignRels = req.POST.get("campaignRels").split('|')
 
@@ -430,6 +435,11 @@ def campaignRelationships(req):
                 relationships = zip(new_relationships, campaignRels)
 
                 for new_relationship, relationship in relationships:
+
+                    print("-----------")
+                    print(new_relationship + "  -  " + relationship)
+                    print("-----------")
+
                     new_users = new_relationship.split(",")
 
                     for new_user in new_users:
@@ -1162,7 +1172,7 @@ def createCampaign(req):
                     r = Relationship(name=rel)
                     chkExists = False
                     for relationship in Relationship.objects.all():
-                        if relationship.name == a.name:
+                        if relationship.name == r.name:
                             chkExists = True
                     if chkExists == False:
                         r.save()

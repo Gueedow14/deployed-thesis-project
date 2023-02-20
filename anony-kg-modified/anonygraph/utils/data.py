@@ -431,7 +431,7 @@ def modify_attribute_edge(owner, attr, value, campaign):
 
 
 
-def delete_rel_edge(o1, rel, o2):
+def delete_rel_edge(o1, rel, o2, campaign):
     raw_dir = putils.get_raw_data_path("anonykg_thesis")
     rels_file = os.path.join(raw_dir, "rels.edges")
     tmp_file = os.path.join(raw_dir, "tmp.idx")
@@ -441,11 +441,11 @@ def delete_rel_edge(o1, rel, o2):
     with open(rels_file, "r") as f:
         for row in f.readlines():
             row_values = row.split(",")
-            if row_values[0] == get_owner_id(o1) and row_values[1] == get_rel_id(rel + "_rel") and row_values[2].strip('\n') == get_owner_id(o2):
+            if row_values[0] == get_owner_id(o1) and row_values[1] == get_rel_id(rel + "_rel") and row_values[2] == get_owner_id(o2) and row_values[3].strip('\n') == get_campaign_id(o2):
                 chkExist = True
 
     if chkExist == True:
-        text2del = get_owner_id(o1) + "," + get_rel_id(rel + "_rel") + "," + get_owner_id(o2)
+        text2del = get_owner_id(o1) + "," + get_rel_id(rel + "_rel") + "," + get_owner_id(o2) + "," + get_campaign_id(campaign)
 
         with open(rels_file, "r") as f_input:
             with open(tmp_file, "w") as f_output:
@@ -454,9 +454,9 @@ def delete_rel_edge(o1, rel, o2):
                         f_output.write(row)
 
         os.replace(tmp_file, rels_file)
-        logger.info("deleted relationship edge {} ---[{}]--> {}".format(o1,rel,o2))
+        logger.info("deleted relationship edge {} ---[{}]--> {} for campaign {}".format(o1,rel,o2, campaign))
     else:
-        logger.info("relationship edge {} ---[{}]--> {} already deleted".format(o1,rel,o2))
+        logger.info("relationship edge {} ---[{}]--> {} already deleted for campaign".format(o1,rel,o2, campaign))
 
 
 

@@ -236,18 +236,20 @@
 
                     campaignRelsInput.value = campaignRelsInput.value.substring(0, campaignRelsInput.value.length - 1)
 
+                    var selectedUsers = "";
+
                     for(var i = 0 ; i < relationships.length ; i++) {
                         rel = relationships[i].id.substring(0, relationships[i].id.length - 9)
                         var usersSelectedElements = document.getElementsByName("selected-" + rel);
                         var usersSelected = []
-                        for(var i = 0 ; i < usersSelectedElements.length ; i++)
-                            usersSelected[i] = usersSelectedElements[i].innerHTML.replace(/^\s+|\s+$/g, '');
-                        var selectedUsers = "";
-                        for(var i = 0 ; i < usersSelected.length ; i++)
-                            selectedUsers += (usersSelected[i] + ",");
+                        for(var j = 0 ; j < usersSelectedElements.length ; j++)
+                            usersSelected[j] = usersSelectedElements[j].innerHTML.replace(/^\s+|\s+$/g, '');
+                        for(var x = 0 ; x < usersSelected.length ; x++)
+                            selectedUsers += (usersSelected[x] + ",");
                         selectedUsers = selectedUsers.substring(0, selectedUsers.length - 1)
                         selectedUsers += "|"
                     }
+
                     selectedUsers = selectedUsers.substring(0, selectedUsers.length - 1)
                     document.getElementById("selected-users").setAttribute("value", selectedUsers)
                     document.getElementById("loader-div").style.display = "flex"
@@ -270,8 +272,6 @@
                         rel_icon.classList.remove("bi-caret-up")
                         rel_icon.classList.add("bi-caret-down")
                     }
-
-                    console.log(relationship)
                 }
                 
                 document.getElementById("reload-page").addEventListener('click', reloadPage);
