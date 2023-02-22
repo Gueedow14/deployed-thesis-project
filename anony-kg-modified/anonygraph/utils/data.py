@@ -366,7 +366,7 @@ def generate_attribute_edge(owner, attr, value, campaign):
     with open(attrs_file, "r") as f:
         for row in f.readlines():
             row_values = row.split(",")
-            if row_values[0] == get_owner_id(owner) and row_values[1] == get_attr_id(attr + "_attr") and row_values[2].strip('\n') == get_value_id(value):
+            if row_values[0] == get_owner_id(owner) and row_values[1] == get_attr_id(attr + "_attr") and row_values[2] == get_value_id(value) and row_values[3].strip('\n') == get_campaign_id(campaign):
                 chkExist = True
 
     if chkExist == False:
@@ -374,9 +374,9 @@ def generate_attribute_edge(owner, attr, value, campaign):
         new_value = get_owner_id(owner)  + "," + get_attr_id(attr + "_attr")  + "," + get_value_id(value) + "," + get_campaign_id(campaign) + "\n"
         f.write(new_value)
         f.close()
-        logger.info("created attribute edge {} ---[{}]--> {}".format(owner, attr, value))
+        logger.info("created attribute edge {} ---[{}]--> {} for campaign {}".format(owner, attr, value, campaign))
     else:
-        logger.info("attribute edge {} ---[{}]--> {} already exists".format(owner, attr, value))
+        logger.info("attribute edge {} ---[{}]--> {} already exists for campaign {}".format(owner, attr, value, campaign))
 
 
 
@@ -456,7 +456,7 @@ def delete_rel_edge(o1, rel, o2, campaign):
         os.replace(tmp_file, rels_file)
         logger.info("deleted relationship edge {} ---[{}]--> {} for campaign {}".format(o1,rel,o2, campaign))
     else:
-        logger.info("relationship edge {} ---[{}]--> {} already deleted for campaign".format(o1,rel,o2, campaign))
+        logger.info("relationship edge {} ---[{}]--> {} already deleted for campaign {}".format(o1,rel,o2, campaign))
 
 
 
