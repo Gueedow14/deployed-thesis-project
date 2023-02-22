@@ -99,3 +99,12 @@ Here are some useful links:
 - [Validate .ttl file](http://ttl.summerofcode.be/)
 - [Convert the file to another format](https://www.easyrdf.org/converter)
 - [Visualize Anonymized Graph](https://www.ldf.fi/service/rdf-grapher)
+
+
+
+
+# Video Tutorial
+
+
+https://user-images.githubusercontent.com/51020750/220290185-3918e5c5-da77-48c1-91d5-d6e15ec8ff6d.mp4
+
