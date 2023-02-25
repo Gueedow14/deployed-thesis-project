@@ -6,8 +6,29 @@ import re, os, mimetypes, subprocess, csv, statistics
 from .models import Provider, Campaign, Attribute, Relationship, Value, Owner, Attribute_Edge, Relationship_Edge, AnonyGraph, OwnerCampaign
 
 
+def clear_session_variables(req, accepted_keys):
+
+    no_delete = ['_auth_user_id','_auth_user_backend','_auth_user_hash'] + accepted_keys
+
+    print("\n---------")
+
+    for key in list(req.session.keys()):
+        print("Considering key " + str(key))
+        if key not in no_delete:
+            print("Deleting key " + str(key) + " with value " + str(req.session[key])) 
+            del req.session[key]
+        
+    print("---------\n\n")
+
 
 def logreg(req):
+
+    print("\n---\nGoing to Login/Registration Page\n---\n")
+
+
+    accepted_keys = []
+
+    clear_session_variables(req, accepted_keys)
 
     if req.method == "POST":
         data = req.POST
@@ -21,14 +42,14 @@ def logreg(req):
 
                 #check in owners
                 for o in Owner.objects.all():
-                    if o.email == email and o.pwd == pwd:
+                    if o.email.lower() == email.lower() and o.pwd == pwd:
                         req.session["owner"] = email.lower();
                         return redirect('/anon/homedataowner')
 
                 #check in providers
                 for p in Provider.objects.all():
-                    if p.email == email and p.pwd == pwd:
-                        req.session["provider"] = email;
+                    if p.email.lower() == email.lower() and p.pwd == pwd:
+                        req.session["provider"] = email.lower();
                         return redirect('/anon/homedataprovider')
 
                 return render(req, 'anon/logreg.html', {'not_found_flag': True, 'not_valid_email_reset': False})
@@ -70,11 +91,18 @@ def logreg(req):
 
 def resetPwd(req):
 
+    print("\n---\nGoing to Reset Password Page\n---\n")
+
+
     if not "email-reset" in req.session or not "originalpage" in req.session:
         return redirect("/anon/error")
 
     email = req.session["email-reset"]
     origin = req.session["originalpage"]
+
+    accepted_keys = ["email-reset", "originalpage"]
+
+    clear_session_variables(req, accepted_keys)
 
     if req.method == "POST":
 
@@ -147,10 +175,17 @@ def resetPwd(req):
 
 def registration(req):
 
+    print("\n---\nGoing to Registration Page\n---\n")
+
+
     if not "accountType" in req.session:
         return redirect("/anon/error")
 
     typeAccount = req.session["accountType"]   
+
+    accepted_keys = ["accountType"]
+
+    clear_session_variables(req, accepted_keys)
 
     if req.method == "POST":
 
@@ -214,13 +249,23 @@ def registration(req):
 
 def selectCampaign(req):
 
+    print("\n---\nGoing to Select Campaign Page\n---\n")
+
+
     if not "origin" in req.session or not "owner" in req.session:
         return redirect("/anon/error")
+    
+    origin = req.session["origin"]
+    passed_owner = req.session["owner"]
 
-    if req.session["origin"] == "registration" or req.session["origin"] == "homepage":
+    accepted_keys = ["origin", "owner"]
+    
+    clear_session_variables(req, accepted_keys)
+
+    if origin == "registration" or origin == "homepage":
 
         for o in Owner.objects.all():
-            if o.email == req.session["owner"]:
+            if o.email == passed_owner:
                 owner = o
 
         campaigns = [] 
@@ -301,6 +346,8 @@ def selectCampaign(req):
                     oc.save()
 
                     req.session["sel-camp"] = campaign
+                    req.session["origin"] = origin
+                    req.session["owner"] = passed_owner
                     return redirect('/anon/campaigndata')
 
         return render(req, 'anon/selectcampaign.html', {'campaigns': campaign_data, 'chkCampaignsAttended': chkAllCampaignsAttended, 'logged': req.session["owner"]})
@@ -313,13 +360,24 @@ def selectCampaign(req):
 
 def campaignData(req):
 
+    print("\n---\nGoing to Campaign Data\n---\n")
+
+
     if not "origin" in req.session or not "owner" in req.session or not "sel-camp" in req.session:
         return redirect("/anon/error")
+    
+    origin = req.session["origin"]
+    passed_campaign = req.session["sel-camp"]
+    passed_owner = req.session["owner"]
 
-    if req.session["origin"] == "registration" or req.session["origin"] == "homepage":
+    accepted_keys = ["origin", "owner", "sel-camp"]
+
+    clear_session_variables(req, accepted_keys)
+
+    if origin == "registration" or origin == "homepage":
 
         for c in Campaign.objects.all():
-            if c.name == req.session["sel-camp"]:
+            if c.name == passed_campaign:
                 selectedCampaign = c
         
         if req.method == "POST":
@@ -332,7 +390,7 @@ def campaignData(req):
                 return redirect('/anon/logreg')
 
             for owner in Owner.objects.all():
-                if owner.email == req.session["owner"]:
+                if owner.email == passed_owner:
                     o = owner
 
             attributes = req.POST.getlist("data")
@@ -371,24 +429,44 @@ def campaignData(req):
                     subprocess.call(terminal, shell=True)
                     
                 if not selectedCampaign.relationships.exists():
+                    req.session["sel-camp"] = passed_campaign
+                    req.session["origin"] = origin
+                    req.session["owner"] = passed_owner
                     return redirect('/anon/seclev')
                 else:
+                    req.session["sel-camp"] = passed_campaign
+                    req.session["origin"] = origin
+                    req.session["owner"] = passed_owner
                     return redirect('/anon/campaignrelationships')
             
-        return render(req, 'anon/campaigndata.html', { 'attributes': selectedCampaign.attributes.all(), 'logged': req.session["owner"] })
+        return render(req, 'anon/campaigndata.html', { 'attributes': selectedCampaign.attributes.all(), 'logged': passed_owner })
 
 
 
 def campaignRelationships(req):
 
+    print("\n---\nGoing to Campaign Relationships\n---\n")
+
+
+    if not "origin" in req.session or not "owner" in req.session or not "sel-camp" in req.session:
+        return redirect("/anon/error")
+    
+    origin = req.session["origin"]
+    passed_campaign = req.session["sel-camp"]
+    passed_owner = req.session["owner"]
+
+    accepted_keys = ["origin", "owner", "sel-camp"]
+
+    clear_session_variables(req, accepted_keys)
+
     for c in Campaign.objects.all():
-        if c.name == req.session["sel-camp"]:
+        if c.name == passed_campaign:
             selectedCampaign = c
 
     no_owners = True
 
     for o in Owner.objects.all():
-        if o.email == req.session["owner"]:
+        if o.email == passed_owner:
             owner = o
         else:
             no_owners = False
@@ -455,10 +533,13 @@ def campaignRelationships(req):
 
                             terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
                             subprocess.call(terminal, shell=True)
-
+    
+        req.session["sel-camp"] = passed_campaign
+        req.session["origin"] = origin
+        req.session["owner"] = passed_owner
         return redirect('/anon/seclev')
 
-    return render(req, 'anon/campaignrelationships.html', {'prev_rels': previous_owner_relationships, 'no_owners': no_owners, 'owners': Owner.objects.all(), 'owner': owner, 'previous_rels_str': previous_rels, 'logged': req.session["owner"]})
+    return render(req, 'anon/campaignrelationships.html', {'prev_rels': previous_owner_relationships, 'no_owners': no_owners, 'owners': Owner.objects.all(), 'owner': owner, 'previous_rels_str': previous_rels, 'logged': passed_owner})
 
 
 
@@ -467,8 +548,19 @@ def campaignRelationships(req):
 
 def secLev(req):
 
-    if not "owner" in req.session or not "sel-camp" in req.session:
+    print("\n---\nGoing to KVal Page\n---\n")
+
+
+    if not "owner" in req.session or not "sel-camp" in req.session or not "origin" in req.session:
         return redirect("/anon/error")
+    
+    origin = req.session["origin"]
+    passed_campaign = req.session["sel-camp"]
+    passed_owner = req.session["owner"]
+
+    accepted_keys = ["origin", "owner", "sel-camp"]
+
+    clear_session_variables(req, accepted_keys)
 
     if req.method == "POST":
 
@@ -484,11 +576,11 @@ def secLev(req):
             kval = req.POST.get("kval")
 
             for o in Owner.objects.all():
-                if o.email == req.session["owner"]:
+                if o.email == passed_owner:
                     owner = o             
 
             for c in Campaign.objects.all():
-                if c.name == req.session["sel-camp"]:
+                if c.name == passed_campaign:
                     selectedCampaign = c
 
             for ownerCamp in OwnerCampaign.objects.all():
@@ -501,17 +593,15 @@ def secLev(req):
             terminal = 'cd anony-kg-modified/ && python -u generate_campaign_owner.py --owner=' + owner.email.lower() + ' --kval=\"' + kval + '\" --campaign=\"' + selectedCampaign.name.lower() + '\"'
             subprocess.call(terminal, shell=True)
 
-            req.session["owner"] = owner.email
+            req.session["owner"] = passed_owner
 
-            if req.session["origin"] == "profile":
-                del req.session["origin"]
+            if origin == "profile":
+                req.session["sel-camp"] = passed_campaign
                 return redirect('/anon/usercampaign')
             else:
-                del req.session["sel-camp"]
-                del req.session["origin"]
                 return redirect('/anon/homedataowner')
 
-    return render(req, 'anon/seclev.html', {'logged': req.session["owner"]})
+    return render(req, 'anon/seclev.html', {'logged': passed_owner})
 
 
 
@@ -519,13 +609,22 @@ def secLev(req):
 
 def homeDataOwner(req):
 
+    print("\n---\nGoing to Home Data Owner\n---\n")
+
+
     if not "owner" in req.session:
         return redirect("/anon/error")
+    
+    passed_owner = req.session["owner"]
+
+    accepted_keys = ["owner"]
+
+    clear_session_variables(req, accepted_keys)
     
     owners = Owner.objects.all()
 
     for owner in owners:
-        if owner.email == req.session["owner"]:
+        if owner.email == passed_owner:
             o = owner
     
     if req.method == "POST":
@@ -678,11 +777,20 @@ def homeDataOwner(req):
 
 def profile(req):
 
+    print("\n---\nGoing to Profile\n---\n")
+
+
     if not "owner" in req.session:
         return redirect("/anon/error")
+    
+    passed_owner = req.session["owner"]
+
+    accepted_keys = ["owner"]
+
+    clear_session_variables(req, accepted_keys)
 
     for owner in Owner.objects.all():
-        if owner.email == req.session["owner"]:
+        if owner.email == passed_owner:
             o = owner
 
     owner_campaigns = []
@@ -705,34 +813,45 @@ def profile(req):
             return redirect('/anon/logreg')
 
         if "done" in req.POST:
+            req.session["owner"] = passed_owner
             return redirect('/anon/homedataowner')
 
         if "campaign" in req.POST:
             req.session["sel-camp"] = req.POST.get("campaign")
+            req.session["owner"] = passed_owner
             return redirect('/anon/usercampaign')
         
         if "yes" in req.POST:
             req.session["email-reset"] = o.email
             req.session["originalpage"] = "profile"
-            del req.session["owner"]
             return redirect('/anon/resetpwd')
 
-    return render(req, 'anon/profile.html', { 'owner': o, 'owner_campaigns': owner_data, 'logged': req.session["owner"] })
+    return render(req, 'anon/profile.html', { 'owner': o, 'owner_campaigns': owner_data, 'logged': passed_owner })
 
 
 
 
 def userCampaign(req):
 
+    print("\n---\nGoing to User Campaign\n---\n")
+
+
     if not "owner" in req.session or not "sel-camp" in req.session:
         return redirect("/anon/error")
+    
+    passed_owner = req.session["owner"]
+    passed_campaign = req.session["sel-camp"]
+
+    accepted_keys = ["owner", "sel-camp"]
+
+    clear_session_variables(req, accepted_keys)
 
     for owner in Owner.objects.all():
-        if owner.email == req.session["owner"]:
+        if owner.email == passed_owner:
             o = owner
 
     for campaign in Campaign.objects.all():
-        if campaign.name == req.session["sel-camp"]:
+        if campaign.name == passed_campaign:
             c = campaign
 
     for oc in OwnerCampaign.objects.all():
@@ -779,10 +898,14 @@ def userCampaign(req):
             return redirect('/anon/logreg')
 
         if "kval" in req.POST:
+            req.session["owner"] = passed_owner
+            req.session["sel-camp"] = passed_campaign
             req.session["origin"] = "profile"
             return redirect('/anon/seclev')
 
         if "rels" in req.POST:
+            req.session["owner"] = passed_owner
+            req.session["sel-camp"] = passed_campaign
             req.session["currentRel"] = req.POST.get("rels")
             return redirect('/anon/userrelationships')
 
@@ -917,30 +1040,39 @@ def userCampaign(req):
                             subprocess.call(terminal, shell=True)
 
 
-            del req.session["sel-camp"]
+            req.session["owner"] = passed_owner
             return redirect('/anon/profile')
 
 
-    return render(req, 'anon/usercampaign.html', { 'oc': selectedOC, 'campaign': c, 'attrs_campaign': c.attributes.all().order_by("name"),'attrs_data': attrData, 'rels': rels, 'logged': req.session["owner"] })
+    return render(req, 'anon/usercampaign.html', { 'oc': selectedOC, 'campaign': c, 'attrs_campaign': c.attributes.all().order_by("name"),'attrs_data': attrData, 'rels': rels, 'logged': passed_owner })
 
 
 
 
 def userRelationships(req):
 
-    if not "currentRel" in req.session:
+    print("\n---\nGoing to User Relationships\n---\n")
+
+
+    if not "currentRel" in req.session or not "owner" in req.session or not "sel-camp" in req.session:
         return redirect("/anon/error")
     
-    for campaign in Campaign.objects.all():
-        if campaign.name == req.session["sel-camp"]:
-            c = campaign
-
+    passed_owner = req.session["owner"]
+    passed_campaign = req.session["sel-camp"]
     currentRel = req.session["currentRel"]
+
+    accepted_keys = ["currentRel", "owner", "sel-camp"]
+
+    clear_session_variables(req, accepted_keys)
+    
+    for campaign in Campaign.objects.all():
+        if campaign.name == passed_campaign:
+            c = campaign
 
     other_owners = []
 
     for owner in Owner.objects.all():
-        if owner.email == req.session["owner"]:
+        if owner.email == passed_owner:
             o = owner
         else:
             other_owners.append(owner)
@@ -997,23 +1129,31 @@ def userRelationships(req):
 
                         relEdge.delete()
 
-        del req.session['currentRel']
+        req.session["owner"] = passed_owner
+        req.session["sel-camp"] = passed_campaign
         return redirect('/anon/usercampaign')
 
 
-    return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': other_owners, 'currentRel': currentRel, 'inputRels': inputRels, 'no_owners': no_owners, 'logged': req.session["owner"] })
+    return render(req, 'anon/userrelationships.html', { 'owner': o, 'userRels': userRels, 'owners': other_owners, 'currentRel': currentRel, 'inputRels': inputRels, 'no_owners': no_owners, 'logged': passed_owner })
 
 
 
 def homeDataProvider(req):
 
+    print("\n---\nGoing to Home Data Provider\n---\n")
+
+
     if not "provider" in req.session:
         return redirect("/anon/error")
+    
+    passed_provider = req.session["provider"]
 
-    providers = Provider.objects.all()
+    accepted_keys = ["provider"]
 
-    for p in providers:
-        if p.email == req.session["provider"]:
+    clear_session_variables(req, accepted_keys)
+
+    for p in Provider.objects.all():
+        if p.email == passed_provider:
             provider = p
 
     campaigns = []
@@ -1057,6 +1197,7 @@ def homeDataProvider(req):
     if req.method == "POST":
 
         if "campaign" in req.POST:
+            req.session["provider"] = passed_provider
             req.session["sel-camp-prov"] = req.POST.get("campaign")
 
             terminal = 'cd anony-kg-modified/ && python generate_raw_kg.py --data=anonykg_thesis --campaign=\"' + req.POST.get("campaign").lower() + '\"'
@@ -1071,10 +1212,10 @@ def homeDataProvider(req):
             return redirect('/anon/campaignpage')
 
         if "logout" in req.POST:
-            del req.session["provider"]
             return redirect('/anon/logreg')
         
         if "create" in req.POST:
+            req.session["provider"] = passed_provider
             return redirect('/anon/createcampaign')
 
     
@@ -1095,11 +1236,20 @@ def homeDataProvider(req):
 
 def createCampaign(req):
 
+    print("\n---\nGoing to Create Campaign\n---\n")
+
+
     if not "provider" in req.session:
         return redirect("/anon/error")
+    
+    passed_provider = req.session["provider"]
+
+    accepted_keys = ["provider"]
+
+    clear_session_variables(req, accepted_keys)
 
     for p in Provider.objects.all():
-        if p.email == req.session["provider"]:
+        if p.email == passed_provider:
             provider = p
 
     if req.method == "POST":
@@ -1122,10 +1272,10 @@ def createCampaign(req):
 
             for c in Campaign.objects.all():
                 if c.name.lower() == name.lower():
-                    return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True, 'logged': req.session["provider"] })
+                    return render(req, 'anon/createcampaign.html', { 'name_existing_flag': True, 'logged': passed_provider })
             
             if len(attrsInput) > 5:
-                return render(req, 'anon/createcampaign.html', { 'name_existing_flag': False, 'logged': req.session["provider"] })
+                return render(req, 'anon/createcampaign.html', { 'name_existing_flag': False, 'logged': passed_provider })
             
             for attr in attrsInput:
                 if ' ' in attr:
@@ -1220,7 +1370,7 @@ def createCampaign(req):
             return redirect('/anon/homedataprovider')
             
 
-    return render(req, 'anon/createcampaign.html', { 'name_existing_flag': False, 'logged': req.session["provider"] })
+    return render(req, 'anon/createcampaign.html', { 'name_existing_flag': False, 'logged': passed_provider })
 
 
 
@@ -1228,11 +1378,20 @@ def createCampaign(req):
 
 def campaignPage(req):
 
-    if not "sel-camp-prov" in req.session and not "provider" in req.session:
+    print("\n---\nGoing to Campaign Page\n---\n")
+
+    if not "sel-camp-prov" in req.session or not "provider" in req.session:
         return redirect("/anon/error")
+    
+    passed_campaign = req.session["sel-camp-prov"]
+    passed_provider = req.session["provider"]
+
+    accepted_keys = ["provider", "sel-camp-prov"]
+
+    clear_session_variables(req, accepted_keys)
 
     for c in Campaign.objects.all():
-        if c.name == req.session["sel-camp-prov"]:
+        if c.name == passed_campaign:
             campaign = c
 
     campaignOwners = []
@@ -1292,17 +1451,21 @@ def campaignPage(req):
             return redirect('/anon/logreg')
 
         if "home" in req.POST:
-            del req.session["sel-camp-prov"]
+            req.session["provider"] = passed_provider
             return redirect('/anon/homedataprovider')
 
         if "compare" in req.POST:
+            req.session["sel-camp-prov"] = passed_campaign
+            req.session["provider"] = passed_provider
             return redirect('/anon/comparehome')
 
         if "anonymize" in req.POST:
+            req.session["sel-camp-prov"] = passed_campaign
+            req.session["provider"] = passed_provider
             return redirect('/anon/clusteringpage')
 
 
-    return render(req, 'anon/campaignpage.html', { 'campaign': campaign, 'numEntities': numEntities, 'numValues': len(ownerValues), 'numNodes': numNodes, 'numRelations': numRelations, 'numRelationships': numRelationships, 'numAttributes': numAttributes, 'numEdges': totalEdges, 'numAttrEdges': len(campaignAttrEdges), 'numRelEdges': len(campaignRelEdges), 'allOwners': campaignOwners + otherEntitiesInvolved, 'allValues': ownerValues, 'attrEdges': campaignAttrEdges, 'relEdges': campaignRelEdges, 'logged': req.session["provider"] })
+    return render(req, 'anon/campaignpage.html', { 'campaign': campaign, 'numEntities': numEntities, 'numValues': len(ownerValues), 'numNodes': numNodes, 'numRelations': numRelations, 'numRelationships': numRelationships, 'numAttributes': numAttributes, 'numEdges': totalEdges, 'numAttrEdges': len(campaignAttrEdges), 'numRelEdges': len(campaignRelEdges), 'allOwners': campaignOwners + otherEntitiesInvolved, 'allValues': ownerValues, 'attrEdges': campaignAttrEdges, 'relEdges': campaignRelEdges, 'logged': passed_provider })
 
 
 
@@ -1310,11 +1473,21 @@ def campaignPage(req):
 
 def compareHome(req):
 
-    if not "sel-camp-prov" in req.session and not "provider" in req.session:
+    print("\n---\nGoing to Compare Home\n---\n")
+
+
+    if not "sel-camp-prov" in req.session or not "provider" in req.session:
         return redirect("/anon/error")
+    
+    passed_campaign = req.session["sel-camp-prov"]
+    passed_provider = req.session["provider"]
+
+    accepted_keys = ["provider", "sel-camp-prov"]
+
+    clear_session_variables(req, accepted_keys)
 
     for c in Campaign.objects.all():
-        if c.name == req.session["sel-camp-prov"]:
+        if c.name == passed_campaign:
             campaign = c
 
     campaign_graphs = []
@@ -1376,20 +1549,35 @@ def compareHome(req):
             return redirect('/anon/logreg')
 
         if "campaign-page" in req.POST:
+            req.session["sel-camp-prov"] = passed_campaign
+            req.session["provider"] = passed_provider
             return redirect('/anon/campaignpage')
 
         if req.POST.get("selected-graphs") != "":
             req.session["selected-graphs"] = req.POST.get("selected-graphs")
+            req.session["sel-camp-prov"] = passed_campaign
+            req.session["provider"] = passed_provider
             return redirect('/anon/compareresults')
 
 
-    return render(req, 'anon/comparehome.html', { 'graphs': campaign_graphs_data, 'logged': req.session["provider"], 'campaign': campaign, 'maxail': maxail, "minail": minail, 'maxrru': maxrru, "minrru": minrru })
+    return render(req, 'anon/comparehome.html', { 'graphs': campaign_graphs_data, 'logged': passed_provider, 'campaign': campaign, 'maxail': maxail, "minail": minail, 'maxrru': maxrru, "minrru": minrru })
 
 
 def compareResults(req):
 
-    if not "selected-graphs" in req.session or not "sel-camp-prov" in req.session and not "provider" in req.session:
+    print("\n---\nGoing to Compare Results\n---\n")
+
+
+    if not "selected-graphs" in req.session or not "sel-camp-prov" in req.session or not "provider" in req.session:
         return redirect("/anon/error")
+    
+    passed_selected_graphs = req.session["selected-graphs"]
+    passed_provider = req.session["provider"]
+    passed_campaign = req.session["sel-camp-prov"]
+
+    accepted_keys = ["provider", "sel-camp-prov", "selected-graphs"]
+
+    clear_session_variables(req, accepted_keys)
 
     if req.method == "POST":
 
@@ -1400,11 +1588,10 @@ def compareResults(req):
 
             return redirect('/anon/logreg')
 
-        del req.session["selected-graphs"]
-        del req.session["sel-camp-prov"]
+        req.session["provider"] = passed_provider
         return redirect("/anon/homedataprovider")
 
-    selected_graphs = req.session["selected-graphs"].split("|")
+    selected_graphs = passed_selected_graphs.split("|")
 
     calgos = []
     enforcers = []
@@ -1426,12 +1613,16 @@ def compareResults(req):
         values = graph.split(";")
         names.append(values[0] + " - " + values[1])
 
-    return render(req, 'anon/compareresults.html', { 'graphs': graph_data, 'rrus': rrus, 'ails': ails, 'names': names, 'logged': req.session["provider"] })
+    return render(req, 'anon/compareresults.html', { 'graphs': graph_data, 'rrus': rrus, 'ails': ails, 'names': names, 'logged': passed_provider })
 
 
 def downloadfile(req):
 
-    if not "campaign" in req.session or not "calgo" in req.session or not "calgo_args" in req.session or not "enforcer" in req.session or not "enforcer_args" in req.session and not "provider" in req.session:
+    print("\n---\nGoing to Download Page\n---\n")
+
+
+
+    if not "campaign" in req.session or not "calgo" in req.session or not "calgo_args" in req.session or not "enforcer" in req.session or not "enforcer_args" in req.session or not "provider" in req.session:
         return redirect("/anon/error")
 
     campaign = req.session["campaign"]
@@ -1439,9 +1630,14 @@ def downloadfile(req):
     calgo_args = req.session["calgo_args"]
     enforcer = req.session["enforcer"]
     enforcer_args = req.session["enforcer_args"]
+    passed_provider = req.session["provider"]
 
-    base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    accepted_keys = ["provider", "campaign", "calgo", "calgo_args", "enforcer", "enforcer_args"]
+
+    clear_session_variables(req, accepted_keys)
+
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
     filename = 'anony_' + campaign.replace(" ", "_") + '.ttl'
 
     graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
@@ -1478,19 +1674,26 @@ def downloadfile(req):
             return response
 
         if "redirect" in req.POST:
-            del req.session["sel-camp-prov"]
-
+            req.session["provider"] = passed_provider
             return redirect('/anon/homedataprovider')
 
-    return render(req, 'anon/download_page.html', {"path": filepath, 'logged': req.session["provider"]})
+    return render(req, 'anon/download_page.html', {"path": filepath, 'logged': passed_provider})
 
 
 def clusteringpage(req):
 
-    if not "sel-camp-prov" in req.session and not "provider" in req.session:
+    print("\n---\nGoing to Clustering Page\n---\n")
+
+
+    if not "sel-camp-prov" in req.session or not "provider" in req.session:
         return redirect("/anon/error")
 
-    campaign = req.session["sel-camp-prov"]
+    passed_campaign = req.session["sel-camp-prov"]
+    passed_provider = req.session["provider"]
+
+    accepted_keys = ["provider", "sel-camp-prov"]
+
+    clear_session_variables(req, accepted_keys)
 
     if req.method == "POST":
 
@@ -1511,27 +1714,40 @@ def clusteringpage(req):
             clust = clust.split("-")[0]
 
         if clust == "vac":
-            command_line = 'cd anony-kg-modified/ && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+            command_line = 'cd anony-kg-modified/ && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + passed_campaign.lower() + '\" --calgo=' + clust
         else:
-            command_line = 'cd anony-kg-modified/ && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
+            command_line = 'cd anony-kg-modified/ && python generate_raw_clusters.py --data=anonykg_thesis --campaign=\"' + passed_campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
 
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
         req.session["clust"] = clust
         req.session["clust-arg"] = clust_arg
+        req.session["sel-camp-prov"] = passed_campaign
+        req.session["provider"] = passed_provider
 
         return redirect('/anon/clusteringresults')
 
-    return render(req, 'anon/clusteringpage.html', {'logged': req.session["provider"]})
+    return render(req, 'anon/clusteringpage.html', {'logged': passed_provider})
 
 
 
 def clusteringresults(req):
 
+    print("\n---\nGoing to Clustering Results\n---\n")
 
-    if not "sel-camp-prov" in req.session and not "clust" in req.session and not "clust-arg" in req.session and not "provider" in req.session:
+
+    if not "sel-camp-prov" in req.session or not "clust" in req.session or not "clust-arg" in req.session or not "provider" in req.session:
         return redirect("/anon/error")
+    
+    clust = req.session["clust"]
+    clust_arg = req.session["clust-arg"]
+    passed_campaign = req.session["sel-camp-prov"]
+    passed_provider = req.session["provider"]
+
+    accepted_keys = ["provider", "sel-camp-prov", "clust_arg", "clust"]
+
+    clear_session_variables(req, accepted_keys)
     
     if req.method == "POST":
 
@@ -1542,17 +1758,17 @@ def clusteringresults(req):
 
             return redirect('/anon/logreg')
 
-        if "proceed" in req.POST:
+        if "proceed" in req.POST:        
+            req.session["clust"] = clust
+            req.session["clust-arg"] = clust_arg
+            req.session["sel-camp-prov"] = passed_campaign
+            req.session["provider"] = passed_provider
             return redirect('/anon/anonymize')
         
         if "regen" in req.POST:
-            del req.session["clust"]
-            del req.session["clust-arg"]
+            req.session["sel-camp-prov"] = passed_campaign
+            req.session["provider"] = passed_provider
             return redirect('/anon/clusteringpage')
-
-    campaign = req.session["sel-camp-prov"]
-    clust = req.session["clust"]
-    clust_arg = req.session["clust-arg"]
 
     if clust == "km":
         clust_str = "k-Medoids"
@@ -1563,37 +1779,37 @@ def clusteringresults(req):
         clust_str += ("#" + clust_arg.capitalize())
 
 
-    base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
-    filename = campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
+    filename = passed_campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
 
     if clust_arg is not None:
         filename += ("#" + clust_arg)
 
     filename += ".txt"
 
-    clusters_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "clusters", "raw", filename)
+    clusters_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", passed_campaign.lower(), "clusters", "raw", filename)
 
     if not os.path.exists(clusters_filepath):
         print("File " + str(clusters_filepath) + " non esiste")
-        return render(req, 'anon/clusteringresults.html', {'clusters': None, 'logged': req.session["provider"]})
+        return render(req, 'anon/clusteringresults.html', {'clusters': None, 'logged': passed_provider})
     
     filename = "entities.idx"
     
-    owners_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "raw", filename)
+    owners_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", passed_campaign.lower(), "raw", filename)
 
     if not os.path.exists(owners_filepath):
         print("File " + str(owners_filepath) + " non esiste")
-        return render(req, 'anon/clusteringresults.html', {'clusters': None, 'logged': req.session["provider"]})
+        return render(req, 'anon/clusteringresults.html', {'clusters': None, 'logged': passed_provider})
 
-    filename = campaign.replace(" ", "_").lower() + ".txt"
+    filename = passed_campaign.replace(" ", "_").lower() + ".txt"
 
-    kvals_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", campaign.lower(), "k_values", filename)
+    kvals_filepath = os.path.join(base_dir, "anony-kg-modified", "outputs", "anonykg_thesis_-1", passed_campaign.lower(), "k_values", filename)
 
     if not os.path.exists(kvals_filepath):
         print("File " + str(kvals_filepath) + " non esiste")
-        return render(req, 'anon/clusteringresults.html', {'clusters': None, 'logged': req.session["provider"]})
+        return render(req, 'anon/clusteringresults.html', {'clusters': None, 'logged': passed_provider})
 
 
     kvals = {}
@@ -1627,7 +1843,7 @@ def clusteringresults(req):
             cluster_values = zip(cluster, cluster_kval)
             clusters.append(cluster_values)
 
-    return render(req, 'anon/clusteringresults.html', {'clusters': clusters, 'clust_str': clust_str, 'logged': req.session["provider"]})
+    return render(req, 'anon/clusteringresults.html', {'clusters': clusters, 'clust_str': clust_str, 'logged': passed_provider})
 
 
 
@@ -1635,20 +1851,26 @@ def clusteringresults(req):
 
 def anonymize(req):
 
-    if not "sel-camp-prov" in req.session and not "clust" in req.session and not "clust-arg" in req.session and not "provider" in req.session:
+    print("\n---\nGoing to Anonymize Page\n---\n")
+
+
+
+    if not "sel-camp-prov" in req.session or not "clust" in req.session or not "clust-arg" in req.session or not "provider" in req.session:
         return redirect("/anon/error")
-    
+        
     clust = req.session["clust"]
     clust_arg = req.session["clust-arg"]
+    passed_campaign = req.session["sel-camp-prov"]
+    passed_provider = req.session["provider"]
 
-    campaign = req.session["sel-camp-prov"]
+    accepted_keys = ["provider", "sel-camp-prov", "clust", "clust_arg"]
+
+    clear_session_variables(req, accepted_keys)
 
     if req.method == "POST":
 
         if "home" in req.POST:
-            del req.session['sel-camp-prov']
-            del req.session['clust']
-            del req.session['clust-arg']
+            req.session["provider"] = passed_provider
             return redirect('/anon/homedataprovider')
 
         if "logout" in req.POST:
@@ -1669,9 +1891,9 @@ def anonymize(req):
 
 
         if clust == "vac":
-            command_line = 'cd anony-kg-modified/ && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+            command_line = 'cd anony-kg-modified/ && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + passed_campaign.lower() + '\" --calgo=' + clust
         else:
-            command_line = 'cd anony-kg-modified/ && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
+            command_line = 'cd anony-kg-modified/ && python anonymize_clusters.py --data=anonykg_thesis --campaign=\"' + passed_campaign.lower() + '\" --calgo=' + clust + ' --calgo_args=' + clust_arg
 
 
         if valid == "sr":
@@ -1682,7 +1904,7 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        command_line = 'cd anony-kg-modified/ && python anonymize_kg.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\"'
+        command_line = 'cd anony-kg-modified/ && python anonymize_kg.py --data=anonykg_thesis --campaign=\"' + passed_campaign.lower() + '\"'
 
         if clust == "vac":
             command_line += ' --calgo=' + clust
@@ -1697,7 +1919,7 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        command_line = 'cd anony-kg-modified/ && python visualize_outputs.py --data_list=anonykg_thesis --campaign=\"{}\" --refresh=y,y --src_type=graphs --exp_names={},{} --workers=1'.format(campaign.lower(), clust, valid)
+        command_line = 'cd anony-kg-modified/ && python visualize_outputs.py --data_list=anonykg_thesis --campaign=\"{}\" --refresh=y,y --src_type=graphs --exp_names={},{} --workers=1'.format(passed_campaign.lower(), clust, valid)
 
         if clust == "vac":
             command_line += ' --calgo=' + clust
@@ -1712,21 +1934,20 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        base_dir = "/app"
-        #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+        #base_dir = "/app"
+        base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
 
-
-        filename = campaign.lower().replace(" ", "_") + ".csv"
+        filename = passed_campaign.lower().replace(" ", "_") + ".csv"
 
         filepath = os.path.join(base_dir, "anony-kg-modified", "exp_data", "tuning_graphs", "anonykg_thesis_-1", filename)
 
-        agg_filename = campaign.lower().replace(" ", "_") + "_agg.csv"
+        agg_filename = passed_campaign.lower().replace(" ", "_") + "_agg.csv"
 
         agg_filepath = os.path.join(base_dir, "anony-kg-modified", "exp_data", "tuning_graphs", "anonykg_thesis_-1", agg_filename)
 
         if not os.path.exists(agg_filepath):
-            return render(req, 'anon/anonymize.html', {'logged': req.session["provider"], 'error_flag': True})
+            return render(req, 'anon/anonymize.html', {'logged': passed_provider, 'error_flag': True})
 
         with open(agg_filepath, 'r') as f:
             csvreader = csv.reader(f)
@@ -1753,7 +1974,7 @@ def anonymize(req):
                     raw_ent = row[raw_entities_index]
 
                     for c in Campaign.objects.all():
-                        if c.name.lower() == campaign.lower():
+                        if c.name.lower() == passed_campaign.lower():
                             selectedCampaign = c
 
                     ail_values = ail.split(".")
@@ -1785,7 +2006,7 @@ def anonymize(req):
 
         if download == "yes":
 
-            command_line = 'cd anony-kg-modified/ && python generate_anon_kg_file.py --data=anonykg_thesis --campaign=\"' + campaign.lower() + '\" --calgo=' + clust
+            command_line = 'cd anony-kg-modified/ && python generate_anon_kg_file.py --data=anonykg_thesis --campaign=\"' + passed_campaign.lower() + '\" --calgo=' + clust
 
             if clust != "vac":
                 command_line += ' --calgo_args=' + clust_arg
@@ -1798,26 +2019,25 @@ def anonymize(req):
             terminal = command_line
             subprocess.call(terminal, shell=True)
 
-            campaign = campaign.lower()
-
-            req.session["campaign"] = campaign
+            req.session["campaign"] = passed_campaign.lower()
             req.session["calgo"] = clust
             req.session["calgo_args"] = clust_arg
             req.session["enforcer"] = valid
             req.session["enforcer_args"] = valid_arg
+            req.session["provider"] = passed_provider
 
             return redirect('/anon/download')
 
-
-
-        del req.session["sel-camp-prov"]
+        req.session["provider"] = passed_provider
 
         return redirect('/anon/homedataprovider')
 
-    return render(req, 'anon/anonymize.html', {'logged': req.session["provider"], 'error_flag': False})
+    return render(req, 'anon/anonymize.html', {'logged': passed_provider, 'error_flag': False})
 
 
 def errorpage(req):
+
+    print("\n---\nGoing to Error Page\n---\n")
 
     if req.method == "POST":
 
