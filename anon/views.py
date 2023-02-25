@@ -1745,7 +1745,7 @@ def clusteringresults(req):
     passed_campaign = req.session["sel-camp-prov"]
     passed_provider = req.session["provider"]
 
-    accepted_keys = ["provider", "sel-camp-prov", "clust_arg", "clust"]
+    accepted_keys = ["provider", "sel-camp-prov", "clust-arg", "clust"]
 
     clear_session_variables(req, accepted_keys)
     
@@ -1863,7 +1863,7 @@ def anonymize(req):
     passed_campaign = req.session["sel-camp-prov"]
     passed_provider = req.session["provider"]
 
-    accepted_keys = ["provider", "sel-camp-prov", "clust", "clust_arg"]
+    accepted_keys = ["provider", "sel-camp-prov", "clust", "clust-arg"]
 
     clear_session_variables(req, accepted_keys)
 
