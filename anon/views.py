@@ -1644,8 +1644,8 @@ def downloadfile(req):
 
     clear_session_variables(req, accepted_keys)
 
-    #base_dir = "/app"
-    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    base_dir = "/app"
+    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
     filename = 'anony_' + campaign.replace(" ", "_") + '.ttl'
 
     graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
@@ -1787,8 +1787,8 @@ def clusteringresults(req):
         clust_str += ("#" + clust_arg.capitalize())
 
 
-    #base_dir = "/app"
-    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    base_dir = "/app"
+    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
     filename = passed_campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
 
@@ -1942,8 +1942,8 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        #base_dir = "/app"
-        base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+        base_dir = "/app"
+        #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
 
         filename = passed_campaign.lower().replace(" ", "_") + ".csv"
