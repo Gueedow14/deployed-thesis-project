@@ -26,33 +26,42 @@
 
         particleSystem.eachEdge (function (edge, pt1, pt2)
         {
-            ctx.strokeStyle = "rgba(0,0,0, .333)";
-            ctx.lineWidth = 1;
-            ctx.beginPath ();
-            ctx.moveTo (pt1.x, pt1.y);
-            ctx.lineTo (pt2.x, pt2.y);
-            ctx.stroke ();
 
-            ctx.fillStyle = "black";
-            ctx.font = 'italic 13px sans-serif';
-            ctx.fillText (edge.data.name, (pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2);
+            edge_name_values = edge.data.name.split(",")
+
+            if(edge_name_values[1] == "attr") {
+
+              ctx.strokeStyle = "rgba(0,0,0, .333)";
+              ctx.lineWidth = 1;
+              ctx.beginPath ();
+              ctx.moveTo (pt1.x, pt1.y);
+              ctx.lineTo (pt2.x, pt2.y);
+              ctx.stroke ();
+              ctx.fillStyle = "black";
+              ctx.font = 'italic 13px sans-serif';
+              ctx.fillText (edge_name_values[0], (pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2);
+
+            } else {
+
+              ctx.strokeStyle = "rgba(0,0,0, .333)";
+              ctx.lineWidth = 1;
+              ctx.beginPath ();
+              ctx.moveTo (pt1.x, pt1.y-20);
+              ctx.lineTo (pt2.x, pt2.y+20);
+              ctx.stroke ();
+              ctx.fillStyle = "black";
+              ctx.font = 'italic 13px sans-serif';
+              ctx.fillText (edge_name_values[0], (pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2);
+
+            }
 
         });
-
-
-
-
-
-
-
-
 
 
         particleSystem.eachNode (function (node, pt)
         {
             
             var w = ctx.measureText(""+node.name).width + 30;
-            //var w = 5
             ctx.fillStyle = node.data.color;
             gfx.oval(pt.x-w/2, pt.y-w/2, w,w, {fill:ctx.fillStyle})
             ctx.fillStyle = "black";

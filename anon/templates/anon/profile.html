@@ -83,35 +83,39 @@
                 </div>
 
 
-                <div id="data-div" class="inside_container">
+                {% if owner_campaigns %}
 
-                    {% for campaign, kval in owner_campaigns %}
+                    <div id="data-div" class="inside_container">
 
-                        <div class="campaign">
-                            <div style="display: flex; justify-content: center; align-items: center;">
-                                {% if kval == None %}
-                                    <span style="color: #eed04d;">{{ campaign.name }}</span><i class="bi bi-exclamation-triangle" style="margin-left: 10px; color: #eed04d;"></i>
-                                {% else %}
-                                    <span>{{ campaign.name }}</span>
-                                {% endif %}
+                        {% for campaign, kval in owner_data %}
+
+                            <div class="campaign">
+                                <div style="display: flex; justify-content: center; align-items: center;">
+                                    {% if kval == None %}
+                                        <span style="color: #eed04d;">{{ campaign.name }}</span><i class="bi bi-exclamation-triangle" style="margin-left: 10px; color: #eed04d;"></i>
+                                    {% else %}
+                                        <span>{{ campaign.name }}</span>
+                                    {% endif %}
+                                </div>
+        
+                                <div>
+                                    <button type="submit" name="campaign" value="{{ campaign.name }}" class="campaign_icon_button">
+                                        <i class="change_icon bi bi-eye-fill"></i>
+                                    </button>
+                                </div>
                             </div>
-    
-                            <div>
-                                <button type="submit" name="campaign" value="{{ campaign.name }}" class="campaign_icon_button">
-                                    <i class="change_icon bi bi-eye-fill"></i>
-                                </button>
-                            </div>
-                        </div>
 
-                    {% empty %}
+                        {% endfor %}
 
-                        <div id="no-data-div" class="p_div">
-                            <p id="no-data-p" class="no_data">No Campaign chosen.</p>
-                        </div>
+                    </div>
 
-                    {% endfor %}
+                {% else %}
 
-                </div>
+                    <div id="no-data-div" class="p_div">
+                        <p id="no-data-p" class="no_data">No Campaign chosen yet.</p>
+                    </div>
+
+                {% endif %}
     
                 <div class="button_div">
                     <button id="button" type="submit" name="done" class="button_profile">Done</button>

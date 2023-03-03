@@ -435,7 +435,7 @@ body{
 
 
 .button_div {
-    height: 20%;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -630,6 +630,52 @@ body{
     color: #006657;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+.no_data_div {
+    text-align: center;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+
+.p_div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no_data {
+    padding: 30px;
+    border: 3px solid #004d41;
+    border-radius: 10px;
+    background: linear-gradient(#00806c, #00b398);
+    color: white;
+    font-size: 65px;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

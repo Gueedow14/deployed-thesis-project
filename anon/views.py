@@ -204,6 +204,10 @@ def registration(req):
                     if o.email.lower() == email.lower():
                         return render(req, 'anon/registration.html', {'owner_flag': True, 'type': typeAccount})
                     
+                for p in Provider.objects.all():
+                    if p.email.lower() == email.lower():
+                        return render(req, 'anon/registration.html', {'provider_flag': True, 'type': typeAccount})
+
                 o = Owner(email=email.lower(), pwd=pwd)
                 o.save()
 
@@ -216,6 +220,10 @@ def registration(req):
 
             if typeAccount == 1:
 
+                for o in Owner.objects.all():
+                    if o.email.lower() == email.lower():
+                        return render(req, 'anon/registration.html', {'owner_flag': True, 'type': typeAccount})
+                    
                 for p in Provider.objects.all():
                     if p.email.lower() == email.lower():
                         return render(req, 'anon/registration.html', {'provider_flag': True, 'type': typeAccount})
@@ -528,10 +536,10 @@ def campaignRelationships(req):
                                 if owner2.email == new_user:
                                     o2 = owner2
 
-                            e = Relationship_Edge(owner1=o, relationship=r, owner2=o2, campaign=selectedCampaign)
+                            e = Relationship_Edge(owner1=owner, relationship=r, owner2=o2, campaign=selectedCampaign)
                             e.save()
 
-                            terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + o.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
+                            terminal = 'cd anony-kg-modified/ && python -u generate_rel_edge.py --o1=' + owner.email.lower() + ' --rel=\"' + r.name.lower() + '\" --o2=' + o2.email.lower() + ' --campaign=\"' + selectedCampaign.name.lower() + '\"'
                             subprocess.call(terminal, shell=True)
     
         req.session["sel-camp"] = passed_campaign
@@ -826,7 +834,7 @@ def profile(req):
             req.session["originalpage"] = "profile"
             return redirect('/anon/resetpwd')
 
-    return render(req, 'anon/profile.html', { 'owner': o, 'owner_campaigns': owner_data, 'logged': passed_owner })
+    return render(req, 'anon/profile.html', { 'owner': o, 'owner_data': owner_data, 'owner_campaigns': owner_campaigns, 'logged': passed_owner })
 
 
 
@@ -1636,8 +1644,8 @@ def downloadfile(req):
 
     clear_session_variables(req, accepted_keys)
 
-    base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
     filename = 'anony_' + campaign.replace(" ", "_") + '.ttl'
 
     graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
@@ -1779,8 +1787,8 @@ def clusteringresults(req):
         clust_str += ("#" + clust_arg.capitalize())
 
 
-    base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+    #base_dir = "/app"
+    base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
     filename = passed_campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
 
@@ -1934,8 +1942,8 @@ def anonymize(req):
         terminal = command_line
         subprocess.call(terminal, shell=True)
 
-        base_dir = "/app"
-        #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
+        #base_dir = "/app"
+        base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
 
         filename = passed_campaign.lower().replace(" ", "_") + ".csv"

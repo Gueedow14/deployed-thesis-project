@@ -284,7 +284,7 @@
                                 {% if attr_edge.owner == owner %}
                                     "{{ attr_edge.value.value }}": {
                                         length: .5,
-                                        name: "{{ attr_edge.attribute.name }}"
+                                        name: "{{ attr_edge.attribute.name }},attr"
                                     },
                                 {% endif %}
                             {% endfor %}
@@ -292,7 +292,7 @@
                                 {% if rel_edge.owner1 == owner %}
                                     "{{ rel_edge.owner2.email }}": {
                                         length: .5,
-                                        name: "{{ rel_edge.relationship.name }}"
+                                        name: "{{ rel_edge.relationship.name }},rel"
                                     },
                                 {% endif %}
                             {% endfor %}

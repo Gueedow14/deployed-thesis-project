@@ -1,0 +1,19 @@
+
+<ken@email.com> <age> "19",
+        "21" ;
+    <follows> <henry@email.com> ;
+    <job> "student" .
+
+<mary@email.com> <age> "19",
+        "21" ;
+    <follows> <tom@email.com> ;
+    <job> "student" .
+
+<henry@email.com> <age> "21",
+        "30" ;
+    <job> "engineer" .
+
+<tom@email.com> <age> "21",
+        "30" ;
+    <job> "engineer" .
+
