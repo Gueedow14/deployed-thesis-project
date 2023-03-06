@@ -1448,6 +1448,33 @@ def campaignPage(req):
 
     totalEdges = len(campaignAttrEdges) + len(campaignRelEdges)
 
+    done_owners = []
+
+    rels_with_owners = []
+
+    owner_relationships = []
+
+    for owner in Owner.objects.all():
+        
+        for other_owner in Owner.objects.exclude(email=owner.email):
+            rel_str = ""
+            owner_rels_with_other_owner = Relationship_Edge.objects.filter(owner1=owner, owner2=other_owner);
+
+            if owner_rels_with_other_owner:
+                if other_owner in done_owners:
+                    for rel in owner_rels_with_other_owner:
+                        rel_str += rel.relationship.name + "-R|"
+                else:
+                    for rel in owner_rels_with_other_owner:
+                        rel_str += rel.relationship.name + "|"
+
+                rels_with_owners.append((other_owner, rel_str))
+
+        owner_relationships.append((owner, rels_with_owners))
+        done_owners.append(owner)
+        rels_with_owners = []
+
+
 
     if req.method == "POST":
 
@@ -1473,7 +1500,7 @@ def campaignPage(req):
             return redirect('/anon/clusteringpage')
 
 
-    return render(req, 'anon/campaignpage.html', { 'campaign': campaign, 'numEntities': numEntities, 'numValues': len(ownerValues), 'numNodes': numNodes, 'numRelations': numRelations, 'numRelationships': numRelationships, 'numAttributes': numAttributes, 'numEdges': totalEdges, 'numAttrEdges': len(campaignAttrEdges), 'numRelEdges': len(campaignRelEdges), 'allOwners': campaignOwners + otherEntitiesInvolved, 'allValues': ownerValues, 'attrEdges': campaignAttrEdges, 'relEdges': campaignRelEdges, 'logged': passed_provider })
+    return render(req, 'anon/campaignpage.html', { 'campaign': campaign, 'numEntities': numEntities, 'numValues': len(ownerValues), 'numNodes': numNodes, 'numRelations': numRelations, 'numRelationships': numRelationships, 'numAttributes': numAttributes, 'numEdges': totalEdges, 'numAttrEdges': len(campaignAttrEdges), 'numRelEdges': len(campaignRelEdges), 'allOwners': campaignOwners + otherEntitiesInvolved, 'allValues': ownerValues, 'attrEdges': campaignAttrEdges, 'relEdges': campaignRelEdges, 'owner_rels': owner_relationships, 'logged': passed_provider })
 
 
 
@@ -1645,7 +1672,6 @@ def downloadfile(req):
     clear_session_variables(req, accepted_keys)
 
     base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
     filename = 'anony_' + campaign.replace(" ", "_") + '.ttl'
 
     graph_str = campaign.replace(" ", "_") + "_adm#0.50,0.50_n_" + calgo
@@ -1788,7 +1814,6 @@ def clusteringresults(req):
 
 
     base_dir = "/app"
-    #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
     filename = passed_campaign.lower().replace(" ", "_") + "_adm#0.50,0.50_n_" + clust
 
@@ -1943,7 +1968,6 @@ def anonymize(req):
         subprocess.call(terminal, shell=True)
 
         base_dir = "/app"
-        #base_dir = "/home/guido/Documenti/Thesis Project - Test/kg-anonymization"
 
 
         filename = passed_campaign.lower().replace(" ", "_") + ".csv"

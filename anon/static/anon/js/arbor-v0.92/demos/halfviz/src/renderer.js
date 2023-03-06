@@ -1,3 +1,10 @@
+function getBezierXY(t, sx, sy, cp1x, cp1y, cp2x, cp2y, ex, ey) {
+  return {
+    x: Math.pow(1-t,3) * sx + 3 * t * Math.pow(1 - t, 2) * cp1x + 3 * t * t * (1 - t) * cp2x + t * t * t * ex,
+    y: Math.pow(1-t,3) * sy + 3 * t * Math.pow(1 - t, 2) * cp1y + 3 * t * t * (1 - t) * cp2y + t * t * t * ey
+  };
+}
+
 (function(){
   
   Renderer = function(canvas){
@@ -43,15 +50,49 @@
 
             } else {
 
-              ctx.strokeStyle = "rgba(0,0,0, .333)";
-              ctx.lineWidth = 1;
-              ctx.beginPath ();
-              ctx.moveTo (pt1.x, pt1.y-20);
-              ctx.lineTo (pt2.x, pt2.y+20);
-              ctx.stroke ();
-              ctx.fillStyle = "black";
-              ctx.font = 'italic 13px sans-serif';
-              ctx.fillText (edge_name_values[0], (pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2);
+              user_rels = edge_name_values[0].split("|")
+
+              for(var i = 0 ; i<user_rels.length ; i++) {
+
+                rel_values = user_rels[i].split("-");
+
+                if(user_rels[i] != "") {
+                  if(rel_values.length==1) {
+
+
+                    var coord = getBezierXY(0.5,pt1.x, pt1.y, pt1.x, pt1.y+(50*(i+1)), pt2.x, pt2.y+(50*(i+1)), pt2.x, pt2.y);
+
+                    ctx.strokeStyle = "rgba(0,0,0, .333)";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath ();
+                    ctx.moveTo (pt1.x, pt1.y);
+                    ctx.bezierCurveTo(pt1.x, pt1.y+(50*(i+1)), pt2.x, pt2.y+(50*(i+1)), pt2.x, pt2.y);
+                    ctx.stroke ();
+                    ctx.fillStyle = "black";
+                    ctx.font = 'italic 13px sans-serif';
+                    ctx.fillText (rel_values[0], (pt1.x + pt2.x) / 2, coord.y);
+
+
+                  } else {
+
+
+                    var coord = getBezierXY(0.5,pt1.x, pt1.y, pt1.x, pt1.y-(50*(i+1)), pt2.x, pt2.y-(50*(i+1)), pt2.x, pt2.y);
+
+                    ctx.strokeStyle = "rgba(0,0,0, .333)";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath ();
+                    ctx.moveTo (pt1.x, pt1.y);
+                    ctx.bezierCurveTo(pt1.x, pt1.y-(50*(i+1)), pt2.x, pt2.y-(50*(i+1)), pt2.x, pt2.y);
+                    ctx.stroke ();
+                    ctx.fillStyle = "black";
+                    ctx.font = 'italic 13px sans-serif';
+                    ctx.fillText (rel_values[0], (pt1.x + pt2.x) / 2, coord.y);
+
+                    
+                  }
+                }
+
+              }
 
             }
 

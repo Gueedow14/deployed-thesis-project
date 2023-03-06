@@ -80,6 +80,13 @@ If some of the packages are unavailable through conda, try finding and installin
 pip install <PACKAGE>==<VERSION>
 ```
 
+## Post-Installation Guideline
+
+In order to execute the program correctly it's suggested that you change the `base_dir` variable in the `views.py` file.
+
+You can find the variable at lines: 1647, 1789, 1943.
+Set it to the path of the folder containing the `manage.py` file.
+
 
 ## Run Locally
 
@@ -107,4 +114,3 @@ Here are some useful links:
 
 
 https://user-images.githubusercontent.com/51020750/220290185-3918e5c5-da77-48c1-91d5-d6e15ec8ff6d.mp4
-

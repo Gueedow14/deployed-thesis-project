@@ -276,10 +276,11 @@
                 },
 
                 edges:{
-
+                    
                     {% for owner in allOwners %}
 
                         "{{ owner.email }}": {
+
                             {% for attr_edge in attrEdges %}
                                 {% if attr_edge.owner == owner %}
                                     "{{ attr_edge.value.value }}": {
@@ -288,17 +289,27 @@
                                     },
                                 {% endif %}
                             {% endfor %}
-                            {% for rel_edge in relEdges %}
-                                {% if rel_edge.owner1 == owner %}
-                                    "{{ rel_edge.owner2.email }}": {
-                                        length: .5,
-                                        name: "{{ rel_edge.relationship.name }},rel"
-                                    },
+
+                            {% for o, rels in owner_rels %}
+
+                                {% if owner == o %}
+                                        {% for other_owner, rel_str in rels %}
+
+                                            "{{ other_owner.email }}": {
+                                                length: .5,
+                                                name: "{{rel_str}}"
+                                            },
+
+                                        {% endfor %}
+
                                 {% endif %}
+
                             {% endfor %}
+                            
                         },
 
                     {% endfor %}
+
                 }
 
             };
